@@ -143,3 +143,6 @@ html{scroll-padding-top:0}
 .photo-filter-definitions{position:absolute;pointer-events:none;overflow:hidden}
 .product-image,.product-modal-image,.food-photo{background:#e8e5df}
 .food-photo{object-fit:cover}
+.menu-products .product-card{display:flex;flex-direction:column}
+.menu-products .product-copy{display:flex;flex-direction:column;flex:1}
+.menu-products .product-bottom{margin-top:auto}
