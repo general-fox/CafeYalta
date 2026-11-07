@@ -3,7 +3,7 @@ export const categories = [
 ];
 
 // Демонстрационное меню. Цены, вес, состав и аллергены нужно заменить
-// подтверждёнными данными ресторана при подключении iiko.
+// подтверждёнными данными кафе при подключении iiko.
 export const products = [
   { id: 'b1', category: 'breakfast', name: 'Сырники со сметаной', description: 'Румяные творожные сырники, сметана и ягодный джем', price: 490, weight: '220 г', image: 'generated/menu/b1.jpg', tag: 'Любимое', allergens: 'Молоко, яйца, глютен' },
   { id: 'b2', category: 'breakfast', name: 'Мацони с мёдом и орехами', description: 'Нежный кисломолочный мацони, цветочный мёд и грецкие орехи', price: 290, weight: '200 г', image: 'generated/menu/b2.jpg', tag: 'Лёгкое утро', allergens: 'Молоко, орехи, мёд' },
@@ -22,7 +22,7 @@ export const products = [
   { id: 'p1', category: 'bakery', name: 'Хачапури по-аджарски', description: 'Румяная лодочка с расплавленным сыром, яйцом и сливочным маслом', price: 650, weight: '350 г', image: 'generated/menu/p1.jpg', tag: 'Из печи', allergens: 'Глютен, молоко, яйца' },
   { id: 'd1', category: 'dessert', name: 'Медовик', description: 'Тонкие медовые коржи и нежный сметанный крем', price: 390, weight: '140 г', image: 'generated/menu/d1.jpg', allergens: 'Молоко, яйца, глютен, мёд' },
   { id: 'd2', category: 'dessert', name: 'Наполеон', description: 'Хрустящие слои теста с воздушным заварным кремом', price: 450, weight: '160 г', image: 'generated/menu/d2.jpg', allergens: 'Молоко, яйца, глютен' },
-  { id: 'dr1', category: 'drinks', name: 'Грушевый лимонад', description: 'Освежающий лимонад со вкусом спелой груши', price: 290, weight: '500 мл', image: 'generated/menu/dr1.jpg', allergens: 'Уточните состав у ресторана' },
-  { id: 'dr2', category: 'drinks', name: 'Морс клюква — гибискус', description: 'Насыщенный клюквенный морс с цветочными нотами гибискуса', price: 490, weight: '1 л', image: 'generated/menu/dr2.jpg', allergens: 'Уточните состав у ресторана' },
-  { id: 'dr3', category: 'drinks', name: 'Апельсиновый сок', description: 'Яркий цитрусовый вкус к завтраку или любимому блюду', price: 260, weight: '250 мл', image: 'generated/menu/dr3.jpg', allergens: 'Уточните состав у ресторана' },
+  { id: 'dr1', category: 'drinks', name: 'Грушевый лимонад', description: 'Освежающий лимонад со вкусом спелой груши', price: 290, weight: '500 мл', image: 'generated/menu/dr1.jpg', allergens: 'Уточните состав у сотрудников кафе' },
+  { id: 'dr2', category: 'drinks', name: 'Морс клюква — гибискус', description: 'Насыщенный клюквенный морс с цветочными нотами гибискуса', price: 490, weight: '1 л', image: 'generated/menu/dr2.jpg', allergens: 'Уточните состав у сотрудников кафе' },
+  { id: 'dr3', category: 'drinks', name: 'Апельсиновый сок', description: 'Яркий цитрусовый вкус к завтраку или любимому блюду', price: 260, weight: '250 мл', image: 'generated/menu/dr3.jpg', allergens: 'Уточните состав у сотрудников кафе' },
 ];

@@ -44,7 +44,7 @@ export default function Loyalty() {
     <section className="container lb-intro">
       <div className="lb-intro-copy">
         <span className="lb-kicker">ПРОГРАММА ЛОЯЛЬНОСТИ</span>
-        <h1>Хорошо быть<br/><em>своим.</em></h1>
+        <h1>Хорошо быть<br/><em>своим</em></h1>
         <p>Любимые блюда, тёплые встречи<br/>и чуть больше внимания нашим гостям.</p>
         <a className="button" href="#get-card" onClick={scrollToRegistration}>Стать гостем Ялты <ArrowDownRight size={20} aria-hidden="true"/></a>
       </div>
@@ -69,7 +69,7 @@ export default function Loyalty() {
     </section>
 
     <section id="get-card" className="container lb-signup" aria-labelledby="loyalty-signup-title">
-      <div className="lb-signup-copy"><span className="lb-kicker">ДАВАЙТЕ ЗНАКОМИТЬСЯ</span><h2 id="loyalty-signup-title">До новой<br/><em>встречи в Ялте.</em></h2><p>Пока можно попробовать<br/>регистрацию в деморежиме.</p><Link to="/delivery" className="lb-text-link">Посмотреть меню <ArrowUpRight size={19} aria-hidden="true"/></Link></div>
+      <div className="lb-signup-copy"><span className="lb-kicker">ДАВАЙТЕ ЗНАКОМИТЬСЯ</span><h2 id="loyalty-signup-title">До новой<br/><em>встречи в Ялте</em></h2><p>Пока можно попробовать<br/>регистрацию в деморежиме.</p><Link to="/delivery" className="lb-text-link">Посмотреть меню <ArrowUpRight size={19} aria-hidden="true"/></Link></div>
       <div className="lb-signup-form">
         {user?.loyaltyRequested ? <div className="lb-success" role="status">
           <span className="lb-success-icon"><Check size={25} strokeWidth={1.7} aria-hidden="true"/></span>

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { asset } from './components';
@@ -6,6 +6,11 @@ import { asset } from './components';
 export default function HomeHero() {
   const section = useRef(null);
   const photo = useRef(null);
+  const [photoReady, setPhotoReady] = useState(false);
+
+  useEffect(() => {
+    if (photo.current?.complete) setPhotoReady(true);
+  }, []);
 
   useEffect(() => {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -38,23 +43,28 @@ export default function HomeHero() {
     };
   }, []);
 
-  return <section ref={section} className="editorial-hero" aria-labelledby="hero-title">
+  return <section ref={section} className="editorial-hero" aria-labelledby="hero-title" data-photo-ready={photoReady ? 'true' : undefined}>
     <div className="editorial-hero-media">
-      <img ref={photo} src={asset('generated/scene/hero-syrniki.jpg')} alt="Румяные сырники со сметаной и ягодами на фарфоровой тарелке с синим узором" fetchPriority="high" width="1672" height="941"/>
+      <picture>
+        <source media="(max-width: 700px)" srcSet={asset('generated/scene/hero-syrniki-mobile.jpg')}/>
+        <img ref={photo} src={asset('generated/scene/hero-syrniki.jpg')} alt="Румяные сырники со сметаной и ягодами на фарфоровой тарелке с синим узором" fetchPriority="high" width="1672" height="941" onLoad={() => setPhotoReady(true)} onError={() => setPhotoReady(true)}/>
+      </picture>
     </div>
     <div className="hero-tide" aria-hidden="true">
-      <svg viewBox="0 0 1440 160" preserveAspectRatio="none" fill="none">
-        <path className="hero-tide-line" d="M0 49C240 4 360 89 660 54S1110 4 1440 59"/>
-        <path className="hero-tide-fill" d="M0 65C240 20 360 105 660 70S1110 20 1440 75V160H0Z"/>
+      <svg className="hero-tide-trace" viewBox="0 0 2880 160" preserveAspectRatio="none" fill="none">
+        <path className="hero-tide-line" d="M0 49Q360 5 720 49T1440 49T2160 49T2880 49"/>
+      </svg>
+      <svg className="hero-tide-water" viewBox="0 0 2880 160" preserveAspectRatio="none" fill="none">
+        <path className="hero-tide-fill" d="M0 65Q360 16 720 65T1440 65T2160 65T2880 65V160H0Z"/>
       </svg>
     </div>
     <div className="editorial-hero-content">
       <div>
-        <p className="editorial-hero-kicker">КАФЕ «ЯЛТА» · МОСКВА</p>
-        <h1 id="hero-title">Море<br/><em>рядом.</em></h1>
+        <p className="editorial-hero-kicker">МОСКВА · ПОКРОВКА, 27</p>
+        <h1 id="hero-title">Море<br/><em>рядом</em></h1>
       </div>
       <div className="editorial-hero-bottom">
-        <p>Домашняя кухня.<br/>С южным характером.</p>
+        <div className="hero-promotion"><span>К ВАШЕМУ ЗАКАЗУ</span><p>Морс в подарок<br/>к доставке от 2 000 ₽</p><small>Демоакция</small></div>
         <Link className="button" to="/delivery">Заказать доставку <ArrowUpRight size={21}/></Link>
       </div>
     </div>

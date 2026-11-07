@@ -148,6 +148,10 @@
   font-size: 16px;
 }
 
+.account-page .account-sidebar nav {
+  position: relative;
+}
+
 .account-page .profile-form label {
   font-size: 15px;
   font-weight: 600;
@@ -220,6 +224,11 @@
 }
 
 @media (max-width: 700px) {
+  .account-page .account-sidebar nav {
+    overscroll-behavior-x: contain;
+    scroll-behavior: auto;
+  }
+
   .account-entry h1,
   .account-page h1 {
     font-size: 30px;
