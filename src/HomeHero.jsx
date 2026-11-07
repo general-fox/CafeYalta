@@ -6,6 +6,7 @@ import { asset } from './components';
 export default function HomeHero() {
   const section = useRef(null);
   const photo = useRef(null);
+  const tide = useRef(null);
   const [photoReady, setPhotoReady] = useState(false);
 
   useEffect(() => {
@@ -13,33 +14,95 @@ export default function HomeHero() {
   }, []);
 
   useEffect(() => {
+    const element = section.current;
+    const image = photo.current;
+    const water = tide.current;
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let frame = 0;
-    const update = () => {
+    let previousTime = 0;
+    let needsMeasure = true;
+    let disposed = false;
+    let photoPosition = 0;
+    let wavePosition = 0;
+    let photoTarget = 0;
+    let waveTarget = 0;
+
+    const stop = () => {
+      cancelAnimationFrame(frame);
       frame = 0;
-      if (!section.current || !photo.current) return;
-      const { top, height } = section.current.getBoundingClientRect();
+      previousTime = 0;
+    };
+    const update = time => {
+      frame = 0;
+      if (disposed) return;
       if (motion.matches) {
-        photo.current.style.setProperty('--parallax-y', '0px');
-        section.current.style.setProperty('--wave-rise', '0px');
+        photoPosition = wavePosition = 0;
+        image.style.setProperty('--parallax-y', '0px');
+        water.style.setProperty('--wave-rise', '0px');
+        element.setAttribute('data-motion-paused', '');
+        stop();
         return;
       }
-      if (top > window.innerHeight || top < -height) return;
-      const distance = Math.max(0, section.current.offsetTop - top);
-      const strength = window.innerWidth <= 700 ? 0.09 : 0.16;
-      photo.current.style.setProperty('--parallax-y', `${Math.min(distance * strength, height * 0.2)}px`);
-      section.current.style.setProperty('--wave-rise', `${Math.min(distance * 0.18, 90)}px`);
+      if (document.hidden) {
+        element.setAttribute('data-motion-paused', '');
+        stop();
+        return;
+      }
+      if (needsMeasure) {
+        const { top, height } = element.getBoundingClientRect();
+        if (top > window.innerHeight || top < -height) {
+          element.setAttribute('data-motion-paused', '');
+          stop();
+          return;
+        }
+        element.removeAttribute('data-motion-paused');
+        const distance = Math.max(0, element.offsetTop - top);
+        const mobile = window.innerWidth <= 700;
+        photoTarget = Math.min(distance * (mobile ? 0.09 : 0.16), height * 0.2);
+        waveTarget = mobile ? Math.min(distance * 0.18, 90) : 0;
+        needsMeasure = false;
+      }
+      // Follow scroll with subpixel transforms, without resizing/repainting the wave.
+      const elapsed = previousTime ? Math.min(time - previousTime, 64) : 16;
+      previousTime = time;
+      const easing = 1 - Math.exp(-elapsed / 95);
+      photoPosition += (photoTarget - photoPosition) * easing;
+      wavePosition += (waveTarget - wavePosition) * easing;
+      const settled = Math.abs(photoTarget - photoPosition) < 0.01 && Math.abs(waveTarget - wavePosition) < 0.01;
+      if (settled) {
+        photoPosition = photoTarget;
+        wavePosition = waveTarget;
+      }
+      image.style.setProperty('--parallax-y', `${photoPosition.toFixed(3)}px`);
+      water.style.setProperty('--wave-rise', `${wavePosition.toFixed(3)}px`);
+      if (settled) stop();
+      else frame = requestAnimationFrame(update);
     };
-    const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
-    update();
+    const schedule = () => {
+      needsMeasure = true;
+      if (!frame && !disposed) frame = requestAnimationFrame(update);
+    };
+    const changeVisibility = () => {
+      if (document.hidden) {
+        element.setAttribute('data-motion-paused', '');
+        stop();
+      } else schedule();
+    };
+    schedule();
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule);
+    document.addEventListener('visibilitychange', changeVisibility);
     motion.addEventListener('change', schedule);
     return () => {
-      cancelAnimationFrame(frame);
+      disposed = true;
+      stop();
       window.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', schedule);
+      document.removeEventListener('visibilitychange', changeVisibility);
       motion.removeEventListener('change', schedule);
+      image.style.removeProperty('--parallax-y');
+      water.style.removeProperty('--wave-rise');
+      element.removeAttribute('data-motion-paused');
     };
   }, []);
 
@@ -50,7 +113,7 @@ export default function HomeHero() {
         <img ref={photo} src={asset('generated/scene/hero-syrniki.jpg')} alt="Румяные сырники со сметаной и ягодами на фарфоровой тарелке с синим узором" fetchPriority="high" width="1672" height="941" onLoad={() => setPhotoReady(true)} onError={() => setPhotoReady(true)}/>
       </picture>
     </div>
-    <div className="hero-tide" aria-hidden="true">
+    <div ref={tide} className="hero-tide" aria-hidden="true">
       <svg className="hero-tide-trace" viewBox="0 0 2880 160" preserveAspectRatio="none" fill="none">
         <path className="hero-tide-line" d="M0 49Q360 5 720 49T1440 49T2160 49T2880 49"/>
       </svg>
