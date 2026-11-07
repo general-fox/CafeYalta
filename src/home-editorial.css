@@ -1,7 +1,7 @@
 :root{--red:#a63c36;--red-dark:#87312d}
 
 /* Full photographic opening, with quiet copy in the image's negative space. */
-.editorial-hero{position:relative;isolation:isolate;overflow:hidden;min-height:640px;height:min(760px,calc(100svh - 100px));background:var(--cream);border-radius:5px}
+.editorial-hero{position:relative;isolation:isolate;overflow:hidden;min-height:640px;height:min(760px,calc(100svh - 100px));background:var(--sand);border-radius:5px}
 .editorial-hero-media{position:absolute;inset:0;z-index:-1;overflow:hidden}
 .editorial-hero-media img{position:absolute;left:0;top:-9%;width:100%;height:118%;object-fit:cover;object-position:58% 50%;transform:translate3d(0,var(--parallax-y,0px),0);will-change:transform}
 .editorial-hero-content{height:100%;min-height:inherit;width:min(1440px,100%);margin:auto;padding:43px max(40px,5.5vw) 48px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;position:relative;z-index:2}
@@ -19,7 +19,7 @@
 .sea-divider span>svg{position:static;width:13px;height:13px;fill:none;stroke:var(--red);stroke-width:1.5;flex-shrink:0}
 
 /* Three separate photographs overlap; the design stays responsive. */
-.about-section{background:var(--cream);padding-block:92px}
+.about-section{background:var(--sand);padding-block:92px}
 .about-grid{grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);grid-template-areas:'photos title' 'photos copy';column-gap:85px;row-gap:24px;align-items:start}
 .about-heading{grid-area:title;align-self:end}
 .about-copy{grid-area:copy;align-self:start}
@@ -30,12 +30,12 @@
 .atmosphere-collage[data-motion-active] .collage-image{will-change:transform}
 .collage-main{width:80%;height:59%;left:0;top:140px;z-index:2}
 .collage-table{width:37%;height:49%;right:5%;top:0;z-index:1;object-position:48% 65%}
-.collage-detail{width:34%;height:39%;right:0;bottom:14px;z-index:3;border:6px solid var(--cream);object-position:50% 60%}
+.collage-detail{width:34%;height:39%;right:0;bottom:14px;z-index:3;border:6px solid var(--sand);object-position:50% 60%}
 .atmosphere-collage figcaption{position:absolute;bottom:10px;left:0;color:var(--blue);font-size:12px;letter-spacing:.3px;line-height:1.5}
 .about-heading .eyebrow{color:var(--red)}
 .about-heading h2{font-size:clamp(44px,4.1vw,59px);line-height:1.02;margin:20px 0 0}
 .about-copy p{max-width:390px}
-.product-image,.food-photo{background:var(--cream)}
+.product-image,.food-photo{background:var(--sand)}
 .menu-products .product-image>img{object-fit:cover}
 
 @media(min-width:1600px){.editorial-hero-content{padding-inline:70px}.editorial-hero-media img{object-position:center 50%}}
@@ -66,8 +66,8 @@
   .editorial-hero-media:after{display:none}
   .hero-tide{display:block;position:absolute;left:0;right:0;bottom:-1px;height:calc(280px + var(--wave-rise,0px));pointer-events:none;z-index:1}
   .hero-tide>svg{position:absolute;top:0;left:0;width:100%;height:100px;overflow:visible}
-  .hero-tide:after{content:'';position:absolute;top:99px;bottom:0;left:0;right:0;background:var(--cream)}
-  .hero-tide-fill{fill:var(--cream)}
+  .hero-tide:after{content:'';position:absolute;top:99px;bottom:0;left:0;right:0;background:var(--sand)}
+  .hero-tide-fill{fill:var(--sand)}
   .hero-tide-line{stroke:var(--blue);stroke-width:1.2;opacity:.25;vector-effect:non-scaling-stroke}
   .editorial-hero-bottom{gap:16px;margin:0;width:100%}
   .editorial-hero-bottom p{font-size:14px;line-height:1.4}
@@ -84,7 +84,8 @@
   .atmosphere-collage figcaption{bottom:8px;font-size:12px}
   .about-heading h2{font-size:45px;margin:18px 0 0}
   .about-copy p{max-width:none}
-  .booking-float,.booking-float:hover,.booking-float:has(+.mobile-cart-bar){top:50%;right:0;bottom:auto;transform:translateY(-50%);writing-mode:vertical-rl;white-space:nowrap;width:42px;min-height:0;height:auto;padding:16px 11px;font-size:13px;line-height:1.4;border-radius:5px 0 0 5px!important}
+  .booking-float,.booking-float:hover,.booking-float:has(+.mobile-cart-bar){top:auto;right:0;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:none;writing-mode:vertical-rl;white-space:nowrap;width:42px;min-height:0;height:auto;padding:16px 11px;font-size:13px;line-height:1.4;border-radius:5px 0 0 5px!important}
+  .booking-float:has(+.mobile-cart-bar){bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 }
 @media(max-width:370px){
   .editorial-hero{min-height:590px}
