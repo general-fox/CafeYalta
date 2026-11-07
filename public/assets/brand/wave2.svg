@@ -3,11 +3,11 @@
   <defs>
     <style>
       .cls-1 {
-        
+
       }
 
       .cls-2 {
-        
+
       }
 
       .cls-3 {
@@ -19,16 +19,16 @@
       }
 
       .cls-5 {
-        
+
       }
 
       .cls-6 {
         clip-path: url(#clippath);
       }
     </style>
-    
-    
-    
+
+
+
     <clipPath id="clippath">
       <rect class="cls-4" x="16.29" y="36.52" width="91.57" height="77.71"/>
     </clipPath>

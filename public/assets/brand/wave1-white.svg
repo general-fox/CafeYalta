@@ -11,14 +11,14 @@
       }
 
       .cls-3 {
-        
+
       }
 
       .cls-4 {
         clip-path: url(#clippath);
       }
     </style>
-    
+
     <clipPath id="clippath">
       <rect class="cls-2" x="12.66" width="86.68" height="73.56"/>
     </clipPath>
