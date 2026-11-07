@@ -146,3 +146,78 @@ html{scroll-padding-top:0}
 .menu-products .product-card{display:flex;flex-direction:column}
 .menu-products .product-copy{display:flex;flex-direction:column;flex:1}
 .menu-products .product-bottom{margin-top:auto}
+/* Cafe details and fulfilment terms at the top of the delivery page. */
+.delivery-heading{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:50px;padding-block:35px}
+.delivery-heading h1{font-size:44px;margin:0 0 8px;letter-spacing:-1px}
+.delivery-heading .restaurant-location{font-size:18px;line-height:1.5;color:var(--ink);margin:0 0 19px}
+.restaurant-details{display:grid;gap:5px;font-style:normal;font-size:16px;line-height:1.65}
+.delivery-heading .restaurant-details p{font-size:16px;line-height:1.65;color:var(--ink);margin:0}
+.restaurant-details a{width:fit-content;text-underline-offset:4px}
+.restaurant-details a:hover{text-decoration:underline}
+.delivery-heading .delivery-service{width:100%;max-width:410px;min-width:0;justify-self:end;margin:4px 0 0}
+.delivery-terms{margin-top:20px;min-height:104px}
+.delivery-heading .delivery-terms p{font-size:16px;line-height:1.65;margin:0 0 6px;color:var(--muted)}
+.delivery-heading .delivery-terms .delivery-terms-primary{font-weight:600;color:var(--ink)}
+@media(max-width:700px){
+  .delivery-heading{grid-template-columns:1fr;gap:27px;padding-block:25px 28px}
+  .delivery-heading h1{font-size:40px}
+  .delivery-heading .restaurant-location{font-size:17px;margin-bottom:15px}
+  .delivery-heading .delivery-service{max-width:none;margin:0}
+  .delivery-terms{margin-top:16px;min-height:0}
+  .delivery-heading .delivery-terms p{font-size:15px}
+}
+/* Food offers sit alongside the cafe details, as a compact carousel. */
+.delivery-heading{grid-template-columns:230px 285px minmax(0,1fr);grid-template-areas:'cafe terms offers';gap:28px;align-items:center}
+.restaurant-info{grid-area:cafe}
+.delivery-heading h1{font-size:39px}
+.delivery-heading .delivery-service{grid-area:terms;max-width:none;margin:0;align-self:center}
+.delivery-offers{grid-area:offers;min-width:0;align-self:stretch;display:flex;flex-direction:column}
+.offer-slide{position:relative;isolation:isolate;overflow:hidden;min-height:250px;flex:1;background:#e2dfd7;touch-action:pan-y;animation:fade-in .35s ease}
+.offer-photo{position:absolute;inset:0 0 0 40%;z-index:-1;mask-image:linear-gradient(to right,transparent,#000 20%)}
+.offer-photo>img{height:100%;width:100%;object-fit:cover}
+.offer-slide-gift{background:#c7c5bf}
+.offer-slide-gift .offer-photo{inset:0 0 0 38%;mask-image:linear-gradient(to right,transparent,#000 25%)}
+.offer-slide-gift .offer-photo>img{object-position:50% 50%}
+.offer-slide-delivery .offer-photo{inset:0 0 0 35%;mask-image:linear-gradient(to right,transparent,#000 42%)}
+.offer-slide-delivery .offer-photo>img{object-position:56% 50%}
+.offer-copy{padding:30px 0 30px 25px;position:relative;width:60%;max-width:285px}
+.offer-copy h2{font-size:37px;line-height:1.04;letter-spacing:-.6px;margin:0 0 15px;color:var(--blue)}
+.delivery-heading .offer-copy p{font-size:15px;line-height:1.55;color:var(--ink);margin:0 0 24px;max-width:190px}
+.offer-copy .text-link{font-size:14px;gap:10px}
+.offer-controls{display:flex;align-items:center;gap:12px;padding-top:8px;min-height:40px}
+.offer-demo-label{font-size:12px;color:var(--muted)}
+.offer-dots{display:flex;align-items:center;margin-left:auto}
+.offer-dots button{width:28px;height:32px;display:grid;place-items:center;padding:0}
+.offer-dots span{width:6px;height:6px;background:#c3c8d1;border-radius:50%;transition:width .2s,background .2s}
+.offer-dots button[aria-pressed='true'] span{width:19px;border-radius:6px;background:var(--blue)}
+.offer-arrows{display:flex;gap:5px}
+.offer-arrows button{width:34px;height:34px;display:grid;place-items:center;border:1px solid #334da035;color:var(--blue);transition:background .2s}
+.offer-arrows button:hover{background:var(--pale)}
+.gift-line{display:flex;align-items:center;gap:13px;background:#e9eee7;padding:13px;margin:18px 0;color:var(--ink)}
+.gift-line>.food-photo{width:50px;height:58px;object-fit:cover;flex-shrink:0}
+.gift-line strong{display:block;font-size:14px;font-weight:600;line-height:1.5}
+.gift-line span{display:block;font-size:12px;line-height:1.6;color:var(--muted);margin-top:3px}
+@media(max-width:1190px){
+  .delivery-heading{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);grid-template-areas:'cafe offers' 'terms offers';gap:25px 35px}
+  .delivery-heading .delivery-service{justify-self:start;max-width:360px}
+  .delivery-offers{justify-content:center;align-self:center;width:100%}
+  .offer-slide{min-height:285px}
+  .offer-copy{padding:34px 0 30px 28px}
+  .offer-copy h2{font-size:42px}
+}
+@media(max-width:700px){
+  .delivery-heading{grid-template-columns:1fr;grid-template-areas:'cafe' 'terms' 'offers';gap:24px;padding-bottom:20px}
+  .delivery-heading .delivery-service{max-width:none}
+  .delivery-heading h1{font-size:40px}
+  .delivery-offers{margin-top:1px}
+  .offer-slide{min-height:220px}
+  .offer-copy{width:64%;padding:24px 0 24px 20px}
+  .offer-copy h2{font-size:35px;max-width:200px}
+  .delivery-heading .offer-copy p{font-size:14px;max-width:175px;margin-bottom:22px}
+
+  .offer-controls{padding-top:5px}
+  .offer-arrows button{width:40px;height:40px}
+  .offer-dots button{width:30px;height:40px}
+  .gift-line{padding:12px}
+}
+@media(max-width:370px){.offer-copy h2{font-size:32px}.offer-copy{padding-left:17px}.offer-copy .text-link{font-size:13px;gap:6px}}

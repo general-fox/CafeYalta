@@ -5,9 +5,12 @@ import {
   cartTotal,
   changeQuantity,
   deliveryFee,
+  getOrderGift,
+  getOrderItems,
   normalizePhone,
   validReservation,
 } from '../src/domain.js';
+import { products } from '../src/data.js';
 
 const breakfast = Object.freeze({ id: 'breakfast', name: 'Сырники', price: 490 });
 const salad = Object.freeze({ id: 'salad', name: 'Салат', price: 650 });
@@ -85,6 +88,58 @@ test('самовывоз бесплатный независимо от сумм
   for (const amount of [0, 490, 2499, 2500]) {
     assert.equal(deliveryFee(amount, 'pickup'), 0);
   }
+});
+
+test('один литр морса добавляется в подарок начиная ровно с 2000 рублей доставки', () => {
+  const cartAt = price => [{ ...breakfast, price, quantity: 1 }];
+  assert.equal(getOrderGift(cartAt(1999), 'delivery'), null);
+  const drink = products.find(product => product.id === 'dr2');
+  for (const subtotal of [2000, 2500, 10000]) {
+    assert.deepEqual(getOrderGift(cartAt(subtotal), 'delivery'), {
+      ...drink, price: 0, quantity: 1, isGift: true,
+    });
+  }
+});
+
+test('подарок недоступен при самовывозе, пустой корзине и неизвестном способе получения', () => {
+  const cart = [{ ...breakfast, price: 3000, quantity: 1 }];
+  assert.equal(getOrderGift(cart, 'pickup'), null);
+  assert.equal(getOrderGift(cart, undefined), null);
+  assert.equal(getOrderGift([], 'delivery'), null);
+});
+
+test('подарок не изменяет корзину, каталог или сумму заказа и не отменяет платную доставку', () => {
+  const original = Object.freeze([Object.freeze({ ...breakfast, price: 2000, quantity: 1 })]);
+  const drink = products.find(product => product.id === 'dr2');
+  const originalDrink = { ...drink };
+  const items = getOrderItems(original, 'delivery');
+  assert.equal(original.length, 1);
+  assert.notEqual(items[0], original[0]);
+  assert.equal(items.length, 2);
+  assert.equal(items[1].isGift, true);
+  assert.equal(items[1].quantity, 1);
+  assert.equal(cartTotal(items), 2000);
+  assert.equal(deliveryFee(cartTotal(items), 'delivery'), 250);
+  assert.deepEqual(drink, originalDrink);
+  assert.equal(drink.price, 490);
+});
+
+test('покупной морс остаётся платной строкой рядом с единственным подарочным', () => {
+  const drink = products.find(product => product.id === 'dr2');
+  const cart = [{ ...breakfast, price: 1600, quantity: 1 }, { ...drink, quantity: 1 }];
+  const items = getOrderItems(cart, 'delivery');
+  assert.equal(items.filter(item => item.id === 'dr2').length, 2);
+  assert.equal(items.filter(item => item.isGift).length, 1);
+  assert.equal(items.find(item => item.id === 'dr2' && !item.isGift).price, 490);
+  assert.equal(cartTotal(items), 2090);
+});
+
+test('пересчёт состава не дублирует подарок и удаляет его при смене на самовывоз', () => {
+  const cart = [{ ...breakfast, price: 2200, quantity: 1 }];
+  const savedItems = getOrderItems(cart, 'delivery');
+  assert.equal(getOrderItems(savedItems, 'delivery').filter(item => item.isGift).length, 1);
+  assert.deepEqual(getOrderItems(savedItems, 'pickup'), cart);
+  assert.deepEqual(getOrderItems([{ ...cart[0], price: 1990 }, savedItems[1]], 'delivery'), [{ ...cart[0], price: 1990 }]);
 });
 
 test('российские телефоны с 7 и 8 приводятся к одному формату', () => {

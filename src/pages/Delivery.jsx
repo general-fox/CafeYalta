@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { Search, X, Clock3, MapPin } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { categories, products } from '../data';
 import { ProductCard } from '../components';
 import { useShop } from '../store';
+import DeliveryOffers from '../DeliveryOffers';
 
 export default function Delivery() {
   const [query, setQuery] = useState('');
@@ -37,8 +38,33 @@ export default function Delivery() {
   const search = <label className="search-box"><Search size={19}/><input aria-label="Поиск блюд" placeholder="Найти блюдо" value={query} onChange={event => setQuery(event.target.value)}/>{query && <button onClick={() => setQuery('')} aria-label="Очистить поиск"><X size={18}/></button>}</label>;
   return <main className="delivery-page">
     <section className="container delivery-heading">
-      <div><span className="eyebrow">ДОСТАВКА И САМОВЫВОЗ</span><h1>Меню «Ялты»</h1></div>
-      <div className="delivery-service"><div className="segmented"><button className={method === 'delivery' ? 'active' : ''} onClick={() => setMethod('delivery')}>Доставка</button><button className={method === 'pickup' ? 'active' : ''} onClick={() => setMethod('pickup')}>Самовывоз</button></div><span>{method === 'delivery' ? <><Clock3 size={17}/> 45–60 минут · от 250 ₽</> : <><MapPin size={17}/> Покровка, 27 · 25 минут</>}</span></div>
+      <div className="restaurant-info">
+        <h1>Кафе «Ялта»</h1>
+        <p className="restaurant-location">Москва · Покровка</p>
+        <address className="restaurant-details">
+          <p>ул. Покровка, 27</p>
+          <a href="tel:+74951234567">+7 (495) 123-45-67</a>
+          <p>Ежедневно 09:00–23:00</p>
+        </address>
+      </div>
+      <div className="delivery-service">
+        <div className="segmented" role="group" aria-label="Способ получения заказа">
+          <button className={method === 'delivery' ? 'active' : ''} aria-pressed={method === 'delivery'} onClick={() => setMethod('delivery')}>Доставка</button>
+          <button className={method === 'pickup' ? 'active' : ''} aria-pressed={method === 'pickup'} onClick={() => setMethod('pickup')}>Самовывоз</button>
+        </div>
+        <div className="delivery-terms" aria-live="polite">
+          {method === 'delivery' ? <>
+            <p className="delivery-terms-primary">45–60 минут · заказ от 800 ₽</p>
+            <p>250 ₽ · бесплатно от 2 500 ₽</p>
+            <p>В пределах 5 км от кафе.</p>
+          </> : <>
+            <p className="delivery-terms-primary">Готовим за 25 минут</p>
+            <p>Без минимальной суммы и платы за выдачу.</p>
+            <p>Заберите заказ на Покровке, 27.</p>
+          </>}
+        </div>
+      </div>
+      <DeliveryOffers onChoose={category => { setMethod('delivery'); setQuery(''); requestAnimationFrame(() => choose(category)); }}/>
     </section>
     <div className="category-bar"><div className="container category-inner"><nav ref={mobileNav} className="category-nav" aria-label="Категории меню">{categoryButtons}</nav></div></div>
     <div className="container menu-layout">
