@@ -1,0 +1,236 @@
+/* Account tasks use a readable UI typeface instead of the editorial headings. */
+.account-entry,
+.account-page {
+  --account-muted: #5b6473;
+  font-family: Manrope, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.account-entry :is(h1, h2, h3),
+.account-page :is(h1, h2, h3),
+.account-page .account-avatar,
+.account-page .account-sidebar-note p {
+  font-family: Manrope, Arial, sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -.02em;
+}
+
+.account-entry h1,
+.account-page h1 {
+  font-size: clamp(36px, 3.1vw, 44px);
+  line-height: 1.2;
+  letter-spacing: -.035em;
+  margin: 20px 0;
+}
+
+.account-entry h1 em,
+.account-page h1 em {
+  font: inherit;
+  color: var(--blue);
+}
+
+.account-page .account-panel-head h2 {
+  font-size: clamp(24px, 2vw, 28px);
+  font-weight: 650;
+  line-height: 1.35;
+  margin: 6px 0 24px;
+}
+
+.account-page .account-empty h3 {
+  font-size: 24px;
+  line-height: 1.35;
+  margin: 23px 0 14px;
+}
+
+.account-page .reservation-item h3 {
+  font-size: 22px;
+  line-height: 1.4;
+  margin: 2px 0 12px;
+  overflow-wrap: anywhere;
+}
+
+.account-entry .eyebrow,
+.account-page .eyebrow {
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: .08em;
+  line-height: 1.5;
+}
+
+.account-entry-copy > p,
+.account-page :is(.account-title p, .account-empty p, .order-history-items > div, .order-address > p, .reservation-item p) {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.account-entry-copy > p,
+.account-page .account-empty p {
+  color: var(--account-muted);
+}
+
+.account-entry-copy > small,
+.account-page :is(.account-data-note, .profile-form label > span#profile-phone-hint, .history-order-heading > div > span, .order-status-note, .demo-pill, .order-demo-status) {
+  font-size: 14px !important;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.account-entry-copy > small,
+.account-page :is(.account-data-note, .profile-form label > span, .history-order-heading > div > span, .order-status-note, .account-person small, .order-address > span) {
+  color: var(--account-muted);
+}
+
+.account-page :is(.account-person strong, .history-order-heading strong) {
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.account-page .account-person small,
+.account-page .reservation-date strong {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+.account-page .account-avatar {
+  font-size: 20px;
+  font-weight: 650;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.account-page .reservation-date > span {
+  font-size: 21px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.account-page .history-order-footer > strong {
+  font-size: 22px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.account-entry .button,
+.account-page .button,
+.account-entry .account-text-link,
+.account-page .account-text-link,
+.account-page .account-sidebar nav :is(button, a),
+.account-page .account-logout {
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.account-page .account-sidebar nav :is(button, a) {
+  font-size: 16px;
+}
+
+.account-page .profile-form label {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.account-page .profile-form input {
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.55;
+  background: var(--cream);
+}
+
+.account-page .profile-form input[readonly],
+.account-page .profile-form input::placeholder {
+  color: var(--account-muted);
+  opacity: 1;
+}
+
+.account-page .profile-saved {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.account-entry-art,
+.account-page :is(.account-empty, .history-order, .reservation-item, .reservation-date) {
+  background: var(--cream);
+}
+
+.account-entry-letter {
+  font-family: Manrope, Arial, sans-serif;
+  font-style: normal;
+  font-size: 168px;
+  font-weight: 500;
+  letter-spacing: -.04em;
+}
+
+.account-entry-bird {
+  width: 54px;
+  height: 54px;
+}
+
+/* Every action icon uses the same centered SVG alignment. */
+.account-entry :is(.button, .account-text-link),
+.account-page :is(.button, .account-text-link),
+.account-page .account-sidebar nav :is(button, a) {
+  align-items: center;
+}
+
+.account-entry :is(.button, .account-text-link) > svg,
+.account-page :is(.button, .account-text-link) > svg,
+.account-page .account-sidebar nav svg,
+.account-page .account-empty-icon > svg,
+.account-page .reservation-date > svg {
+  display: block;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.account-page .account-sidebar nav svg {
+  color: var(--blue);
+}
+
+@media (max-width: 700px) {
+  .account-entry h1,
+  .account-page h1 {
+    font-size: 30px;
+    line-height: 1.25;
+    letter-spacing: -.025em;
+  }
+
+  .account-page .account-panel-head h2 {
+    font-size: 24px;
+    margin-bottom: 22px;
+  }
+
+  .account-page .account-empty h3 {
+    font-size: 22px;
+  }
+
+  .account-page .reservation-item h3 {
+    font-size: 21px;
+  }
+
+  .account-entry-copy > p,
+  .account-page :is(.account-empty p, .order-history-items > div, .order-address > p, .reservation-item p),
+  .account-page .account-sidebar nav :is(button, a) {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .account-entry-letter {
+    font-size: 116px;
+  }
+
+  .account-entry-bird {
+    width: 38px;
+    height: 38px;
+  }
+}

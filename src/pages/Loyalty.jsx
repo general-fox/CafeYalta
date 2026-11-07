@@ -1,16 +1,30 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowDownRight, ArrowUpRight, Check, ClipboardList, MessageSquare, Plus, QrCode, WalletCards } from 'lucide-react';
 import { useShop } from '../store';
-import { asset } from '../components';
+import { asset, Waves } from '../components';
 import './secondary.css';
+import './loyalty-brand.css';
 
-function LoyaltyCard({ compact = false }) {
-  return <div className={`guest-card ${compact ? 'guest-card-compact' : ''}`} aria-label="Образец карты гостя Ялты">{!compact && <div className="guest-card-top"><span>КАФЕ • МОСКВА</span><span>≈</span></div>}<div className="guest-card-logo"><img src={asset('brand/Yalta-white.svg')} alt="Ялта"/></div>{!compact && <div className="guest-card-bottom"><span>КАРТА ГОСТЯ</span><span>ДЕМО</span></div>}<svg className="guest-card-waves" viewBox="0 0 500 100" fill="none" aria-hidden="true"><path d="M-30 40Q30 0 90 40T210 40T330 40T450 40T570 40M-30 65Q30 25 90 65T210 65T330 65T450 65T570 65M-30 90Q30 50 90 90T210 90T330 90T450 90T570 90"/></svg></div>;
+const registrationSteps = [
+  { title: 'Откройте регистрацию', text: 'Перейдите по ссылке или отсканируйте QR-код в кафе.', Icon: QrCode },
+  { title: 'Подтвердите телефон', text: 'Введите свой номер и проверочный код из SMS.', Icon: MessageSquare },
+  { title: 'Заполните анкету', text: 'Укажите данные в полях, отмеченных звёздочкой.', Icon: ClipboardList },
+  { title: 'Сохраните карту', text: 'На экране карты нажмите «Добавить» справа вверху.', Icon: WalletCards },
+];
+
+function GuestCard() {
+  return <div className="lb-card" aria-label="Образец электронной карты Ялты">
+    <div className="lb-card-top"><span>КАРТА ГОСТЯ</span><Waves/></div>
+    <img src={asset('brand/Yalta-white.svg')} alt="Ялта"/>
+    <div className="lb-card-bottom"><span>Всегда рады вам</span><span>Демо</span></div>
+  </div>;
 }
 
 export default function Loyalty() {
   const { user, setUser, notify, openAuth } = useShop();
   const [consent, setConsent] = useState(false);
+
   function register(event) {
     event.preventDefault();
     if (!user) return openAuth();
@@ -18,17 +32,66 @@ export default function Loyalty() {
     setUser({ ...user, loyaltyRequested: true });
     notify('Тестовая заявка сохранена. Настоящая карта пока не выпускается.');
   }
-  return <main className="loyalty-page">
-    <section className="loyalty-hero container"><div className="loyalty-hero-copy"><span className="eyebrow">ПРОГРАММА ЛОЯЛЬНОСТИ</span><h1>Своим —<br/><em>больше тепла.</em></h1><p>Любимые блюда и приятные привилегии. Для тех, кто с нами.</p><a href="#get-card" className="button" onClick={event => { event.preventDefault(); document.getElementById('get-card')?.scrollIntoView({ behavior: 'smooth' }); }}>Стать любимым гостем <span aria-hidden="true">↘</span></a><span className="loyalty-preview-label">Скоро в «Ялте»</span></div><div className="loyalty-hero-art"><div className="loyalty-orbit"/><LoyaltyCard/><span className="loyalty-sun" aria-hidden="true">☼</span><svg className="loyalty-bird" viewBox="0 0 80 30" fill="none" aria-hidden="true"><path d="M2 25Q22 0 40 24Q56 3 78 14"/></svg></div></section>
-    <section className="loyalty-benefits container" aria-label="Предлагаемые привилегии"><div><span className="benefit-mark">01</span><h2>Вкусные бонусы</h2><p>Бонусы за любимые блюда.</p></div><div><span className="benefit-mark">02</span><h2>Личные поводы</h2><p>Комплимент в день рождения.</p></div><div><span className="benefit-mark">03</span><h2>Особое внимание</h2><p>Сезонные предложения для своих.</p></div></section>
-    <section className="loyalty-how"><div className="container"><div className="loyalty-section-intro"><span className="eyebrow">ПАРА МИНУТ — И ВЫ С НАМИ</span><h2>Карта, которая<br/><em>всегда рядом.</em></h2></div>
-      <div className="loyalty-steps">
-        <article><span className="step-number">01</span><div className="step-illustration step-scan" aria-hidden="true"><div className="illustrated-code">{Array.from({ length: 35 }, (_, index) => <i key={index} className={[0, 1, 2, 4, 5, 6, 7, 9, 11, 13, 14, 15, 16, 18, 19, 20, 22, 25, 27, 28, 29, 30, 32, 34].includes(index) ? 'filled' : ''}/>)}</div><span className="scan-line"/></div><h3>Начнём знакомство</h3><p>Откройте ссылку регистрации или QR-код в кафе.</p></article>
-        <article><span className="step-number">02</span><div className="step-illustration step-phone" aria-hidden="true"><div className="mini-phone mini-phone-sms"><div className="mini-phone-speaker"/><span>Ялта</span><i/><div className="sms-dots">• • • •</div><b>✓</b></div></div><h3>Это точно вы</h3><p>Введите телефон и код из SMS.</p></article>
-        <article><span className="step-number">03</span><div className="step-illustration step-phone" aria-hidden="true"><div className="mini-phone"><div className="mini-phone-speaker"/><span>Ялта</span><i/><i/><i/><b>✓</b></div></div><h3>Пара слов о себе</h3><p>Заполните поля анкеты, отмеченные звёздочкой.</p></article>
-        <article><span className="step-number">04</span><div className="step-illustration step-wallet" aria-hidden="true"><LoyaltyCard compact/><span className="wallet-add">+</span></div><h3>Вы — наш гость</h3><p>На экране карты нажмите «Добавить» справа вверху.</p></article>
-      </div><p className="loyalty-instruction-note">Регистрация и SMS пока недоступны. Ссылку на карту добавим к запуску.</p></div></section>
-    <section id="get-card" className="loyalty-signup container"><div><span className="eyebrow">ДАВАЙТЕ ЗНАКОМИТЬСЯ</span><h2>У каждой встречи<br/><em>есть продолжение.</em></h2><p>Попробуйте тестовую регистрацию.</p><Link to="/delivery" className="account-text-link">Посмотреть меню <span aria-hidden="true">↗</span></Link></div><div className="loyalty-signup-panel">{user?.loyaltyRequested ? <div className="loyalty-success" role="status"><span>✓</span><h3>Заявка сохранена</h3><p>Демо-заявка сохранена в браузере. Настоящая карта пока не выпускается.</p><Link to="/account" className="button button-outline">Перейти в кабинет <span aria-hidden="true">↗</span></Link></div> : <form onSubmit={register}><h3>Карта гостя</h3><p>{user ? `${user.name || 'Гость'}, рады знакомству!` : 'Войдите в тестовый профиль.'}</p>{user && <div className="loyalty-user-summary"><span>{user.name}</span><strong>{user.phone}</strong></div>}<label className="loyalty-consent"><input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} required={Boolean(user)}/><span>Понимаю, что это демо без выпуска карты.</span></label><button type="submit" className="button">{user ? 'Сохранить заявку' : 'Войти и продолжить'} <span aria-hidden="true">↗</span></button></form>}</div></section>
-    <section className="loyalty-questions container"><h2>О карте</h2><details><summary>Когда заработает программа?<span>+</span></summary><p>После подключения системы лояльности. Привилегии на странице пока предварительные.</p></details><details><summary>Как пользоваться картой?<span>+</span></summary><p>Сохраните её в телефоне и показывайте перед оплатой. Условия для доставки объявим к запуску.</p></details></section>
+
+  function scrollToRegistration(event) {
+    event.preventDefault();
+    document.getElementById('get-card')?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    });
+  }
+
+  return <main className="loyalty-page loyalty-brand">
+    <section className="container lb-intro">
+      <div className="lb-intro-copy">
+        <span className="lb-kicker">ПРОГРАММА ЛОЯЛЬНОСТИ</span>
+        <h1>Хорошо быть<br/><em>своим.</em></h1>
+        <p>Любимые блюда, тёплые встречи<br/>и чуть больше внимания нашим гостям.</p>
+        <a className="button" href="#get-card" onClick={scrollToRegistration}>Стать гостем Ялты <ArrowDownRight size={20} aria-hidden="true"/></a>
+      </div>
+      <aside className="lb-card-preview" aria-label="Электронная карта гостя">
+        <GuestCard/>
+        <div className="lb-card-caption"><WalletCards size={22} aria-hidden="true"/><div><strong>В телефоне. Всегда рядом.</strong><span>Программа готовится к запуску.</span></div></div>
+      </aside>
+    </section>
+
+    <section className="container lb-instructions" aria-labelledby="loyalty-steps-title">
+      <div className="lb-section-heading">
+        <div><span className="lb-kicker">ЧЕТЫРЕ ПРОСТЫХ ШАГА</span><h2 id="loyalty-steps-title">Как получить карту</h2></div>
+        <p className="lb-launch-note">Регистрация и SMS пока недоступны.<br/>Ссылку добавим к запуску.</p>
+      </div>
+      <ol className="lb-steps">
+        {registrationSteps.map(({ title, text, Icon }, index) => <li key={title}>
+          <div className="lb-step-top"><span>{String(index + 1).padStart(2, '0')}</span><Icon size={26} strokeWidth={1.5} aria-hidden="true"/></div>
+          <h3>{title}</h3>
+          <p>{text}</p>
+        </li>)}
+      </ol>
+    </section>
+
+    <section id="get-card" className="container lb-signup" aria-labelledby="loyalty-signup-title">
+      <div className="lb-signup-copy"><span className="lb-kicker">ДАВАЙТЕ ЗНАКОМИТЬСЯ</span><h2 id="loyalty-signup-title">До новой<br/><em>встречи в Ялте.</em></h2><p>Пока можно попробовать<br/>регистрацию в деморежиме.</p><Link to="/delivery" className="lb-text-link">Посмотреть меню <ArrowUpRight size={19} aria-hidden="true"/></Link></div>
+      <div className="lb-signup-form">
+        {user?.loyaltyRequested ? <div className="lb-success" role="status">
+          <span className="lb-success-icon"><Check size={25} strokeWidth={1.7} aria-hidden="true"/></span>
+          <h3>Заявка сохранена</h3>
+          <p>Демо-заявка осталась в этом браузере. Настоящая карта пока не выпускается.</p>
+          <Link to="/account" className="button button-outline">Перейти в кабинет <ArrowUpRight size={19} aria-hidden="true"/></Link>
+        </div> : <form onSubmit={register}>
+          <h3>Карта гостя</h3>
+          <p>{user ? `${user.name || 'Гость'}, рады знакомству!` : 'Войдите в тестовый профиль.'}</p>
+          {user && <div className="lb-user"><span>{user.name}</span><strong>{user.phone}</strong></div>}
+          <label className="lb-consent"><input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} required={Boolean(user)}/><span>Понимаю, что это демо без выпуска карты.</span></label>
+          <button type="submit" className="button">{user ? 'Сохранить заявку' : 'Войти и продолжить'} <ArrowUpRight size={19} aria-hidden="true"/></button>
+        </form>}
+      </div>
+    </section>
+
+    <section className="container lb-faq" aria-labelledby="loyalty-faq-title">
+      <div><span className="lb-kicker">ПОЛЕЗНО ЗНАТЬ</span><h2 id="loyalty-faq-title">О карте</h2></div>
+      <div className="lb-faq-items">
+        <details><summary>Когда заработает программа?<Plus size={20} aria-hidden="true"/></summary><p>После подключения системы лояльности. Правила опубликуем к запуску.</p></details>
+        <details><summary>Как пользоваться картой?<Plus size={20} aria-hidden="true"/></summary><p>Сохраните её в телефоне и показывайте перед оплатой. Условия для доставки объявим к запуску.</p></details>
+      </div>
+    </section>
   </main>;
 }

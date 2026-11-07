@@ -1,0 +1,674 @@
+/* The loyalty page shares the warm editorial language of the main site. */
+.loyalty-brand {
+  --loyalty-red: var(--red, #a63c36);
+  --loyalty-line: #334da02b;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: Manrope, Arial, sans-serif;
+  font-size: 16px;
+}
+
+.loyalty-brand .lb-kicker {
+  display: block;
+  color: var(--loyalty-red);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 1.2px;
+}
+
+.loyalty-brand .lb-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+  align-items: center;
+  gap: 8%;
+  padding-block: 64px 72px;
+}
+
+.loyalty-brand .lb-intro h1 {
+  margin: 25px 0 24px;
+  color: var(--loyalty-red);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(68px, 7.4vw, 106px);
+  font-weight: 400;
+  line-height: .9;
+  letter-spacing: -3px;
+}
+
+.loyalty-brand .lb-intro h1 em {
+  color: inherit;
+  font-weight: 400;
+}
+
+.loyalty-brand .lb-intro-copy > p,
+.loyalty-brand .lb-signup-copy > p {
+  margin: 0 0 27px;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.loyalty-brand .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  min-height: 50px;
+  border-radius: var(--radius, 5px);
+  font-family: Manrope, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.loyalty-brand .button > svg,
+.loyalty-brand .lb-text-link > svg,
+.loyalty-brand .lb-card-caption > svg,
+.loyalty-brand .lb-faq summary > svg {
+  display: block;
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+.loyalty-brand .lb-card-preview {
+  width: min(100%, 370px);
+  justify-self: center;
+  padding: 34px 0 34px 35px;
+  border-left: 1px solid var(--loyalty-line);
+}
+
+.loyalty-brand .lb-card {
+  width: 100%;
+  max-width: 320px;
+  padding: 23px 24px 20px;
+  border-radius: var(--radius, 5px);
+  background: var(--blue);
+  color: #fffaf0;
+}
+
+.loyalty-brand .lb-card-top,
+.loyalty-brand .lb-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.loyalty-brand .lb-card-top {
+  letter-spacing: 1px;
+}
+
+.loyalty-brand .lb-card-top .waves {
+  width: 39px;
+  height: 18px;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.loyalty-brand .lb-card > img {
+  width: 190px;
+  max-width: 86%;
+  height: 73px;
+  margin-block: 19px 20px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.loyalty-brand .lb-card-bottom > span:last-child {
+  opacity: .75;
+}
+
+.loyalty-brand .lb-card-caption {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  margin-top: 23px;
+  color: var(--blue);
+}
+
+.loyalty-brand .lb-card-caption strong,
+.loyalty-brand .lb-card-caption span {
+  display: block;
+}
+
+.loyalty-brand .lb-card-caption strong {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.loyalty-brand .lb-card-caption span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.loyalty-brand .lb-instructions {
+  padding-block: 51px 70px;
+  border-top: 1px solid var(--loyalty-line);
+}
+
+.loyalty-brand .lb-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: 36px;
+}
+
+.loyalty-brand .lb-section-heading h2,
+.loyalty-brand .lb-signup h2,
+.loyalty-brand .lb-faq h2 {
+  margin: 16px 0 0;
+  color: var(--blue);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(42px, 4.3vw, 60px);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -1.5px;
+}
+
+.loyalty-brand .lb-launch-note {
+  flex: 0 0 auto;
+  margin: 0 0 3px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.loyalty-brand .lb-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.loyalty-brand .lb-steps > li {
+  min-width: 0;
+  padding-top: 21px;
+  border-top: 1px solid var(--loyalty-line);
+}
+
+.loyalty-brand .lb-step-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 22px;
+  color: var(--blue);
+}
+
+.loyalty-brand .lb-step-top > span {
+  color: var(--loyalty-red);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.loyalty-brand .lb-steps h3 {
+  margin: 0 0 12px;
+  color: var(--blue);
+  font-family: Manrope, Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: -.25px;
+}
+
+.loyalty-brand .lb-steps p {
+  margin: 0;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.loyalty-brand .lb-signup {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 8%;
+  padding: 43px 47px;
+  border: 1px solid var(--loyalty-line);
+  border-radius: var(--radius, 5px);
+  background: var(--cream);
+  scroll-margin-top: 120px;
+}
+
+.loyalty-brand .lb-signup h2 {
+  margin-bottom: 22px;
+  font-size: clamp(40px, 4vw, 56px);
+}
+
+.loyalty-brand .lb-signup-copy > p {
+  margin-bottom: 22px;
+}
+
+.loyalty-brand .lb-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 17px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #334da05c;
+  color: var(--blue);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.loyalty-brand .lb-signup-form {
+  min-width: 0;
+  padding-left: 35px;
+  border-left: 1px solid var(--loyalty-line);
+}
+
+.loyalty-brand .lb-signup-form h3 {
+  margin: 0 0 12px;
+  color: var(--blue);
+  font-family: Manrope, Arial, sans-serif;
+  font-size: 23px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -.5px;
+}
+
+.loyalty-brand .lb-signup-form p {
+  margin: 0;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.loyalty-brand .lb-user {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 16px;
+  margin-top: 20px;
+  padding-block: 15px;
+  border-block: 1px solid var(--loyalty-line);
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.loyalty-brand .lb-user strong {
+  font-weight: 500;
+}
+
+.loyalty-brand .lb-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 24px 0;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.loyalty-brand .lb-consent input {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  margin: 3px 0 0;
+  accent-color: var(--blue);
+}
+
+.loyalty-brand .lb-signup-form .button {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.loyalty-brand .lb-success-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 19px;
+  border: 1px solid var(--loyalty-line);
+  border-radius: var(--radius, 5px);
+  color: var(--blue);
+}
+
+.loyalty-brand .lb-success .button {
+  margin-top: 24px;
+}
+
+.loyalty-brand .lb-faq {
+  display: grid;
+  grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr);
+  gap: 8%;
+  padding-block: 73px 90px;
+}
+
+.loyalty-brand .lb-faq h2 {
+  font-size: 49px;
+}
+
+.loyalty-brand .lb-faq details {
+  border-top: 1px solid var(--loyalty-line);
+  padding-block: 22px;
+}
+
+.loyalty-brand .lb-faq details:last-child {
+  border-bottom: 1px solid var(--loyalty-line);
+}
+
+.loyalty-brand .lb-faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  color: var(--blue);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.6;
+  cursor: pointer;
+  list-style: none;
+}
+
+.loyalty-brand .lb-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.loyalty-brand .lb-faq summary > svg {
+  transition: transform .2s ease;
+}
+
+.loyalty-brand .lb-faq details[open] summary > svg {
+  transform: rotate(45deg);
+}
+
+.loyalty-brand .lb-faq summary:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 5px;
+  border-radius: var(--radius, 5px);
+}
+
+.loyalty-brand .lb-faq details p {
+  max-width: 570px;
+  margin: 16px 0 0;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+@media (max-width: 1000px) {
+  .loyalty-brand .lb-intro {
+    gap: 5%;
+    padding-block: 55px 60px;
+  }
+
+  .loyalty-brand .lb-intro h1 {
+    font-size: 78px;
+  }
+
+  .loyalty-brand .lb-card-preview {
+    padding-left: 26px;
+  }
+
+  .loyalty-brand .lb-card {
+    padding: 20px;
+  }
+
+  .loyalty-brand .lb-card-caption {
+    gap: 10px;
+  }
+
+  .loyalty-brand .lb-section-heading {
+    align-items: flex-start;
+  }
+
+  .loyalty-brand .lb-launch-note {
+    margin-top: 33px;
+    max-width: 250px;
+  }
+
+  .loyalty-brand .lb-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 35px;
+  }
+
+  .loyalty-brand .lb-signup {
+    padding: 34px;
+    gap: 6%;
+  }
+
+  .loyalty-brand .lb-signup-form {
+    padding-left: 25px;
+  }
+
+  .loyalty-brand .lb-signup .button {
+    padding-inline: 18px;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 700px) {
+  .loyalty-brand .lb-kicker {
+    font-size: 13px;
+    letter-spacing: .9px;
+  }
+
+  .loyalty-brand .lb-intro {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 31px;
+    padding-block: 37px 43px;
+  }
+
+  .loyalty-brand .lb-intro h1 {
+    margin-block: 21px 22px;
+    font-size: clamp(64px, 18vw, 82px);
+    letter-spacing: -2.4px;
+  }
+
+  .loyalty-brand .lb-intro-copy > p {
+    margin-bottom: 23px;
+  }
+
+  .loyalty-brand .lb-intro-copy > p br {
+    display: none;
+  }
+
+  .loyalty-brand .lb-card-preview {
+    width: 100%;
+    justify-self: start;
+    display: flex;
+    align-items: center;
+    gap: 19px;
+    padding: 25px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--loyalty-line);
+  }
+
+  .loyalty-brand .lb-card {
+    max-width: 230px;
+    min-width: 0;
+    flex: 0 1 52%;
+    padding: 15px;
+  }
+
+  .loyalty-brand .lb-card-top {
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+
+  .loyalty-brand .lb-card-top .waves {
+    display: none;
+  }
+
+  .loyalty-brand .lb-card > img {
+    width: 100%;
+    max-width: 100%;
+    height: 42px;
+    margin-block: 12px 9px;
+  }
+
+  .loyalty-brand .lb-card-bottom > span:first-child {
+    display: none;
+  }
+
+  .loyalty-brand .lb-card-caption {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .loyalty-brand .lb-card-caption > svg {
+    margin-bottom: 10px;
+  }
+
+  .loyalty-brand .lb-card-caption strong {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .loyalty-brand .lb-card-caption span {
+    font-size: 12px;
+  }
+
+  .loyalty-brand .lb-instructions {
+    padding-block: 37px 45px;
+  }
+
+  .loyalty-brand .lb-section-heading {
+    display: block;
+    margin-bottom: 26px;
+  }
+
+  .loyalty-brand .lb-section-heading h2,
+  .loyalty-brand .lb-signup h2 {
+    font-size: 43px;
+    letter-spacing: -1px;
+  }
+
+  .loyalty-brand .lb-launch-note {
+    max-width: none;
+    margin: 18px 0 0;
+    font-size: 13px;
+  }
+
+  .loyalty-brand .lb-steps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 23px;
+  }
+
+  .loyalty-brand .lb-steps > li {
+    position: relative;
+    padding: 20px 43px 0 42px;
+  }
+
+  .loyalty-brand .lb-step-top {
+    display: contents;
+  }
+
+  .loyalty-brand .lb-step-top > span {
+    position: absolute;
+    left: 0;
+    top: 23px;
+    font-size: 14px;
+  }
+
+  .loyalty-brand .lb-step-top > svg {
+    position: absolute;
+    right: 0;
+    top: 21px;
+    width: 23px;
+    height: 23px;
+  }
+
+  .loyalty-brand .lb-steps h3 {
+    font-size: 17px;
+    margin-bottom: 7px;
+  }
+
+  .loyalty-brand .lb-steps p {
+    font-size: 16px;
+  }
+
+  .loyalty-brand .lb-signup {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 29px;
+    padding: 28px 23px;
+    scroll-margin-top: 98px;
+  }
+
+  .loyalty-brand .lb-signup-copy > p br {
+    display: none;
+  }
+
+  .loyalty-brand .lb-signup-form {
+    padding: 27px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--loyalty-line);
+  }
+
+  .loyalty-brand .lb-signup-form h3 {
+    font-size: 22px;
+  }
+
+  .loyalty-brand .lb-consent {
+    margin-block: 22px;
+  }
+
+  .loyalty-brand .button {
+    max-width: 100%;
+    font-size: 14px;
+    gap: 18px;
+    padding-inline: 20px;
+  }
+
+  .loyalty-brand .lb-faq {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding-block: 44px 65px;
+  }
+
+  .loyalty-brand .lb-faq h2 {
+    font-size: 43px;
+    margin-top: 12px;
+  }
+
+  .loyalty-brand .lb-faq details {
+    padding-block: 20px;
+  }
+}
+
+@media (max-width: 360px) {
+  .loyalty-brand .lb-card-preview {
+    gap: 14px;
+  }
+
+  .loyalty-brand .lb-card {
+    padding: 13px;
+    flex-basis: 48%;
+  }
+
+  .loyalty-brand .lb-card-caption > svg {
+    display: none;
+  }
+
+  .loyalty-brand .lb-signup {
+    padding: 25px 18px;
+  }
+
+  .loyalty-brand .lb-steps > li {
+    padding-left: 34px;
+    padding-right: 32px;
+  }
+
+  .loyalty-brand .lb-signup .button {
+    padding-inline: 14px;
+    gap: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loyalty-brand .lb-faq summary > svg {
+    transition: none;
+  }
+}
