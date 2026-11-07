@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Search, X } from 'lucide-react';
+import { ChevronUp, Search, X } from 'lucide-react';
 import { categories, products } from '../data';
 import { ProductCard } from '../components';
 import { useShop } from '../store';
@@ -8,6 +8,7 @@ import DeliveryOffers from '../DeliveryOffers';
 export default function Delivery() {
   const [query, setQuery] = useState('');
   const [active, setActive] = useState('breakfast');
+  const [introExpanded, setIntroExpanded] = useState(true);
   const { deliveryMethod: method, setDeliveryMethod: setMethod } = useShop();
   const mobileNav = useRef();
   const navigating = useRef(false);
@@ -37,12 +38,18 @@ export default function Delivery() {
   const categoryButtons = categories.map(category => <button key={category.id} data-category={category.id} disabled={!filtered.some(product => product.category === category.id)} className={active === category.id ? 'active' : ''} onClick={() => choose(category.id)} aria-current={active === category.id ? 'true' : undefined}>{category.name}</button>);
   const search = <label className="search-box"><Search size={19}/><input aria-label="Поиск блюд" placeholder="Найти блюдо" value={query} onChange={event => setQuery(event.target.value)}/>{query && <button onClick={() => setQuery('')} aria-label="Очистить поиск"><X size={18}/></button>}</label>;
   return <main className="delivery-page">
-    <section className="container delivery-heading">
+    <section className="delivery-intro" aria-label="О кафе и доставке">
+      <div className="delivery-intro-handle">
+        <button className="delivery-intro-toggle" aria-expanded={introExpanded} aria-controls="delivery-intro-content" aria-label={introExpanded ? 'Свернуть информацию о кафе' : 'Показать информацию о кафе'} title={introExpanded ? 'Свернуть' : 'О кафе и доставке'} onClick={() => setIntroExpanded(expanded => !expanded)}><ChevronUp size={20}/></button>
+      </div>
+      <div id="delivery-intro-content" className={`delivery-intro-collapse${introExpanded ? ' is-expanded' : ''}`} inert={!introExpanded} aria-hidden={!introExpanded}>
+      <div className="delivery-intro-clip">
+      <div className="container delivery-heading">
+      <div className="delivery-information">
       <div className="restaurant-info">
         <h1>Кафе «Ялта»</h1>
-        <p className="restaurant-location">Москва · Покровка</p>
         <address className="restaurant-details">
-          <p>ул. Покровка, 27</p>
+          <p>Москва, ул. Покровка, 27</p>
           <a href="tel:+74951234567">+7 (495) 123-45-67</a>
           <p>Ежедневно 09:00–23:00</p>
         </address>
@@ -64,7 +71,11 @@ export default function Delivery() {
           </>}
         </div>
       </div>
+      </div>
       <DeliveryOffers onChoose={category => { setMethod('delivery'); setQuery(''); requestAnimationFrame(() => choose(category)); }}/>
+      </div>
+      </div>
+      </div>
     </section>
     <div className="category-bar"><div className="container category-inner"><nav ref={mobileNav} className="category-nav" aria-label="Категории меню">{categoryButtons}</nav></div></div>
     <div className="container menu-layout">

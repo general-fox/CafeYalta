@@ -1,0 +1,97 @@
+/* Shared corner treatment. Loaded after the page styles; only radius changes. */
+:root {
+  --radius: 5px;
+}
+
+/* Keep this narrow override authoritative across existing page/media rules. */
+button,
+.button,
+.button-outline,
+.skip-link,
+input:not([type='checkbox']):not([type='radio']):not([type='range']),
+select,
+textarea,
+.quantity,
+.segmented,
+.search-box,
+.account-sidebar nav a,
+.product-card,
+.product-image,
+.product-tag,
+.modal,
+.menu-basket,
+.checkout-form,
+.checkout-summary,
+.pickup-address,
+.payment-demo,
+.confirmation-detail,
+.account-panel,
+.account-empty,
+.history-order,
+.reservation-item,
+.reservation-date,
+.loyalty-signup-panel,
+.loyalty-card,
+.guest-card,
+.guest-card-compact,
+.delivery-offers,
+.delivery-promo,
+.delivery-promo img,
+.delivery-intro-toggle,
+.offer-slide,
+.gift-line,
+.delivery-strip,
+.postcard-mark,
+.demo-notice,
+.form-error,
+.demo-pill,
+.order-demo-status,
+.toast,
+.mini-phone,
+.illustrated-code,
+.hero-visual,
+.hero-visual::before,
+.hero-photo,
+.account-entry-art,
+.about-art > img,
+.product-image > img,
+.product-modal-image,
+.food-photo,
+.offer-photo,
+.offer-photo > img,
+.cart-item > img,
+.checkout-item > img {
+  border-radius: var(--radius) !important;
+}
+
+/* Circular marks retain their shape; native radio/checkbox controls are untouched. */
+.header-cart > span,
+.hero-stamp,
+.image-open,
+.menu-section-title > span,
+.success-icon,
+.radio-dot,
+.account-entry-orbit,
+.account-entry-orbit::after,
+.demo-pill > span,
+.account-avatar,
+.account-count,
+.account-empty-icon,
+.loyalty-orbit,
+.loyalty-orbit::after,
+.wallet-add,
+.scan-line::before,
+.scan-line::after,
+.offer-dots span {
+  border-radius: 50% !important;
+}
+
+/* The active carousel mark is a short capsule, with the same circular end caps. */
+.offer-dots button[aria-pressed='true'] span {
+  border-radius: 999px !important;
+}
+
+/* The fixed booking action intentionally follows the requested pill reference. */
+button.booking-float {
+  border-radius: 999px !important;
+}
