@@ -4,5 +4,6 @@ import { HashRouter } from 'react-router-dom';
 import App from './App';
 import { ShopProvider } from './store';
 import './styles.css';
+import './home-editorial.css';
 import './radius.css';
 createRoot(document.getElementById('root')).render(<React.StrictMode><HashRouter><ShopProvider><App/></ShopProvider></HashRouter></React.StrictMode>);

@@ -91,7 +91,7 @@ textarea,
   border-radius: 999px !important;
 }
 
-/* The fixed booking action intentionally follows the requested pill reference. */
+/* The fixed booking action shares the site's 5 px corner treatment. */
 button.booking-float {
-  border-radius: 999px !important;
+  border-radius: var(--radius) !important;
 }

@@ -11,6 +11,6 @@ export default function DeliveryOffers({ onChoose }) {
       <Waves/>
       <span className="delivery-promo-note">Демоакция</span>
     </div>
-    <img className="delivery-promo-image" src={asset('scene/hero.jpg')} alt="Блюда к домашнему обеду"/>
+    <img className="delivery-promo-image" src={asset('generated/scene/hero-syrniki.jpg')} alt="Сырники со сметаной и ягодами"/>
   </section>;
 }
