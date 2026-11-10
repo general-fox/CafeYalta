@@ -6,4 +6,5 @@ import { ShopProvider } from './store';
 import './styles.css';
 import './home-editorial.css';
 import './radius.css';
+import './header.css';
 createRoot(document.getElementById('root')).render(<React.StrictMode><HashRouter><ShopProvider><App/></ShopProvider></HashRouter></React.StrictMode>);

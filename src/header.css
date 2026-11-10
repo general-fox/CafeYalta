@@ -1,0 +1,348 @@
+/* Horizontal brand lockup and accessible header controls. */
+:root {
+  --header-h: 96px;
+  --menu-tabs-h: 0px;
+}
+
+.site-header .header-inner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 32px;
+  width: min(1440px, calc(100% - 64px));
+  height: calc(var(--header-h) - 1px);
+  margin-inline: auto;
+}
+
+.site-header .brand {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 308px;
+  min-height: 44px;
+  flex-shrink: 0;
+}
+
+.site-header .brand img {
+  display: block;
+  width: 100%;
+  height: 44px;
+  object-fit: contain;
+}
+
+.site-header .main-nav {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  min-width: 0;
+}
+
+.site-header .main-nav > a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.site-header .header-actions {
+  grid-column: 3;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+  margin-left: 0;
+}
+
+.site-header .account-button,
+.site-header .header-cart,
+.site-header .mobile-menu {
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  color: var(--blue);
+  line-height: 1;
+}
+
+.site-header .account-button,
+.site-header .header-cart {
+  display: inline-flex;
+}
+
+.site-header .header-phone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding-inline: 6px;
+  color: var(--blue);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.site-header .header-phone > span {
+  display: inline;
+  margin: 0;
+  color: inherit;
+  font: inherit;
+}
+
+.site-header .header-actions > :is(button, a) > svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.site-header .header-cart > span {
+  top: 1px;
+  right: 0;
+  width: auto;
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 4px;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.site-header .mobile-menu {
+  display: none;
+}
+
+.site-header .account-button:hover,
+.site-header .header-cart:hover,
+.site-header .mobile-menu:hover,
+.site-header .header-phone:hover {
+  background: #334da00a;
+}
+
+.site-footer .footer-brand {
+  min-width: 0;
+}
+
+.site-footer .footer-brand img {
+  width: min(308px, 100%);
+  height: auto;
+  aspect-ratio: 7 / 1;
+  object-fit: contain;
+  object-position: left center;
+}
+
+/* Follow the actual header row count without changing the entrance animation. */
+.category-bar {
+  top: var(--header-h);
+}
+
+.category-sidebar,
+.menu-basket {
+  top: calc(var(--header-h) + 24px);
+}
+
+.menu-section {
+  scroll-margin-top: calc(var(--header-h) + var(--menu-tabs-h) + 16px);
+}
+
+#about,
+#home-menu,
+.loyalty-brand #get-card {
+  scroll-margin-top: calc(var(--header-h) + 20px);
+}
+
+@media (max-width: 1240px) {
+  .site-header .header-inner {
+    width: calc(100% - 48px);
+    gap: 24px;
+  }
+
+  .site-header .main-nav {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    display: none;
+    max-height: calc(100dvh - var(--header-h));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 20px 24px 24px;
+    background: var(--cream);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 12px 15px #24345309;
+  }
+
+  .site-header .main-nav.is-open {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .site-header .main-nav > a {
+    padding-block: 12px;
+    font-size: 16px;
+  }
+
+  .site-header .mobile-menu {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 800px) {
+  .site-header .header-inner {
+    width: calc(100% - 32px);
+    gap: 14px;
+  }
+
+  .site-header .brand {
+    width: 252px;
+  }
+
+  .site-header .header-actions {
+    gap: 4px;
+  }
+
+  .site-header .header-phone {
+    font-size: 14px;
+    padding-inline: 2px;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 700px) {
+  :root {
+    --menu-tabs-h: 60px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --header-h: 118px;
+  }
+
+  .site-header .header-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: calc(100% - 24px);
+    gap: 8px;
+    padding-block: 10px;
+  }
+
+  .site-header .brand {
+    width: min(294px, 100%);
+    height: 42px;
+    min-height: 42px;
+  }
+
+  .site-header .brand img {
+    height: 42px;
+  }
+
+  .site-header .header-actions {
+    width: 100%;
+    max-width: 380px;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .site-header .header-phone {
+    flex: 1 0 auto;
+    padding-inline: 0;
+    font-size: 14px;
+    letter-spacing: -.2px;
+  }
+
+  .site-header .header-phone > svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .site-header .main-nav {
+    padding-inline: 20px;
+  }
+}
+/* The contact action is icon-only, alongside account and basket. */
+.site-header .header-phone {
+  flex: 0 0 44px;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  padding: 0;
+  gap: 0;
+  line-height: 1;
+}
+.site-header .header-phone > svg { width: 22px; height: 22px; }
+
+/* Compact mobile masthead: logo left, four actions right on a single row. */
+@media (max-width:640px) {
+  :root { --header-h:76px; }
+  .site-header .header-inner {
+    flex-direction:row;
+    justify-content:space-between;
+    width:calc(100% - 24px);
+    gap:8px;
+    padding:0;
+  }
+  .site-header .brand {
+    flex:1 1 196px;
+    min-width:0;
+    max-width:196px;
+    width:auto;
+    height:40px;
+    min-height:40px;
+  }
+  .site-header .brand img { height:40px; }
+  .site-header .header-actions {
+    flex:0 0 auto;
+    width:auto;
+    max-width:none;
+    margin-left:auto;
+    justify-content:flex-end;
+    gap:4px;
+  }
+  .site-header .account-button,
+  .site-header .header-cart,
+  .site-header .header-phone,
+  .site-header .mobile-menu {
+    flex:0 0 40px;
+    width:40px;
+    min-width:40px;
+    height:44px;
+  }
+}
+@media (max-width:360px) {
+  .site-header .account-button,
+  .site-header .header-cart,
+  .site-header .header-phone,
+  .site-header .mobile-menu {
+    flex-basis:36px;
+    width:36px;
+    min-width:36px;
+  }
+}
+
+.site-header .brand-caption { display:none; }
+@media (max-width:700px) {
+  .site-header .brand { height:auto; min-height:44px; gap:4px; }
+  .site-header .brand img { height:auto; aspect-ratio:7 / 1; }
+  .site-header .brand-caption {
+    display:block;
+    margin:0;
+    color:var(--blue);
+    font-size:12px;
+    font-weight:500;
+    line-height:1.2;
+    letter-spacing:.25px;
+    white-space:nowrap;
+    text-align:center;
+  }
+}

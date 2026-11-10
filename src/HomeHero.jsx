@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { asset } from './components';
+import { useShop } from './store';
 
 export default function HomeHero() {
+  const { setModal } = useShop();
   const section = useRef(null);
   const photo = useRef(null);
   const tide = useRef(null);
@@ -124,11 +126,12 @@ export default function HomeHero() {
     <div className="editorial-hero-content">
       <div>
         <p className="editorial-hero-kicker">МОСКВА · ПОКРОВКА, 27</p>
-        <h1 id="hero-title">Море<br/><em>рядом</em></h1>
+        <h1 id="hero-title" aria-label="Доставка за 99 рублей"><span>Доставка</span><em>99 ₽</em></h1>
+        <p className="hero-offer-description">При заказе на сайте<br/>скидка 20% на всё меню</p>
       </div>
       <div className="editorial-hero-bottom">
-        <div className="hero-promotion"><span>К ВАШЕМУ ЗАКАЗУ</span><p>Морс в подарок<br/>к доставке от 2 000 ₽</p><small>Демоакция</small></div>
         <Link className="button" to="/delivery">Заказать доставку <ArrowUpRight size={21}/></Link>
+        <button className="button hero-booking" type="button" onClick={() => setModal('booking')}>Забронировать стол</button>
       </div>
     </div>
   </section>;

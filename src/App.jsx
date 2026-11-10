@@ -1,6 +1,6 @@
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Routes, Route, NavLink, Link, useLocation } from 'react-router-dom';
-import { ArrowUpRight, Clock3, UserRound, ShoppingBag, Menu, X, Check, Heart, Sparkle } from 'lucide-react';
+import { ArrowUpRight, Clock3, UserRound, ShoppingBag, Menu, X, Check, Heart, Sparkle, Phone } from 'lucide-react';
 import { useShop } from './store';
 import { asset, Waves, Gulls, ArrowLink, ProductCard } from './components';
 import { products } from './data';
@@ -13,10 +13,52 @@ import Account from './pages/Account';
 import Loyalty from './pages/Loyalty';
 import Modals from './modals';
 function Header() {
-  const { user, cart, setModal, openAuth } = useShop(); const [mobile, setMobile] = useState(false); const location = useLocation();
-  useEffect(() => setMobile(false), [location.pathname]);
+  const { user, cart, setModal, openAuth } = useShop();
+  const [mobile, setMobile] = useState(false);
+  const location = useLocation();
+  const header = useRef(null);
+  const navigation = useRef(null);
+  const menuButton = useRef(null);
   const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-  return <header className="site-header"><div className="header-inner"><Link className="brand" to="/" aria-label="Кафе Ялта — главная"><img src={asset('brand/Yalta.svg')} alt="Ялта"/></Link><nav className={mobile ? 'main-nav is-open' : 'main-nav'} aria-label="Главная навигация"><NavLink to="/delivery">Доставка</NavLink><NavLink to="/loyalty">Программа лояльности</NavLink><a href="#/#about" onClick={() => { setMobile(false); setTimeout(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }), 60); }}>О нас</a><a className="mobile-phone" href="tel:+74951234567">+7 (495) 123-45-67</a></nav><div className="header-actions"><a className="header-phone" href="tel:+74951234567">+7 (495) 123-45-67<span>Ежедневно, 09:00–23:00</span></a>{user ? <Link className="account-button" to="/account"><UserRound size={19}/><span>Кабинет</span></Link> : <button className="account-button" onClick={openAuth}><UserRound size={19}/><span>Войти</span></button>}<button className="header-cart icon-button" onClick={() => setModal('cart')} aria-label={`Корзина: ${count} блюд`}><ShoppingBag size={21}/>{count > 0 && <span>{count}</span>}</button><button className="mobile-menu icon-button" onClick={() => setMobile(!mobile)} aria-expanded={mobile} aria-label={mobile ? 'Закрыть меню' : 'Открыть меню'}>{mobile ? <X/> : <Menu/>}</button></div></div></header>;
+
+  useEffect(() => setMobile(false), [location.pathname]);
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 1241px)');
+    const closeDesktopMenu = () => { if (desktop.matches) setMobile(false); };
+    desktop.addEventListener('change', closeDesktopMenu);
+    return () => desktop.removeEventListener('change', closeDesktopMenu);
+  }, []);
+  useEffect(() => {
+    if (!mobile) return;
+    navigation.current?.querySelector('a')?.focus();
+    const closeOnEscape = event => {
+      if (event.key === 'Escape') { setMobile(false); menuButton.current?.focus(); }
+    };
+    const closeOutside = event => {
+      if (!header.current?.contains(event.target)) setMobile(false);
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    document.addEventListener('pointerdown', closeOutside);
+    return () => {
+      document.removeEventListener('keydown', closeOnEscape);
+      document.removeEventListener('pointerdown', closeOutside);
+    };
+  }, [mobile]);
+
+  return <header ref={header} className="site-header"><div className="header-inner">
+    <Link className="brand" to="/" aria-label="Кафе Ялта — главная" onClick={() => setMobile(false)}><img src={asset('brand/CafeYalta.svg')} alt="Кафе Ялта" width="700" height="100"/><span className="brand-caption">ДОМАШНЯЯ КУХНЯ</span></Link>
+    <nav ref={navigation} id="main-navigation" className={mobile ? 'main-nav is-open' : 'main-nav'} aria-label="Главная навигация">
+      <NavLink to="/delivery">Доставка</NavLink>
+      <NavLink to="/loyalty">Программа лояльности</NavLink>
+      <a href="#/#about" onClick={() => { setMobile(false); setTimeout(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }), 60); }}>О нас</a>
+    </nav>
+    <div className="header-actions">
+      {user ? <Link className="account-button" to="/account" aria-label="Личный кабинет" title="Личный кабинет" onClick={() => setMobile(false)}><UserRound size={22} aria-hidden="true"/></Link> : <button type="button" className="account-button" aria-label="Войти в личный кабинет" title="Войти в личный кабинет" onClick={() => { setMobile(false); openAuth(); }}><UserRound size={22} aria-hidden="true"/></button>}
+      <button type="button" className="header-cart icon-button" onClick={() => { setMobile(false); setModal('cart'); }} aria-label={`Корзина: ${count} блюд`} title="Корзина"><ShoppingBag size={22} aria-hidden="true"/>{count > 0 && <span aria-hidden="true">{count}</span>}</button>
+      <a className="header-phone" href="tel:+74951234567" aria-label="Позвонить в кафе: +7 (495) 123-45-67" title="Позвонить в кафе" onClick={() => setMobile(false)}><Phone size={22} aria-hidden="true"/></a>
+      <button ref={menuButton} type="button" className="mobile-menu icon-button" onClick={() => setMobile(open => !open)} aria-expanded={mobile} aria-controls="main-navigation" aria-label={mobile ? 'Закрыть меню' : 'Открыть меню'} title={mobile ? 'Закрыть меню' : 'Открыть меню'}>{mobile ? <X size={24} aria-hidden="true"/> : <Menu size={24} aria-hidden="true"/>}</button>
+    </div>
+  </div></header>;
 }
 function Home() { const { setModal } = useShop(); return <main>
   <HomeHero/>
@@ -26,10 +68,10 @@ function Home() { const { setModal } = useShop(); return <main>
   <section className="loyalty-preview container section-space"><div className="loyalty-preview-copy reveal"><span className="eyebrow">ДЛЯ ТЕХ, КТО С НАМИ</span><h2>Хорошо быть<br/><em>своим</em></h2><p>Бонусы за любимые блюда<br/>и сюрпризы для наших гостей.</p><ArrowLink to="/loyalty">Стать другом «Ялты»</ArrowLink><small>Программа готовится к запуску</small></div><div className="loyalty-preview-art reveal"><div className="loyalty-card"><span>КАРТА ЛЮБИМОГО ГОСТЯ</span><img src={asset('brand/Yalta-white.svg')} alt="Ялта"/><Waves/><div><span>МОРЕ ПРИЯТНЫХ МОМЕНТОВ</span><Heart size={18} aria-hidden="true"/></div></div><Gulls/></div></section>
   <section className="visit-section"><div className="container"><Gulls/><span className="eyebrow">ВАШ СТОЛИК УЖЕ ЖДЁТ</span><h2>До встречи <em>в «Ялте»</em></h2><p>Москва, ул. Покровка, 27 <span>•</span> Каждый день с 09:00 до 23:00</p><button className="button button-light" onClick={() => setModal('booking')}>Забронировать стол <ArrowUpRight size={19}/></button></div></section>
   </main>; }
-function Footer() { return <footer className="site-footer container"><div className="footer-main"><Link className="footer-brand" to="/"><img src={asset('brand/Yalta.svg')} alt="Кафе Ялта"/><span>Немного моря в Москве</span></Link><div><span className="eyebrow">ЗАГЛЯДЫВАЙТЕ</span><Link to="/delivery">Доставка и меню</Link><Link to="/loyalty">Программа лояльности</Link><Link to="/account">Личный кабинет</Link></div><div><span className="eyebrow">МЫ РЯДОМ</span><a href="tel:+74951234567">+7 (495) 123-45-67</a><span>Москва, ул. Покровка, 27</span><span>Ежедневно 09:00–23:00</span></div><Waves/></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Кафе «Ялта»</span><span>Демо · контакты и меню — примеры</span><Link to="/privacy">Конфиденциальность</Link></div></footer>; }
+function Footer() { return <footer className="site-footer container"><div className="footer-main"><Link className="footer-brand" to="/"><img src={asset('brand/CafeYalta.svg')} alt="Кафе Ялта" width="700" height="100"/><span>Немного моря в Москве</span></Link><div><span className="eyebrow">ЗАГЛЯДЫВАЙТЕ</span><Link to="/delivery">Доставка и меню</Link><Link to="/loyalty">Программа лояльности</Link><Link to="/account">Личный кабинет</Link></div><div><span className="eyebrow">МЫ РЯДОМ</span><a href="tel:+74951234567">+7 (495) 123-45-67</a><span>Москва, ул. Покровка, 27</span><span>Ежедневно 09:00–23:00</span></div><Waves/></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Кафе «Ялта»</span><span>Демо · контакты и меню — примеры</span><Link to="/privacy">Конфиденциальность</Link></div></footer>; }
 function Privacy() { return <main className="container text-page"><span className="eyebrow">ВАШИ ДАННЫЕ</span><h1>Конфиденциальность</h1><p>Этот сайт — демонстрационная версия кафе «Ялта». Введённые имя, телефон, адрес, состав тестовых заказов и бронирований сохраняются только в локальном хранилище вашего браузера на этом устройстве. В кафе они не отправляются. Не вводите реальные персональные данные для тестирования.</p><h2>Как удалить данные</h2><p>Очистите данные сайта в настройках браузера. После этого удалятся профиль, корзина и вся тестовая история на этом устройстве.</p><h2>Перед открытием кафе</h2><p>Здесь появится политика оператора персональных данных с актуальными реквизитами, целями обработки, сроками хранения и контактами. Реальная авторизация, оплата и обработка заказов пока не подключены.</p><Link className="button" to="/">На главную <ArrowUpRight size={18}/></Link></main>; }
 export default function App() { const location = useLocation(); const { setModal, cart, toast } = useShop();
-  useLayoutEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); const titles = { '/': 'Ялта — море рядом', '/delivery': 'Доставка и меню — Ялта', '/loyalty': 'Программа лояльности — Ялта', '/account': 'Личный кабинет — Ялта', '/checkout': 'Оформление заказа — Ялта' }; document.title = titles[location.pathname] || 'Кафе Ялта'; }, [location.pathname]);
+  useLayoutEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); const titles = { '/': 'Кафе Ялта — доставка в Москве', '/delivery': 'Доставка и меню — Ялта', '/loyalty': 'Программа лояльности — Ялта', '/account': 'Личный кабинет — Ялта', '/checkout': 'Оформление заказа — Ялта' }; document.title = titles[location.pathname] || 'Кафе Ялта'; }, [location.pathname]);
   useEffect(() => { const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } }), { threshold: 0.07 }); const observe = () => document.querySelectorAll('.reveal:not(.is-visible)').forEach(el => observer.observe(el)); observe(); const mutation = new MutationObserver(observe); mutation.observe(document.getElementById('root'), { childList: true, subtree: true }); return () => { observer.disconnect(); mutation.disconnect(); }; }, []);
-  return <><a className="skip-link" href="#main-content" onClick={e => { e.preventDefault(); document.getElementById('main-content')?.focus(); }}>Перейти к содержимому</a><Header/><div id="main-content" tabIndex={-1} className="route-content" key={location.pathname}><Routes><Route path="/" element={<Home/>}/><Route path="/delivery" element={<Delivery/>}/><Route path="/checkout" element={<Checkout/>}/><Route path="/account" element={<Account/>}/><Route path="/loyalty" element={<Loyalty/>}/><Route path="/privacy" element={<Privacy/>}/><Route path="*" element={<main className="container text-page"><h1>Кажется, здесь только море</h1><Link className="button" to="/">Вернуться на берег</Link></main>}/></Routes></div><Footer/><button className="booking-float" onClick={() => setModal('booking')}><span>Забронировать стол</span></button>{location.pathname === '/delivery' && cart.length > 0 && <button className="mobile-cart-bar" onClick={() => setModal('cart')}><ShoppingBag size={20}/><span>Корзина · {cart.reduce((s, p) => s + p.quantity, 0)}</span><strong>{money(cartTotal(cart))}</strong></button>}<Modals/>{toast && <div className="toast" role="status"><Check size={18}/>{toast}</div>}</>;
+  return <><a className="skip-link" href="#main-content" onClick={e => { e.preventDefault(); document.getElementById('main-content')?.focus(); }}>Перейти к содержимому</a><Header/><div id="main-content" tabIndex={-1} className="route-content" key={location.pathname}><Routes><Route path="/" element={<Home/>}/><Route path="/delivery" element={<Delivery/>}/><Route path="/checkout" element={<Checkout/>}/><Route path="/account" element={<Account/>}/><Route path="/loyalty" element={<Loyalty/>}/><Route path="/privacy" element={<Privacy/>}/><Route path="*" element={<main className="container text-page"><h1>Кажется, здесь только море</h1><Link className="button" to="/">Вернуться на берег</Link></main>}/></Routes></div><Footer/>{location.pathname === '/delivery' && cart.length > 0 && <button className="mobile-cart-bar" onClick={() => setModal('cart')}><ShoppingBag size={20}/><span>Корзина · {cart.reduce((s, p) => s + p.quantity, 0)}</span><strong>{money(cartTotal(cart))}</strong></button>}<Modals/>{toast && <div className="toast" role="status"><Check size={18}/>{toast}</div>}</>;
 }

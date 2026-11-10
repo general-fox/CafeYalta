@@ -27,13 +27,41 @@ export default function Delivery() {
     if (button && nav.clientWidth) nav.scrollTo({ left: button.offsetLeft - nav.clientWidth / 2 + button.clientWidth / 2, behavior: 'smooth' });
   }, [active]);
   useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      if (navigating.current) return;
-      const visible = entries.filter(entry => entry.isIntersecting);
-      if (visible.length) setActive(visible[0].target.dataset.category);
-    }, { rootMargin: '-150px 0px -55% 0px', threshold: 0 });
-    document.querySelectorAll('.menu-section').forEach(element => observer.observe(element));
-    return () => { observer.disconnect(); clearTimeout(timer.current); };
+    const header = document.querySelector('.site-header');
+    const categoryBar = document.querySelector('.category-bar');
+    const sections = [...document.querySelectorAll('.menu-section')];
+    const previousMargins = sections.map(section => section.style.scrollMarginTop);
+    let observer;
+    let currentOffset;
+    const updateObserver = () => {
+      // A display:none category bar measures zero on desktop.
+      const offset = (header?.getBoundingClientRect().height ?? 0)
+        + (categoryBar?.getBoundingClientRect().height ?? 0) + 16;
+      if (offset === currentOffset) return;
+      currentOffset = offset;
+      observer?.disconnect();
+      observer = new IntersectionObserver(entries => {
+        if (navigating.current) return;
+        const visible = entries.filter(entry => entry.isIntersecting);
+        if (visible.length) setActive(visible[0].target.dataset.category);
+      }, { rootMargin: `-${offset}px 0px -55% 0px`, threshold: 0 });
+      sections.forEach(section => {
+        // Keep click navigation aligned with the category tracking boundary.
+        section.style.scrollMarginTop = `${offset}px`;
+        observer.observe(section);
+      });
+    };
+    updateObserver();
+    const resizeObserver = new ResizeObserver(updateObserver);
+    if (header) resizeObserver.observe(header);
+    if (categoryBar) resizeObserver.observe(categoryBar);
+    return () => {
+      observer?.disconnect();
+      resizeObserver.disconnect();
+      sections.forEach((section, index) => { section.style.scrollMarginTop = previousMargins[index]; });
+      clearTimeout(timer.current);
+      navigating.current = false;
+    };
   }, [query]);
   const categoryButtons = categories.map(category => <button key={category.id} data-category={category.id} disabled={!filtered.some(product => product.category === category.id)} className={active === category.id ? 'active' : ''} onClick={() => choose(category.id)} aria-current={active === category.id ? 'true' : undefined}>{category.name}</button>);
   const search = <label className="search-box"><Search size={19}/><input aria-label="Поиск блюд" placeholder="Найти блюдо" value={query} onChange={event => setQuery(event.target.value)}/>{query && <button onClick={() => setQuery('')} aria-label="Очистить поиск"><X size={18}/></button>}</label>;
