@@ -1,137 +1,90 @@
 import { useEffect, useRef, useState } from 'react';
+import { Copy } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight } from 'lucide-react';
-import { asset } from './components';
+import { asset, Gulls } from './components';
 import { useShop } from './store';
+import { HarborIllustration } from './HeroSeaArt';
+import { interiorPhotos } from './interiorPhotos';
 
-export default function HomeHero() {
-  const { setModal } = useShop();
-  const section = useRef(null);
-  const photo = useRef(null);
-  const tide = useRef(null);
-  const [photoReady, setPhotoReady] = useState(false);
+const promoCode = 'CAFEYALTA2026';
+
+export default function HomeHero({ gullOrigin }) {
+  const { setModal, notify } = useShop();
+  const codeText = useRef(null);
+  const hero = useRef(null);
+  const [moving, setMoving] = useState(true);
 
   useEffect(() => {
-    if (photo.current?.complete) setPhotoReady(true);
-  }, []);
-
-  useEffect(() => {
-    const element = section.current;
-    const image = photo.current;
-    const water = tide.current;
-    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let frame = 0;
-    let previousTime = 0;
-    let needsMeasure = true;
-    let disposed = false;
-    let photoPosition = 0;
-    let wavePosition = 0;
-    let photoTarget = 0;
-    let waveTarget = 0;
-
-    const stop = () => {
-      cancelAnimationFrame(frame);
-      frame = 0;
-      previousTime = 0;
-    };
-    const update = time => {
-      frame = 0;
-      if (disposed) return;
-      if (motion.matches) {
-        photoPosition = wavePosition = 0;
-        image.style.setProperty('--parallax-y', '0px');
-        water.style.setProperty('--wave-rise', '0px');
-        element.setAttribute('data-motion-paused', '');
-        stop();
-        return;
-      }
-      if (document.hidden) {
-        element.setAttribute('data-motion-paused', '');
-        stop();
-        return;
-      }
-      if (needsMeasure) {
-        const { top, height } = element.getBoundingClientRect();
-        if (top > window.innerHeight || top < -height) {
-          element.setAttribute('data-motion-paused', '');
-          stop();
-          return;
-        }
-        element.removeAttribute('data-motion-paused');
-        const distance = Math.max(0, element.offsetTop - top);
-        const mobile = window.innerWidth <= 700;
-        photoTarget = Math.min(distance * (mobile ? 0.09 : 0.16), height * 0.2);
-        waveTarget = mobile ? Math.min(distance * 0.18, 90) : 0;
-        needsMeasure = false;
-      }
-      // Follow scroll with subpixel transforms, without resizing/repainting the wave.
-      const elapsed = previousTime ? Math.min(time - previousTime, 64) : 16;
-      previousTime = time;
-      const easing = 1 - Math.exp(-elapsed / 95);
-      photoPosition += (photoTarget - photoPosition) * easing;
-      wavePosition += (waveTarget - wavePosition) * easing;
-      const settled = Math.abs(photoTarget - photoPosition) < 0.01 && Math.abs(waveTarget - wavePosition) < 0.01;
-      if (settled) {
-        photoPosition = photoTarget;
-        wavePosition = waveTarget;
-      }
-      image.style.setProperty('--parallax-y', `${photoPosition.toFixed(3)}px`);
-      water.style.setProperty('--wave-rise', `${wavePosition.toFixed(3)}px`);
-      if (settled) stop();
-      else frame = requestAnimationFrame(update);
-    };
-    const schedule = () => {
-      needsMeasure = true;
-      if (!frame && !disposed) frame = requestAnimationFrame(update);
-    };
-    const changeVisibility = () => {
-      if (document.hidden) {
-        element.setAttribute('data-motion-paused', '');
-        stop();
-      } else schedule();
-    };
-    schedule();
-    window.addEventListener('scroll', schedule, { passive: true });
-    window.addEventListener('resize', schedule);
-    document.addEventListener('visibilitychange', changeVisibility);
-    motion.addEventListener('change', schedule);
+    let onScreen = true;
+    const updateMotion = () => setMoving(onScreen && !document.hidden);
+    const observer = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      updateMotion();
+    });
+    const section = hero.current;
+    // A tall hero must scroll far enough to show its last row before it sticks.
+    const resize = new ResizeObserver(() => {
+      section.style.setProperty('--hero-height', section.offsetHeight + 'px');
+    });
+    resize.observe(section);
+    observer.observe(section);
+    document.addEventListener('visibilitychange', updateMotion);
+    updateMotion();
     return () => {
-      disposed = true;
-      stop();
-      window.removeEventListener('scroll', schedule);
-      window.removeEventListener('resize', schedule);
-      document.removeEventListener('visibilitychange', changeVisibility);
-      motion.removeEventListener('change', schedule);
-      image.style.removeProperty('--parallax-y');
-      water.style.removeProperty('--wave-rise');
-      element.removeAttribute('data-motion-paused');
+      observer.disconnect();
+      resize.disconnect();
+      document.removeEventListener('visibilitychange', updateMotion);
     };
   }, []);
 
-  return <section ref={section} className="editorial-hero" aria-labelledby="hero-title" data-photo-ready={photoReady ? 'true' : undefined}>
-    <div className="editorial-hero-media">
-      <picture>
-        <source media="(max-width: 700px)" srcSet={asset('generated/scene/hero-syrniki-mobile.jpg')}/>
-        <img ref={photo} src={asset('generated/scene/hero-syrniki.jpg')} alt="Румяные сырники со сметаной и ягодами на фарфоровой тарелке с синим узором" fetchPriority="high" width="1672" height="941" onLoad={() => setPhotoReady(true)} onError={() => setPhotoReady(true)}/>
-      </picture>
+  const copyPromoCode = async () => {
+    try {
+      await navigator.clipboard.writeText(promoCode);
+      notify('Скопировано');
+    } catch {
+      if (!codeText.current) return;
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(codeText.current);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      notify('Скопируйте выделенный промокод');
+    }
+  };
+
+  return <section ref={hero} className="editorial-hero" aria-labelledby="hero-title" data-moving={moving}>
+    <div className="surface-grain" aria-hidden="true"/>
+    <div className="hero-art-panel" aria-hidden="true">
+      <span ref={gullOrigin} className="gull-origin"><Gulls className="harbor-gulls"/></span>
+      <HarborIllustration moving={moving}/>
     </div>
-    <div ref={tide} className="hero-tide" aria-hidden="true">
-      <svg className="hero-tide-trace" viewBox="0 0 2880 160" preserveAspectRatio="none" fill="none">
-        <path className="hero-tide-line" d="M0 49Q360 5 720 49T1440 49T2160 49T2880 49"/>
-      </svg>
-      <svg className="hero-tide-water" viewBox="0 0 2880 160" preserveAspectRatio="none" fill="none">
-        <path className="hero-tide-fill" d="M0 65Q360 16 720 65T1440 65T2160 65T2880 65V160H0Z"/>
-      </svg>
-    </div>
-    <div className="editorial-hero-content">
-      <div>
-        <p className="editorial-hero-kicker">МОСКВА · ПОКРОВКА, 27</p>
-        <h1 id="hero-title" aria-label="Доставка за 99 рублей"><span>Доставка</span><em>99 ₽</em></h1>
-        <p className="hero-offer-description">При заказе на сайте<br/>скидка 20% на всё меню</p>
+    <div className="coast-layout hero-content">
+      <div className="hero-scenes" aria-hidden="true">
+        {interiorPhotos.map(({ scene, image, width, height, fullWidth }, index) => {
+          const compact = asset(`generated/scene/${image}`);
+          const full = asset(`generated/scene/interior-${scene}.jpg`);
+          return <img key={scene} className="hero-scene-shot" src={compact}
+            srcSet={`${compact} ${width}w, ${full} ${fullWidth}w`} sizes="(max-width: 370px) calc(100vw - 40px), (max-width: 700px) calc(100vw - 48px), (max-width: 900px) calc(40vw - 32px), (max-width: 1360px) calc(37.6vw - 32px), 478px"
+            width={width} height={height} alt="" fetchPriority={index === 0 ? 'high' : undefined}/>;
+        })}
       </div>
-      <div className="editorial-hero-bottom">
-        <Link className="button" to="/delivery">Заказать доставку <ArrowUpRight size={21}/></Link>
-        <button className="button hero-booking" type="button" onClick={() => setModal('booking')}>Забронировать стол</button>
+      <div className="hero-lettering">
+        <div className="hero-intro-copy">
+          <p className="hero-location">Москва <span className="hero-location-dot" aria-hidden="true">·</span> <span className="hero-neighborhood">ЖК «Испанские кварталы»</span></p>
+          <h1 id="hero-title">Домашняя<br/>кухня</h1>
+          <div className="hero-offer">
+            <p>При заказе на сайте скидка на доставку 20 %</p>
+            <p className="hero-offer-code">по промокоду{' '}
+              <button type="button" onClick={copyPromoCode} aria-label={`Скопировать промокод ${promoCode}`}>
+                <span ref={codeText}>{promoCode}</span><Copy size={15} strokeWidth={1.6} aria-hidden="true"/>
+              </button>
+            </p>
+          </div>
+        </div>
+        <div className="hero-actions">
+          <button type="button" className="button hero-booking" onClick={() => setModal('booking')}>Забронировать стол</button>
+          <Link className="button hero-delivery" to="/delivery">Заказать доставку</Link>
+        </div>
       </div>
     </div>
   </section>;

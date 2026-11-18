@@ -1,0 +1,246 @@
+/* Inter is bundled locally in Cyrillic and Latin, including the ruble sign. */
+:root {
+  --font-ui: 'Inter', sans-serif;
+  --font-accent: 'Great Vibes', cursive;
+  --font-display: var(--font-accent);
+  font-family: var(--font-ui);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.6;
+  font-optical-sizing: auto;
+  font-feature-settings: 'liga' 1, 'calt' 1;
+}
+
+body,
+button,
+input,
+select,
+textarea,
+.account-entry,
+.account-page,
+.loyalty-brand {
+  font-family: var(--font-ui);
+}
+
+.account-entry,
+.account-page {
+  font-weight: 400;
+}
+
+/* Functional titles use the same clear family as their supporting copy. */
+h1,
+h2,
+h3,
+.empty-basket h4,
+.account-entry :is(h1, h2, h3),
+.account-page :is(h1, h2, h3),
+.account-page .account-title h1,
+.account-page .account-avatar,
+.account-page .account-count,
+.account-page .account-sidebar-note p,
+.account-entry-letter,
+.loyalty-brand .lb-intro h1,
+.loyalty-brand .lb-section-heading h2,
+.loyalty-brand .lb-signup h2,
+.loyalty-brand .lb-faq h2,
+.loyalty-brand .lb-steps h3,
+.loyalty-brand .lb-signup-form h3 {
+  font-family: var(--font-ui);
+}
+
+h1,
+h2 {
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -.035em;
+}
+
+.home-menu .section-title h2,
+.about-heading h2,
+.loyalty-preview h2,
+.visit-section h2 {
+  font-size: clamp(32px, 3.7vw, 52px);
+  line-height: 1.14;
+  letter-spacing: -.035em;
+}
+
+.delivery-heading h1,
+.checkout-page > h1,
+.text-page h1,
+.confirmation-page h1 {
+  font-size: clamp(30px, 4.1vw, 56px);
+  line-height: 1.15;
+  letter-spacing: -.04em;
+  overflow-wrap: anywhere;
+}
+
+.menu-section-title h2 {
+  font-size: clamp(28px, 2.9vw, 38px);
+  line-height: 1.2;
+  letter-spacing: -.03em;
+}
+
+.loyalty-brand .lb-intro h1 {
+  font-size: clamp(40px, 5.1vw, 72px);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -.045em;
+}
+
+.loyalty-brand .lb-section-heading h2,
+.loyalty-brand .lb-signup h2,
+.loyalty-brand .lb-faq h2 {
+  font-size: clamp(30px, 3.3vw, 46px);
+  font-weight: 500;
+  line-height: 1.16;
+  letter-spacing: -.035em;
+}
+
+.account-page .account-title h1 {
+  font-size: clamp(30px, 3.6vw, 48px);
+  font-weight: 500;
+  line-height: 1.18;
+  letter-spacing: -.035em;
+  overflow-wrap: anywhere;
+}
+
+.account-entry h1 em,
+.account-page h1 em,
+.account-page .account-title h1 em,
+.loyalty-brand .lb-intro h1 em,
+.loyalty-brand .lb-signup h2 em {
+  font-family: inherit;
+  font-style: normal;
+  font-weight: inherit;
+}
+
+.modal h2,
+.product-modal h2,
+.checkout-form > h2,
+.checkout-summary > h2,
+.empty-state h2,
+.account-page .account-panel-head h2 {
+  font-size: clamp(24px, 2.6vw, 32px);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -.03em;
+}
+
+/* Keep the approved promotional lettering separate from decorative accents. */
+.delivery-promo h2 {
+  font-family: var(--font-ui);
+  font-weight: 400;
+  font-size: clamp(32px, 3.3vw, 44px);
+  line-height: 1.12;
+  letter-spacing: -.035em;
+}
+
+.button,
+.button-outline,
+.text-link,
+.add-button,
+.account-text-link,
+.account-entry .button,
+.account-page .button,
+.account-entry .account-text-link,
+.account-page .account-text-link,
+.account-page .account-sidebar nav :is(button, a),
+.account-page .account-logout,
+.loyalty-brand .button,
+.loyalty-brand .lb-text-link {
+  font-family: var(--font-ui);
+  font-weight: 500;
+}
+
+.product-copy h3,
+.menu-products .product-copy h3,
+.product-bottom strong,
+.menu-products .product-bottom strong,
+.loyalty-brand .lb-steps h3,
+.loyalty-brand .lb-signup-form h3 {
+  font-weight: 500;
+}
+
+/* Small controls and supporting interface text remain readable on mobile. */
+.eyebrow,
+.footer-main .eyebrow,
+.footer-main > div,
+.footer-brand > span,
+.footer-bottom,
+.product-weight,
+.menu-products .product-weight,
+.home-products .product-weight,
+.product-tag,
+.menu-products .product-tag,
+.demo-menu-note,
+.menu-toolbar > p,
+.search-box input,
+.category-nav > button,
+.add-button span,
+.menu-products .add-button span,
+.segmented button,
+.delivery-strip,
+.back-link,
+.time-slots button,
+.summary-line,
+.payment-demo,
+.pickup-address,
+.pickup-address span,
+.confirmation-detail,
+.demo-notice,
+.field-hint,
+.form-error,
+.modal-intro,
+.modal .checkbox-label,
+.checkout-form .checkbox-label,
+.cart-item > div > span,
+.checkout-summary small,
+.product-modal-content > .allergens,
+.loyalty-preview-copy > small,
+.loyalty-brand .lb-kicker,
+.loyalty-brand .lb-launch-note,
+.loyalty-brand .lb-card-caption span,
+.loyalty-brand .lb-card-top,
+.loyalty-brand .lb-card-bottom,
+.toast {
+  font-size: 14px;
+}
+
+.modal :is(input, textarea)::placeholder,
+.checkout-form :is(input, textarea)::placeholder,
+.profile-form input::placeholder {
+  font-size: 16px;
+}
+
+.category-nav > button.active,
+.category-sidebar nav button.active {
+  font-weight: 500;
+}
+
+@media (max-width: 700px) {
+  .home-products .product-copy > p,
+  .menu-products .product-copy > p {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .loyalty-brand .lb-card-top,
+  .loyalty-brand .lb-card-bottom {
+    letter-spacing: 0;
+  }
+}
+.delivery-promo h2 em {
+  font-family: inherit;
+  font-style: normal;
+  font-weight: inherit;
+}
+.text-page :is(h1, h2),
+.confirmation-page h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.14;
+  letter-spacing: normal;
+}
+.text-page h1 { font-size: clamp(38px, 6vw, 76px) }
+.text-page h2 { font-size: clamp(29px, 4vw, 46px) }
+.text-page p { font-size: 16px; line-height: 1.7 }

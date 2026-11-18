@@ -1,0 +1,82 @@
+.coastal-intro { --gull-span: min(20.16vw, 390px); }
+.hero-art-panel .gull-origin {
+  position: absolute;
+  top: 13%;
+  right: 5%;
+  z-index: 2;
+  width: var(--gull-span);
+  aspect-ratio: 300 / 164;
+  pointer-events: none;
+}
+.gull-flight { display: block; visibility: hidden; color: var(--palette-midnight); }
+.coastal-intro .harbor-gulls { display: block; width: 100%; height: auto; color: inherit; overflow: visible; }
+.gull-origin { color: var(--palette-paper-muted); }
+.gull-arrival {
+  display: block;
+  width: calc(var(--gull-span) * .92);
+  margin-bottom: clamp(8px, 1.2vw, 18px);
+  aspect-ratio: 300 / 164;
+  pointer-events: none;
+}
+.harbor-vignette {
+  --harbor-paper: var(--palette-midnight);
+  --harbor-ink: var(--palette-paper-muted);
+  --harbor-mid: color-mix(in srgb, var(--palette-paper) 63%, var(--palette-midnight));
+  --harbor-fine: color-mix(in srgb, var(--palette-paper) 42%, var(--palette-midnight));
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: block;
+  width: var(--harbor-width, min(88%, 730px, calc(var(--hero-available) * .66)));
+  height: auto;
+  opacity: .94;
+  pointer-events: none;
+}
+.harbor-ridge, .harbor-fissures { fill: none; stroke: var(--harbor-fine) }
+.harbor-ridge { stroke-width: 1.05 }
+.harbor-fissures { stroke-width: .78 }
+.harbor-rocks { fill: url(#harbor-rock-etch); stroke: var(--harbor-mid); stroke-width: 1.05 }
+.harbor-cliff { fill: var(--harbor-paper); stroke: var(--harbor-mid); stroke-width: 1.1 }
+.harbor-sails { fill: var(--harbor-paper); stroke: var(--harbor-ink); stroke-width: 1.18 }
+@media (prefers-reduced-motion: no-preference) {
+  .coastal-intro { overflow-x: clip; }
+  .harbor-boat-parallax {
+    transform: translate(calc(69px * var(--boat-progress, 0)), calc(24px * var(--boat-progress, 0)));
+  }
+}
+.harbor-boat {
+  transform-box: fill-box;
+  transform-origin: 53% 94%;
+  animation: harbor-rock 6s ease-in-out -2s infinite alternate;
+}
+.harbor-ripples { animation: harbor-tide 7s ease-in-out -3s infinite alternate }
+@keyframes harbor-rock {
+  from { transform: translateY(-.7px) rotate(-.8deg) }
+  to { transform: translateY(1px) rotate(1deg) }
+}
+@keyframes harbor-tide {
+  from { transform: translateX(-1.4px) }
+  to { transform: translateX(1.8px) }
+}
+.editorial-hero[data-moving='false'] :is(.harbor-boat, .harbor-ripples) {
+  animation-play-state: paused;
+}
+@media (min-width: 701px) and (max-width: 1240px) {
+  .coastal-intro { --gull-span: min(22vw, 270px); }
+  .gull-arrival { width: min(85%, clamp(180px, 27vw, 285px)); }
+  .hero-art-panel .gull-origin {
+    top: 18%;
+    right: 9%;
+  }
+}
+@media (max-width: 700px) {
+  .coastal-intro { --gull-span: min(26vw, 115px); }
+  .hero-art-panel .gull-origin {
+    inset: var(--hero-copy-inset) 8px auto auto;
+    width: var(--hero-gulls-width);
+  }
+  .harbor-vignette { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .harbor-boat, .harbor-ripples { animation: none }
+}

@@ -77,11 +77,10 @@ test('лимит 30 порций действует для новых и сущ�
   assert.equal(changeQuantity([{ ...breakfast, quantity: 30 }], breakfast, 1)[0].quantity, 30);
 });
 
-test('платная доставка становится бесплатной ровно от 2500 рублей', () => {
-  assert.equal(deliveryFee(800, 'delivery'), 250);
-  assert.equal(deliveryFee(2499, 'delivery'), 250);
-  assert.equal(deliveryFee(2500, 'delivery'), 0);
-  assert.equal(deliveryFee(3000, 'delivery'), 0);
+test('доставка стоит 199 рублей независимо от суммы заказа', () => {
+  for (const subtotal of [800, 2499, 2500, 3000, 10000]) {
+    assert.equal(deliveryFee(subtotal, 'delivery'), 199);
+  }
 });
 
 test('самовывоз бесплатный независимо от суммы блюд', () => {
@@ -119,7 +118,7 @@ test('подарок не изменяет корзину, каталог или
   assert.equal(items[1].isGift, true);
   assert.equal(items[1].quantity, 1);
   assert.equal(cartTotal(items), 2000);
-  assert.equal(deliveryFee(cartTotal(items), 'delivery'), 250);
+  assert.equal(deliveryFee(cartTotal(items), 'delivery'), 199);
   assert.deepEqual(drink, originalDrink);
   assert.equal(drink.price, 490);
 });

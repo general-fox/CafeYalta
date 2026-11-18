@@ -1,0 +1,41 @@
+.guest-card-sample {
+  position: relative;
+  display: grid;
+  align-content: space-between;
+  gap: 12px;
+  width: 100%;
+  aspect-ratio: 1.77;
+  padding: clamp(23px, 3vw, 36px) clamp(18px, 2.6vw, 34px) clamp(15px, 2vw, 24px);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--palette-midnight) 18%, transparent);
+  border-radius: var(--panel-radius);
+  background: var(--palette-paper);
+  color: var(--palette-midnight);
+  font-family: var(--font-ui);
+}
+.guest-card-sample::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: clamp(11px, 1.4vw, 17px);
+  background: var(--palette-clay);
+  mask: var(--guest-ornament) left center / auto 100% repeat-x;
+}
+.guest-card-sample :is(.guest-card-label, .guest-card-details) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.guest-card-sample .guest-card-label { font-weight: 600; letter-spacing: .13em; }
+.guest-card-sample .waves { width: 38px; height: 15px; color: var(--palette-clay); }
+.guest-card-sample .guest-card-wordmark {
+  width: 61%;
+  max-width: 210px;
+  height: auto;
+  margin-inline: auto;
+  object-fit: contain;
+}
+

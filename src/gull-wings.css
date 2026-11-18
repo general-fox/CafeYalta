@@ -1,0 +1,15 @@
+/* Each wing rotates around the shoulder in its bird's local SVG coordinates. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-flying] .gulls :is(.gull-wing-left, .gull-wing-right) {
+    transform-box: view-box;
+    transform-origin: 0 0;
+    animation: gull-wingbeat 460ms ease-in-out infinite;
+  }
+  .gull-wing-left { --wing-angle: 18deg; }
+  .gull-wing-right { --wing-angle: -18deg; }
+  @keyframes gull-wingbeat {
+    0%, 100% { transform: rotate(0deg); }
+    30% { transform: rotate(var(--wing-angle)); }
+    72% { transform: rotate(calc(-.7 * var(--wing-angle))); }
+  }
+}

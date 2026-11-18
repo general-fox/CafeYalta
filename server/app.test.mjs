@@ -67,9 +67,9 @@ test('local API blocks rebinding, unknown origins and cross-site requests', asyn
     assert.equal(response.status, 403);
     await response.text();
   }
-  const allowed = await request('/api/health', { headers: { origin: 'http://localhost:5173', 'sec-fetch-site': 'cross-site' } });
+  const allowed = await request('/api/health', { headers: { origin: 'http://localhost:5180', 'sec-fetch-site': 'cross-site' } });
   assert.equal(allowed.status, 200);
-  assert.equal(allowed.headers.get('access-control-allow-origin'), 'http://localhost:5173');
+  assert.equal(allowed.headers.get('access-control-allow-origin'), 'http://localhost:5180');
   await allowed.text();
 });
 

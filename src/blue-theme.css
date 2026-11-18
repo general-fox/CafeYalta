@@ -1,0 +1,324 @@
+/* Shared maritime palette and surface colors. */
+:root {
+  --palette-midnight: #293661;
+  --palette-paper: #f2ede1;
+  --palette-clay: #c86a4a;
+  --product-action: #798098;
+  --product-action-hover: color-mix(in srgb, var(--product-action) 80%, var(--palette-paper));
+  --ornament-opacity: 89%;
+  --palette-ink: color-mix(in srgb, var(--palette-midnight) 36%, black);
+  --palette-paper-muted: color-mix(in srgb, var(--palette-paper) 86%, var(--palette-clay));
+  --blue: var(--palette-midnight);
+  --cream: var(--palette-paper);
+  --ink: var(--palette-midnight);
+  --pale: var(--palette-paper-muted);
+  --sand: color-mix(in srgb, var(--palette-paper) 83%, var(--palette-clay));
+  --muted: var(--palette-paper-muted);
+  --line: color-mix(in srgb, var(--palette-paper) 30%, transparent);
+  --surface-text: var(--palette-paper);
+  --surface-muted: var(--muted);
+  --surface-accent: var(--palette-paper);
+  --surface-line: var(--line);
+  --surface-control: color-mix(in srgb, var(--palette-paper) 75%, var(--palette-midnight));
+  --surface-hover: color-mix(in srgb, var(--palette-paper) 8%, transparent);
+  /* Darken the ornament over navy just enough for white action labels. */
+  --ornament-on-navy: color-mix(in srgb, var(--palette-clay) var(--ornament-opacity), var(--palette-midnight));
+  --surface-action: color-mix(in srgb, var(--ornament-on-navy) 96%, black);
+  --surface-action-hover: color-mix(in srgb, var(--surface-action) 92%, black);
+  --surface-action-text: white;
+  --surface-focus: var(--palette-paper);
+  --account-muted: var(--muted);
+  color: var(--surface-text);
+  background: var(--palette-midnight);
+}
+
+@media (hover: none) {
+  :root {
+    --surface-action-hover: var(--surface-action);
+    --product-action-hover: var(--product-action);
+  }
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 101;
+  pointer-events: none;
+  background-image: url('./neutral-grain.png');
+  background-size: 100px 100px;
+  mix-blend-mode: soft-light;
+  opacity: .1;
+}
+
+@media print, (forced-colors: active) {
+  body::after { display: none; }
+}
+
+body, #root, .site-footer {
+  color: var(--surface-text);
+  background: var(--palette-midnight);
+}
+.route-content {
+  color: var(--surface-text);
+  background: var(--palette-midnight);
+}
+
+.product-card,
+.modal,
+.checkout-form,
+.checkout-summary,
+.account-page .account-panel,
+.loyalty-brand .lb-signup {
+  --muted: color-mix(in srgb, var(--palette-midnight) 94%, var(--palette-paper));
+  --line: color-mix(in srgb, var(--palette-midnight) 28%, transparent);
+  --surface-text: var(--palette-midnight);
+  --surface-muted: var(--muted);
+  --surface-accent: var(--palette-midnight);
+  --surface-line: var(--line);
+  --surface-control: color-mix(in srgb, var(--palette-midnight) 74%, var(--palette-paper));
+  --surface-hover: var(--sand);
+  --surface-focus: var(--palette-midnight);
+  color: var(--surface-text);
+}
+
+.paper-surface {
+  --muted: color-mix(in srgb, var(--palette-midnight) 82%, var(--palette-paper));
+  --line: color-mix(in srgb, var(--palette-midnight) 22%, transparent);
+  --surface-text: var(--palette-midnight);
+  --surface-muted: var(--muted);
+  --surface-accent: var(--palette-midnight);
+  --surface-line: var(--line);
+  --surface-control: color-mix(in srgb, var(--palette-midnight) 62%, var(--palette-paper));
+  --surface-hover: color-mix(in srgb, var(--palette-midnight) 7%, var(--palette-paper));
+  --surface-focus: var(--palette-midnight);
+  color: var(--surface-text);
+  background: var(--palette-paper);
+}
+
+::selection {
+  color: var(--palette-midnight);
+  background: var(--palette-paper-muted);
+}
+
+:is(button, a, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--surface-focus);
+  outline-offset: 4px;
+}
+
+:is(input, select, textarea):focus {
+  outline-color: var(--surface-focus);
+  border-color: var(--surface-focus);
+}
+
+.eyebrow,
+.text-link,
+.waves,
+.gulls,
+h1 em,
+h2 em {
+  color: var(--surface-accent);
+}
+
+.text-link {
+  border-bottom-color: var(--surface-control);
+}
+
+.add-button,
+.quantity,
+.product-modal-bottom .button {
+  --surface-action: var(--product-action);
+  --surface-action-hover: var(--product-action-hover);
+  --surface-action-text: var(--palette-ink);
+}
+
+.button,
+.button-outline,
+.button-light,
+.add-button,
+.mobile-cart-bar,
+.quantity {
+  color: var(--surface-action-text);
+  background: var(--surface-action);
+  border-color: var(--surface-action);
+}
+
+.button:hover,
+.button-outline:hover,
+.button-light:hover,
+.add-button:hover,
+.mobile-cart-bar:hover,
+.quantity button:enabled:hover {
+  color: var(--surface-action-text);
+  background: var(--surface-action-hover);
+  border-color: var(--surface-action-hover);
+}
+
+.skip-link {
+  color: var(--palette-midnight);
+  background: var(--palette-paper);
+  border: 1px solid var(--palette-midnight);
+}
+
+.section-intro p,
+.product-weight,
+.product-copy > p,
+.menu-toolbar > p,
+.demo-menu-note,
+.menu-section-title > span,
+.category-sidebar > p {
+  color: var(--surface-muted);
+}
+
+.product-tag,
+.image-open {
+  color: var(--palette-midnight);
+  background: var(--palette-paper);
+}
+
+.quantity button:focus-visible {
+  outline-color: var(--surface-action-text);
+  outline-offset: -3px;
+}
+
+.delivery-strip,
+.menu-section-title > span,
+.category-sidebar,
+.delivery-intro,
+.delivery-intro-toggle {
+  border-color: var(--surface-line);
+}
+
+.delivery-strip svg,
+.delivery-strip > a,
+.delivery-intro-toggle {
+  color: var(--surface-accent);
+}
+
+.delivery-intro-toggle:hover {
+  background: var(--surface-hover);
+}
+
+.category-bar {
+  color: var(--surface-text);
+  background: var(--palette-midnight);
+  border-color: var(--surface-line);
+  backdrop-filter: none;
+}
+
+.category-nav > button.active,
+.category-sidebar nav button.active,
+.category-sidebar nav button:not(:disabled):hover {
+  color: var(--surface-text);
+}
+
+.category-nav > button::after {
+  background: var(--surface-accent);
+}
+
+.category-sidebar nav button.active,
+.category-sidebar nav button:not(:disabled):hover {
+  background: var(--surface-hover);
+}
+
+.search-box,
+.search-box input {
+  color: var(--surface-text);
+  border-color: var(--surface-control);
+}
+
+.search-box input::placeholder {
+  color: var(--surface-muted);
+  opacity: 1;
+}
+
+.search-box:focus-within {
+  border-color: var(--surface-focus);
+  outline: 2px solid var(--surface-focus);
+  outline-offset: 4px;
+}
+
+.search-box input:focus-visible {
+  outline: none;
+}
+
+.modal-backdrop {
+  background: color-mix(in srgb, var(--palette-midnight) 65%, transparent);
+}
+
+.modal {
+  color: var(--palette-midnight);
+  background: var(--palette-paper);
+}
+
+.modal-close {
+  color: var(--palette-midnight);
+  background: var(--palette-paper);
+}
+
+.demo-notice {
+  color: var(--palette-midnight);
+  background: var(--palette-paper-muted);
+  border-left-color: var(--palette-clay);
+}
+
+.success-icon {
+  color: var(--palette-midnight);
+  background: var(--palette-paper-muted);
+}
+
+.mobile-cart-bar,
+.toast {
+  box-shadow: 0 8px 28px color-mix(in srgb, var(--palette-midnight) 15%, transparent);
+}
+
+.toast {
+  color: var(--palette-paper);
+  background: var(--palette-midnight);
+  border: 1px solid var(--surface-line);
+}
+
+.footer-brand > span,
+.footer-bottom {
+  color: var(--surface-muted);
+}
+
+.footer-bottom {
+  border-color: var(--surface-line);
+}
+
+.site-footer a:hover {
+  color: var(--palette-paper-muted);
+}
+
+.site-footer { padding: 0; }
+.footer-inner { padding-block: clamp(40px, 5vw, 76px) max(24px, env(safe-area-inset-bottom)); }
+.site-footer .footer-links,
+.site-footer .footer-contacts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  font: 400 15px/1.55 var(--font-ui);
+}
+.site-footer .footer-main .eyebrow { font: 500 12px/1.5 var(--font-ui); letter-spacing: .12em; }
+.site-footer :is(.footer-links, .footer-contacts, .footer-bottom) a:hover {
+  text-decoration: underline;
+  text-underline-offset: .23em;
+}
+@media (max-width: 700px) {
+  .site-footer .footer-links, .site-footer .footer-contacts { font-size: 14px; }
+  #root:has(.mobile-cart-bar) .footer-inner { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
+}
+
+.route-content:has(> .paper-surface) { background: var(--palette-paper); }
+.info-page .text-page {
+  width: min(72ch, calc(100% - 2 * clamp(20px, 5vw, 60px)));
+  margin-inline: auto;
+  padding-block: clamp(36px, 6vw, 88px) clamp(52px, 8vw, 106px);
+}
+.info-page .text-page h1 { font-size: clamp(40px, 6vw, 72px); overflow-wrap: anywhere; }
+.info-page .text-page h2 { font: 500 clamp(20px, 2vw, 26px)/1.3 var(--font-ui); }
+.info-page .text-page p { color: var(--surface-text); line-height: 1.75; }
+.info-page .text-page .button { margin-top: 12px; }

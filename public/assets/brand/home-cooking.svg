@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 563 57" fill="#f2ede1" fill-rule="evenodd">
+  <title>Домашняя кухня</title>
+  <defs>
+    <path id="en" d="M0 0h8v20h14V0h8v49h-8V28H8v21H0z"/>
+    <path id="ya" d="M30 0v49h-8V30h-5L8 49h-9L9 28C4 26 1 22 1 16v-2C1 5 6 0 16 0zm-8 8h-6c-4 0-6 2-6 6v2c0 4 2 6 6 6h6z"/>
+  </defs>
+  <!-- The А and К outlines come from CafeYalta-light.svg. -->
+  <g aria-label="ДОМАШНЯЯ">
+    <path d="M0 41h4c3-7 4-18 4-32V0h23v41h4v16h-8v-8H8v8H0zm12 0h11V8h-7v4c0 13-1 23-4 29z"/>
+    <path transform="translate(47)" d="M15 0c10 0 15 6 15 16v17c0 10-5 16-15 16S0 43 0 33V16C0 6 5 0 15 0zm0 8c-5 0-7 3-7 8v17c0 5 2 8 7 8s7-3 7-8V16c0-5-2-8-7-8z"/>
+    <path transform="translate(88)" d="M0 49V0h9l10 25L29 0h9v49h-8V20l-8 20h-6L8 20v29z"/>
+    <path transform="translate(25 -28)" d="M111 77l10-49h12l10 49h-9l-2-11h-11l-2 11zm12-19h7l-3.5-20z"/>
+    <path transform="translate(179)" d="M0 0h8v41h9V0h8v41h9V0h8v49H0z"/>
+    <use href="#en" x="232"/>
+    <use href="#ya" x="273"/>
+    <use href="#ya" x="314"/>
+  </g>
+  <g aria-label="КУХНЯ">
+    <path transform="translate(311 -28)" d="M60 28h8v19l12-19h9l-14 23 15 26h-10l-12-22v22h-8z"/>
+    <path transform="translate(410)" d="M0 0h9l8 24L24 0h9L20 38c-2 7-5 11-14 11H3v-8h3c4 0 6-1 7-5l1-3z"/>
+    <path transform="translate(450)" d="M0 0h9l7 16 7-16h9L21 24l12 25h-9l-8-17-8 17h-9l12-25z"/>
+    <use href="#en" x="492"/>
+    <use href="#ya" x="533"/>
+  </g>
+</svg>

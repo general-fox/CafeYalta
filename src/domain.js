@@ -2,7 +2,8 @@ import { products } from './data.js';
 
 export const money = value => new Intl.NumberFormat('ru-RU').format(value) + ' ₽';
 export function cartTotal(cart) { return cart.reduce((sum, item) => sum + item.price * item.quantity, 0); }
-export function deliveryFee(total, method) { return method === 'pickup' || total >= 2500 ? 0 : 250; }
+export const COURIER_FEE = 199;
+export function deliveryFee(_subtotal, method) { return method === 'pickup' ? 0 : COURIER_FEE; }
 export function getOrderGift(cart, method) {
   const subtotal = cartTotal(cart.filter(item => !item.isGift));
   if (method !== 'delivery' || subtotal < 2000) return null;

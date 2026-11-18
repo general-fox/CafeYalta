@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ArrowUpRight, Waves } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, CalendarDays } from 'lucide-react';
 import { useShop } from '../store';
+import { asset } from '../components';
 import { normalizePhone, changeQuantity } from '../domain';
 import './secondary.css';
 import './account-readable.css';
@@ -18,8 +19,15 @@ function centerMobileNavItem(nav, item) {
   });
 }
 
-function SmallIcon({ kind = 'bag' }) {
-  return <svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">{kind === 'calendar' ? <><rect x="5" y="7" width="22" height="21" rx="4"/><path d="M5 13h22M11 4v6M21 4v6M11 18h3M18 18h3M11 23h3"/></> : <><path d="M7 10h18l2 18H5l2-18Z"/><path d="M11 12V8a5 5 0 0 1 10 0v4"/></>}</svg>;
+function AccountEmpty({ title, description, image, children }) {
+  return <div className="account-empty">
+    <div className="account-empty-copy">
+      <h3>{title}</h3>
+      <p>{description}</p>
+      {children}
+    </div>
+    <img className="account-empty-photo" src={asset(image)} alt="" width="400" height="400"/>
+  </div>;
 }
 
 function Profile({ user, setUser, notify }) {
@@ -46,7 +54,7 @@ function Profile({ user, setUser, notify }) {
 }
 
 export default function Account() {
-  const { user, setUser, orders = [], reservations = [], setCart, notify, openAuth } = useShop();
+  const { user, setUser, orders = [], reservations = [], setCart, notify, openAuth, setModal } = useShop();
   const [tab, setTab] = useState('orders');
   const mobileNav = useRef(null);
   const signedIn = Boolean(user);
@@ -59,21 +67,42 @@ export default function Account() {
     window.addEventListener('resize', centerSelected);
     return () => window.removeEventListener('resize', centerSelected);
   }, [tab, signedIn]);
-  if (!user) return <main className="account-entry container"><div className="account-entry-art" aria-hidden="true"><div className="account-entry-orbit"/><span className="account-entry-letter">Я</span><Waves className="account-entry-bird" aria-hidden="true"/><p>ВАШЕ МЕСТО У МОРЯ</p></div><div className="account-entry-copy"><span className="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span><h1>Рады видеть<br/><em>вас снова</em></h1><p>Заказы, бронирования и любимый адрес — в одном месте.</p><button className="button" onClick={openAuth}>Войти / создать профиль <ArrowUpRight size={18} aria-hidden="true"/></button><small>Демо без SMS. Данные остаются в этом браузере.</small><Link className="account-text-link" to="/delivery">Посмотреть меню <ArrowRight size={18} aria-hidden="true"/></Link></div></main>;
+  if (!user) return (
+    <main className="account-entry container" aria-labelledby="account-entry-title">
+      <div className="account-entry-copy">
+        <span className="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span>
+        <h1 id="account-entry-title">Рады видеть <em>вас снова</em></h1>
+        <p>Здесь можно посмотреть заказы, бронирования и сохранить адрес доставки.</p>
+        <button className="button" onClick={openAuth}>Войти / создать профиль <ArrowUpRight size={18} aria-hidden="true"/></button>
+        <small>Демо без SMS. Данные остаются в этом браузере.</small>
+        <Link className="account-text-link" to="/delivery">Посмотреть меню <ArrowRight size={18} aria-hidden="true"/></Link>
+      </div>
+      <div className="account-entry-art">
+        <img src={asset('generated/scene/interior-table-hero.webp')}
+          srcSet={`${asset('generated/scene/interior-table-hero.webp')} 640w, ${asset('generated/scene/interior-table.jpg')} 1086w`}
+          sizes="(max-width: 480px) calc(100vw - 40px), (max-width: 700px) 390px, (max-width: 1100px) 37vw, 465px"
+          width="640" height="853" alt="Сервированный столик у окна в кафе «Ялта»"/>
+      </div>
+    </main>
+  );
 
   function repeatOrder(order) {
     setCart(previous => order.items.filter(item => !item.isGift).reduce((next, item) => changeQuantity(next, item, item.quantity || 1), previous));
     notify('Блюда из заказа добавлены в корзину');
   }
 
-  return <main className="account-page container"><div className="account-title"><div><span className="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span><h1>Здравствуйте, <em>{user.name || 'гость'}</em></h1></div><span className="demo-pill"><span/>Демо-кабинет</span></div>
+  return <main className="account-page container" style={{ '--account-ornament': `url(${asset('brand/olive-border.svg')})` }}><div className="account-title"><div><span className="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span><h1>Здравствуйте, <em>{user.name || 'гость'}</em></h1></div><span className="demo-pill"><span/>Демо-кабинет</span></div>
     <div className="account-layout"><aside className="account-sidebar"><div className="account-person"><span className="account-avatar">{(user.name || 'Я').slice(0, 1).toUpperCase()}</span><div><strong>{user.name || 'Гость'}</strong><small>{user.phone}</small></div></div><nav ref={mobileNav} aria-label="Разделы личного кабинета">{tabs.map(([key, label]) => <button key={key} className={tab === key ? 'active' : ''} onClick={event => { setTab(key); if (tab === key) centerMobileNavItem(mobileNav.current, event.currentTarget); }} aria-current={tab === key ? 'page' : undefined}>{label}</button>)}<Link to="/loyalty" onClick={event => centerMobileNavItem(mobileNav.current, event.currentTarget)}>Карта гостя</Link></nav><button className="account-logout" onClick={() => { setUser(null); notify('Вы вышли из кабинета'); }}>Выйти</button></aside>
     <section className="account-main" aria-label={tabs.find(([key]) => key === tab)?.[1]}>
       {tab === 'profile' && <Profile user={user} setUser={setUser} notify={notify}/>}
-      {tab === 'orders' && <div className="account-panel"><div className="account-panel-head"><div><h2>Мои заказы <span className="account-count">{orders.length}</span></h2></div><Link to="/delivery" className="account-text-link">В меню <ArrowUpRight size={18} aria-hidden="true"/></Link></div>
-        {!orders.length ? <div className="account-empty"><span className="account-empty-icon"><SmallIcon/></span><h3>Пока без заказов</h3><p>Начните с любимого блюда.</p><Link className="button" to="/delivery">Выбрать блюда <ArrowUpRight size={18} aria-hidden="true"/></Link></div> : <div className="order-history">{orders.map(order => <article className="history-order" key={order.id}><div className="history-order-heading"><div><strong>Заказ № {String(order.id).slice(-6)}</strong><span>{dateLabel(order.createdAt)} · {order.method === 'pickup' ? 'Самовывоз' : 'Доставка'}</span></div><span className="order-demo-status">Тестовый заказ</span></div><div className="order-history-items">{order.items.map((item, index) => <div key={`${item.id}-${index}`}><span>{item.isGift ? `Морс в подарок · ${item.weight}` : `${item.quantity || 1} × ${item.name}`}</span><span>{rub(item.price * (item.quantity || 1))}</span></div>)}{order.method !== 'pickup' && <div className="history-delivery-fee"><span>Доставка</span><span>{order.deliveryFee ? rub(order.deliveryFee) : 'Бесплатно'}</span></div>}</div><div className="order-address"><span>Куда</span><p>{order.address || (order.method === 'pickup' ? 'Самовывоз из кафе' : user.address || 'Адрес не указан')}</p></div><p className="order-status-note">В кафе не отправлен.</p><div className="history-order-footer"><strong>{rub(order.total)}</strong><Link className="button button-outline" to="/delivery" onClick={() => repeatOrder(order)}>Повторить заказ <ArrowUpRight size={18} aria-hidden="true"/></Link></div></article>)}</div>}
+      {tab === 'orders' && <div className="account-panel"><div className="account-panel-head"><div><h2>Мои заказы <span className="account-count">{orders.length}</span></h2></div>{orders.length > 0 && <Link to="/delivery" className="account-text-link">В меню <ArrowUpRight size={18} aria-hidden="true"/></Link>}</div>
+        {!orders.length ? <AccountEmpty title="Пока без заказов" description="Начните с любимого блюда." image="generated/menu/b1.jpg">
+          <Link className="button" to="/delivery">Выбрать блюда <ArrowUpRight size={18} aria-hidden="true"/></Link>
+        </AccountEmpty> : <div className="order-history">{orders.map(order => <article className="history-order" key={order.id}><div className="history-order-heading"><div><strong>Заказ № {String(order.id).slice(-6)}</strong><span>{dateLabel(order.createdAt)} · {order.method === 'pickup' ? 'Самовывоз' : 'Доставка'}</span></div><span className="order-demo-status">Тестовый заказ</span></div><div className="order-history-items">{order.items.map((item, index) => <div key={`${item.id}-${index}`}><span>{item.isGift ? `Морс в подарок · ${item.weight}` : `${item.quantity || 1} × ${item.name}`}</span><span>{rub(item.price * (item.quantity || 1))}</span></div>)}{order.method !== 'pickup' && order.deliveryFee != null && <div className="history-delivery-fee"><span>Доставка</span><span>{rub(order.deliveryFee)}</span></div>}</div><div className="order-address"><span>Куда</span><p>{order.address || (order.method === 'pickup' ? 'Самовывоз из кафе' : user.address || 'Адрес не указан')}</p></div><p className="order-status-note">В кафе не отправлен.</p><div className="history-order-footer"><strong>{rub(order.total)}</strong><Link className="button button-outline" to="/delivery" onClick={() => repeatOrder(order)}>Повторить заказ <ArrowUpRight size={18} aria-hidden="true"/></Link></div></article>)}</div>}
       </div>}
-      {tab === 'reservations' && <div className="account-panel"><div className="account-panel-head"><div><h2>Бронирования <span className="account-count">{reservations.length}</span></h2></div></div>{!reservations.length ? <div className="account-empty"><span className="account-empty-icon"><SmallIcon kind="calendar"/></span><h3>Пока без бронирований</h3><p>Выберите день и время через кнопку «Забронировать стол».</p></div> : <div className="reservation-history">{reservations.map(reservation => <article key={reservation.id} className="reservation-item"><div className="reservation-date"><SmallIcon kind="calendar"/><strong>{dateLabel(reservation.date)}</strong><span>{reservation.time}</span></div><div><h3>Встречаемся в «Ялте»</h3><p>{reservation.guests} гостей · {reservation.name || user.name}</p><span className="order-demo-status">Тестовая заявка</span><p className="order-status-note">Заявка не отправлена в кафе.</p></div></article>)}</div>}</div>}
+      {tab === 'reservations' && <div className="account-panel"><div className="account-panel-head"><div><h2>Бронирования <span className="account-count">{reservations.length}</span></h2></div></div>{!reservations.length ? <AccountEmpty title="Пока без бронирований" description="Выберите день и время для встречи в «Ялте»." image="generated/scene/interior-table-hero.webp">
+        <button type="button" className="button" onClick={() => setModal('booking')}>Забронировать стол</button>
+      </AccountEmpty> : <div className="reservation-history">{reservations.map(reservation => <article key={reservation.id} className="reservation-item"><div className="reservation-date"><CalendarDays size={24} strokeWidth={1.5} aria-hidden="true"/><strong>{dateLabel(reservation.date)}</strong><span>{reservation.time}</span></div><div><h3>Встречаемся в «Ялте»</h3><p>{reservation.guests} гостей · {reservation.name || user.name}</p><span className="order-demo-status">Тестовая заявка</span><p className="order-status-note">Заявка не отправлена в кафе.</p></div></article>)}</div>}</div>}
     </section></div>
   </main>;
 }

@@ -9,7 +9,7 @@ export function createApiServer({ config, client, now = Date.now }) {
   let pendingMenu;
   const localHosts = new Set([`127.0.0.1:${config.port}`, `localhost:${config.port}`]);
   const origins = new Set([
-    'http://localhost:5173', 'http://127.0.0.1:5173',
+    'http://localhost:5180', 'http://127.0.0.1:5180',
     `http://localhost:${config.port}`, `http://127.0.0.1:${config.port}`,
   ]);
 

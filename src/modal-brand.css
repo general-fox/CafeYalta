@@ -1,0 +1,204 @@
+/* The cream wave, navy title and clay action echo the home hero. */
+.modal-backdrop .modal {
+  --dialog-padding: clamp(20px, 4vw, 38px);
+  --dialog-line: color-mix(in srgb, var(--palette-midnight) 27%, var(--palette-paper));
+  --dialog-control: color-mix(in srgb, var(--palette-midnight) 58%, var(--palette-paper));
+  --dialog-wash: color-mix(in srgb, var(--palette-paper) 86%, white);
+  border: 0;
+  box-shadow: 0 24px 80px color-mix(in srgb, var(--palette-ink) 30%, transparent);
+  overscroll-behavior: contain;
+}
+
+.modal-backdrop .modal:not(.product-modal) {
+  padding: 0 var(--dialog-padding) var(--dialog-padding);
+}
+
+.modal-backdrop .modal:not(.product-modal) > h2 {
+  position: relative;
+  margin: 0 calc(0px - var(--dialog-padding)) 22px;
+  padding: clamp(23px, 3vw, 32px) calc(var(--dialog-padding) + 46px) 26px var(--dialog-padding);
+  max-width: none;
+  color: var(--palette-paper);
+  background: var(--palette-midnight);
+  border: 0;
+  font: 400 clamp(38px, 4.5vw, 54px)/1.13 var(--font-accent);
+  letter-spacing: normal;
+  text-wrap: balance;
+}
+
+.modal-backdrop .modal:not(.product-modal) > h2::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 10px;
+  background: var(--palette-paper);
+  mask: var(--shore-wave-mask) center / 100% 100% no-repeat;
+  pointer-events: none;
+}
+
+.modal-backdrop .modal-close {
+  display: grid;
+  place-items: center;
+  top: 12px;
+  right: 12px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--palette-paper);
+  border: 1px solid color-mix(in srgb, var(--palette-paper) 55%, var(--palette-midnight));
+  background: var(--palette-midnight);
+}
+
+.modal-backdrop .modal-close:is(:hover, :focus-visible) {
+  color: var(--palette-midnight);
+  background: var(--palette-paper);
+  outline-color: var(--palette-paper);
+}
+
+.modal-backdrop .modal .modal-intro {
+  font: 400 16px/1.55 var(--font-ui);
+  margin: 0 0 20px;
+  color: var(--palette-midnight);
+}
+
+.modal-backdrop .booking-modal > .eyebrow {
+  margin: 0 0 8px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.modal-backdrop .modal label:not(.checkbox-label),
+.modal-backdrop .modal legend {
+  min-width: 0;
+  color: var(--palette-midnight);
+  font: 600 15px/1.4 var(--font-ui);
+}
+
+.modal-backdrop .modal :is(input:not([type='checkbox']), select, textarea) {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--dialog-control);
+  background: var(--dialog-wash);
+  padding: 10px 13px;
+  font: 400 16px/1.4 var(--font-ui);
+}
+
+.modal-backdrop .modal :is(input:not([type='checkbox']), select, textarea):focus {
+  border-color: var(--palette-midnight);
+  outline: 2px solid var(--palette-midnight);
+  outline-offset: 1px;
+}
+
+.modal-backdrop .modal :is(input, textarea)::placeholder {
+  color: color-mix(in srgb, var(--palette-midnight) 78%, var(--palette-paper));
+}
+
+.modal-backdrop .modal .checkbox-label {
+  align-items: start;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.modal-backdrop .modal input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--palette-midnight);
+}
+
+.modal-backdrop .modal .demo-notice {
+  border: 1px solid var(--dialog-line);
+  border-left: 3px solid var(--palette-clay);
+  background: var(--sand);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.modal-backdrop .booking-modal .time-slots button {
+  background: var(--dialog-wash);
+  border-color: var(--dialog-control);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.modal-backdrop .modal .button {
+  min-height: 48px;
+  padding: 12px 18px;
+  font-size: 16px;
+  font-weight: 600;
+  gap: 10px;
+}
+
+.modal-backdrop .cart-modal .cart-item {
+  align-items: center;
+  grid-template-columns: clamp(56px, 12vw, 78px) minmax(0, 1fr) auto;
+  gap: clamp(8px, 2vw, 16px);
+}
+
+.modal-backdrop .cart-modal .cart-item > img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.modal-backdrop .cart-modal .cart-item :is(h3, strong) {
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.modal-backdrop .cart-modal .remove-item {
+  width: 44px;
+  height: 44px;
+}
+
+.modal-backdrop .product-modal > h2 {
+  padding: 22px var(--dialog-padding) 0;
+  font: 500 clamp(24px, 3.3vw, 34px)/1.2 var(--font-ui);
+  letter-spacing: -.025em;
+}
+
+.modal-backdrop .product-modal-content {
+  padding: 12px var(--dialog-padding) var(--dialog-padding);
+}
+
+.modal-backdrop .product-modal-content > p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 12px 0;
+}
+
+.modal-backdrop .product-modal-content > .allergens {
+  font-size: 14px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--dialog-line);
+}
+
+.modal-backdrop .product-modal-bottom {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-backdrop .product-modal-bottom > :is(.button, .quantity) {
+  justify-self: end;
+  min-height: 50px;
+}
+
+@media (max-width: 380px) {
+  .modal-backdrop .product-modal-bottom {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .modal-backdrop .modal { --dialog-padding: 17px; }
+  .modal-backdrop .modal:not(.product-modal) > h2 {
+    padding-right: 60px;
+    margin-bottom: 17px;
+  }
+}

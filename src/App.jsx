@@ -1,29 +1,32 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Routes, Route, NavLink, Link, useLocation } from 'react-router-dom';
-import { ArrowUpRight, Clock3, UserRound, ShoppingBag, Menu, X, Check, Heart, Sparkle, Phone } from 'lucide-react';
+import { ArrowUpRight, UserRound, ShoppingBag, Menu, X, Check, Phone } from 'lucide-react';
 import { useShop } from './store';
-import { asset, Waves, Gulls, ArrowLink, ProductCard } from './components';
-import { products } from './data';
+import { asset, Waves } from './components';
 import { money, cartTotal } from './domain';
 import Delivery from './pages/Delivery';
 import HomeHero from './HomeHero';
-import AtmosphereCollage from './AtmosphereCollage';
+import AboutCafe from './AboutCafe';
+import GuestCard from './GuestCard';
 import Checkout from './pages/Checkout';
 import Account from './pages/Account';
 import Loyalty from './pages/Loyalty';
 import Modals from './modals';
-function Header() {
-  const { user, cart, setModal, openAuth } = useShop();
+function OliveBorder() {
+  return <div className="olive-border" style={{ '--olive-ornament': `url(${asset('brand/olive-border.svg')})` }} aria-hidden="true"/>;
+}
+
+function Header({ cartCount }) {
+  const { user, openAuth, setModal } = useShop();
   const [mobile, setMobile] = useState(false);
   const location = useLocation();
   const header = useRef(null);
   const navigation = useRef(null);
   const menuButton = useRef(null);
-  const count = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => setMobile(false), [location.pathname]);
   useEffect(() => {
-    const desktop = window.matchMedia('(min-width: 1241px)');
+    const desktop = window.matchMedia('(min-width: 701px)');
     const closeDesktopMenu = () => { if (desktop.matches) setMobile(false); };
     desktop.addEventListener('change', closeDesktopMenu);
     return () => desktop.removeEventListener('change', closeDesktopMenu);
@@ -45,33 +48,97 @@ function Header() {
     };
   }, [mobile]);
 
-  return <header ref={header} className="site-header"><div className="header-inner">
-    <Link className="brand" to="/" aria-label="Кафе Ялта — главная" onClick={() => setMobile(false)}><img src={asset('brand/CafeYalta.svg')} alt="Кафе Ялта" width="700" height="100"/><span className="brand-caption">ДОМАШНЯЯ КУХНЯ</span></Link>
+  return <header ref={header} className="site-header">
+    <OliveBorder/>
+    <div className="surface-grain" aria-hidden="true"/>
+    <div className="header-inner">
+    <Link className="brand" to="/" aria-label="Кафе Ялта — главная" onClick={() => setMobile(false)}>
+      <img className="brand-logo" src={asset('brand/CafeYalta-light.svg')} alt="Кафе Ялта" width="700" height="100"/>
+      <img className="brand-caption" src={asset('brand/home-cooking.svg')} alt="Домашняя кухня" width="563" height="57"/>
+    </Link>
     <nav ref={navigation} id="main-navigation" className={mobile ? 'main-nav is-open' : 'main-nav'} aria-label="Главная навигация">
       <NavLink to="/delivery">Доставка</NavLink>
       <NavLink to="/loyalty">Программа лояльности</NavLink>
       <a href="#/#about" onClick={() => { setMobile(false); setTimeout(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }), 60); }}>О нас</a>
+      {mobile && (user
+        ? <NavLink to="/account" onClick={() => setMobile(false)}>Личный кабинет</NavLink>
+        : <button type="button" className="mobile-account-entry" onClick={() => {
+            menuButton.current?.focus();
+            setMobile(false);
+            openAuth();
+          }}>Войти в личный кабинет</button>
+      )}
     </nav>
     <div className="header-actions">
       {user ? <Link className="account-button" to="/account" aria-label="Личный кабинет" title="Личный кабинет" onClick={() => setMobile(false)}><UserRound size={22} aria-hidden="true"/></Link> : <button type="button" className="account-button" aria-label="Войти в личный кабинет" title="Войти в личный кабинет" onClick={() => { setMobile(false); openAuth(); }}><UserRound size={22} aria-hidden="true"/></button>}
-      <button type="button" className="header-cart icon-button" onClick={() => { setMobile(false); setModal('cart'); }} aria-label={`Корзина: ${count} блюд`} title="Корзина"><ShoppingBag size={22} aria-hidden="true"/>{count > 0 && <span aria-hidden="true">{count}</span>}</button>
       <a className="header-phone" href="tel:+74951234567" aria-label="Позвонить в кафе: +7 (495) 123-45-67" title="Позвонить в кафе" onClick={() => setMobile(false)}><Phone size={22} aria-hidden="true"/></a>
+      <button type="button" className="header-cart" disabled={!cartCount} aria-label={`Корзина, порций: ${cartCount}`} title="Открыть корзину" aria-haspopup="dialog" onClick={() => setModal('cart')}>
+        <ShoppingBag size={22} aria-hidden="true"/><span aria-hidden="true">{cartCount}</span>
+      </button>
       <button ref={menuButton} type="button" className="mobile-menu icon-button" onClick={() => setMobile(open => !open)} aria-expanded={mobile} aria-controls="main-navigation" aria-label={mobile ? 'Закрыть меню' : 'Открыть меню'} title={mobile ? 'Закрыть меню' : 'Открыть меню'}>{mobile ? <X size={24} aria-hidden="true"/> : <Menu size={24} aria-hidden="true"/>}</button>
     </div>
   </div></header>;
 }
-function Home() { const { setModal } = useShop(); return <main>
-  <HomeHero/>
-  <div className="sea-divider" aria-hidden="true"><svg viewBox="0 0 1440 24" preserveAspectRatio="none"><path d="M0 12 Q90 -5 180 12T360 12T540 12T720 12T900 12T1080 12T1260 12T1440 12"/></svg><span><Sparkle aria-hidden="true"/>ДОМАШНЯЯ КУХНЯ</span><span><Sparkle aria-hidden="true"/>ЮЖНЫЙ ХАРАКТЕР</span><span><Sparkle aria-hidden="true"/>ТЁПЛЫЕ ВСТРЕЧИ</span></div>
-  <section className="home-menu container section-space" id="home-menu"><div className="section-title reveal"><div><span className="eyebrow">ИЗ ЯЛТЫ — С ЛЮБОВЬЮ</span><h2>К вам на стол</h2></div><div className="section-intro"><ArrowLink to="/delivery">Всё меню</ArrowLink></div></div><div className="home-products">{[products[0], products[11], products[8]].map((product, i) => <ProductCard key={product.id} product={product} index={i}/>)}</div><div className="delivery-strip reveal"><span><Clock3 size={20}/> Примерно 45–60 минут</span><span><ShoppingBag size={20}/> Доставка бесплатно от 2 500 ₽</span><Link to="/delivery">Выбрать что-нибудь вкусное <ArrowUpRight size={18}/></Link></div></section>
-  <section className="about-section" id="about"><div className="container about-grid"><div className="about-heading reveal"><span className="eyebrow">НАША МАЛЕНЬКАЯ ЯЛТА</span><h2>Ближе, чем море<br/><em>Теплее, чем дома</em></h2></div><AtmosphereCollage/><div className="about-copy reveal"><p>«Ялта» — место, где можно выдохнуть и собрать близких за одним столом.</p><p>Готовим щедро и по-домашнему: от румяных сырников к завтраку до неспешного ужина с южным настроением.</p><button className="text-link" onClick={() => setModal('booking')}>Увидимся в «Ялте» <ArrowUpRight size={19}/></button><Waves/></div></div></section>
-  <section className="loyalty-preview container section-space"><div className="loyalty-preview-copy reveal"><span className="eyebrow">ДЛЯ ТЕХ, КТО С НАМИ</span><h2>Хорошо быть<br/><em>своим</em></h2><p>Бонусы за любимые блюда<br/>и сюрпризы для наших гостей.</p><ArrowLink to="/loyalty">Стать другом «Ялты»</ArrowLink><small>Программа готовится к запуску</small></div><div className="loyalty-preview-art reveal"><div className="loyalty-card"><span>КАРТА ЛЮБИМОГО ГОСТЯ</span><img src={asset('brand/Yalta-white.svg')} alt="Ялта"/><Waves/><div><span>МОРЕ ПРИЯТНЫХ МОМЕНТОВ</span><Heart size={18} aria-hidden="true"/></div></div><Gulls/></div></section>
-  <section className="visit-section"><div className="container"><Gulls/><span className="eyebrow">ВАШ СТОЛИК УЖЕ ЖДЁТ</span><h2>До встречи <em>в «Ялте»</em></h2><p>Москва, ул. Покровка, 27 <span>•</span> Каждый день с 09:00 до 23:00</p><button className="button button-light" onClick={() => setModal('booking')}>Забронировать стол <ArrowUpRight size={19}/></button></div></section>
-  </main>; }
-function Footer() { return <footer className="site-footer container"><div className="footer-main"><Link className="footer-brand" to="/"><img src={asset('brand/CafeYalta.svg')} alt="Кафе Ялта" width="700" height="100"/><span>Немного моря в Москве</span></Link><div><span className="eyebrow">ЗАГЛЯДЫВАЙТЕ</span><Link to="/delivery">Доставка и меню</Link><Link to="/loyalty">Программа лояльности</Link><Link to="/account">Личный кабинет</Link></div><div><span className="eyebrow">МЫ РЯДОМ</span><a href="tel:+74951234567">+7 (495) 123-45-67</a><span>Москва, ул. Покровка, 27</span><span>Ежедневно 09:00–23:00</span></div><Waves/></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Кафе «Ялта»</span><span>Демо · контакты и меню — примеры</span><Link to="/privacy">Конфиденциальность</Link></div></footer>; }
-function Privacy() { return <main className="container text-page"><span className="eyebrow">ВАШИ ДАННЫЕ</span><h1>Конфиденциальность</h1><p>Этот сайт — демонстрационная версия кафе «Ялта». Введённые имя, телефон, адрес, состав тестовых заказов и бронирований сохраняются только в локальном хранилище вашего браузера на этом устройстве. В кафе они не отправляются. Не вводите реальные персональные данные для тестирования.</p><h2>Как удалить данные</h2><p>Очистите данные сайта в настройках браузера. После этого удалятся профиль, корзина и вся тестовая история на этом устройстве.</p><h2>Перед открытием кафе</h2><p>Здесь появится политика оператора персональных данных с актуальными реквизитами, целями обработки, сроками хранения и контактами. Реальная авторизация, оплата и обработка заказов пока не подключены.</p><Link className="button" to="/">На главную <ArrowUpRight size={18}/></Link></main>; }
+function Home() {
+  const gullOrigin = useRef(null);
+
+  return <main className="home-page">
+    <div className="coastal-intro">
+      <HomeHero gullOrigin={gullOrigin}/>
+      <AboutCafe gullOrigin={gullOrigin}/>
+    </div>
+    <section className="home-guest-section" aria-labelledby="home-guest-title">
+      <div className="container home-guest-layout">
+        <div className="home-guest-info reveal">
+          <span className="eyebrow">ПРОГРАММА ЛОЯЛЬНОСТИ</span>
+          <h2 id="home-guest-title">Хорошо быть <em>своим</em></h2>
+          <p>Бонусы за любимые блюда и сюрпризы для наших гостей.</p>
+          <Link className="button home-guest-action" to="/loyalty">Как получить карту</Link>
+          <small>Программа готовится к запуску</small>
+        </div>
+        <div className="home-guest-card reveal">
+          <GuestCard/>
+        </div>
+      </div>
+    </section>
+  </main>;
+}
+function Footer() {
+  return <footer className="site-footer">
+    <OliveBorder/>
+    <div className="container footer-inner">
+      <div className="footer-main">
+        <Link className="footer-brand" to="/">
+          <img src={asset('brand/CafeYalta-light.svg')} alt="Кафе Ялта" width="700" height="100"/>
+          <span>Немного моря в Москве</span>
+        </Link>
+        <nav className="footer-links" aria-label="Разделы сайта">
+          <span className="eyebrow">ЗАГЛЯДЫВАЙТЕ</span>
+          <Link to="/delivery">Доставка и меню</Link>
+          <Link to="/loyalty">Программа лояльности</Link>
+          <Link to="/account">Личный кабинет</Link>
+        </nav>
+        <div className="footer-contacts">
+          <span className="eyebrow">МЫ РЯДОМ</span>
+          <a href="tel:+74951234567">+7 (495) 123-45-67</a>
+          <span>Москва, ЖК «Испанские кварталы»</span>
+          <span>Ежедневно 11:00–23:00</span>
+        </div>
+        <Waves/>
+      </div>
+      <div className="footer-bottom">
+        <span>© {new Date().getFullYear()} Кафе «Ялта»</span>
+        <span>Демо · контакты и меню — примеры</span>
+        <Link to="/privacy">Конфиденциальность</Link>
+      </div>
+    </div>
+  </footer>;
+}
+function Privacy() { return <main className="info-page paper-surface"><div className="container text-page"><span className="eyebrow">ВАШИ ДАННЫЕ</span><h1>Конфиденциальность</h1><p>Этот сайт — демонстрационная версия кафе «Ялта». Введённые имя, телефон, адрес, состав тестовых заказов и бронирований сохраняются только в локальном хранилище вашего браузера на этом устройстве. В кафе они не отправляются. Не вводите реальные персональные данные для тестирования.</p><h2>Как удалить данные</h2><p>Очистите данные сайта в настройках браузера. После этого удалятся профиль, корзина и вся тестовая история на этом устройстве.</p><h2>Перед открытием кафе</h2><p>Здесь появится политика оператора персональных данных с актуальными реквизитами, целями обработки, сроками хранения и контактами. Реальная авторизация, оплата и обработка заказов пока не подключены.</p><Link className="button" to="/">На главную <ArrowUpRight size={18}/></Link></div></main>; }
 export default function App() { const location = useLocation(); const { setModal, cart, toast } = useShop();
+  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+  const showCart = location.pathname !== '/checkout' && cartCount > 0;
   useLayoutEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); const titles = { '/': 'Кафе Ялта — доставка в Москве', '/delivery': 'Доставка и меню — Ялта', '/loyalty': 'Программа лояльности — Ялта', '/account': 'Личный кабинет — Ялта', '/checkout': 'Оформление заказа — Ялта' }; document.title = titles[location.pathname] || 'Кафе Ялта'; }, [location.pathname]);
   useEffect(() => { const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } }), { threshold: 0.07 }); const observe = () => document.querySelectorAll('.reveal:not(.is-visible)').forEach(el => observer.observe(el)); observe(); const mutation = new MutationObserver(observe); mutation.observe(document.getElementById('root'), { childList: true, subtree: true }); return () => { observer.disconnect(); mutation.disconnect(); }; }, []);
-  return <><a className="skip-link" href="#main-content" onClick={e => { e.preventDefault(); document.getElementById('main-content')?.focus(); }}>Перейти к содержимому</a><Header/><div id="main-content" tabIndex={-1} className="route-content" key={location.pathname}><Routes><Route path="/" element={<Home/>}/><Route path="/delivery" element={<Delivery/>}/><Route path="/checkout" element={<Checkout/>}/><Route path="/account" element={<Account/>}/><Route path="/loyalty" element={<Loyalty/>}/><Route path="/privacy" element={<Privacy/>}/><Route path="*" element={<main className="container text-page"><h1>Кажется, здесь только море</h1><Link className="button" to="/">Вернуться на берег</Link></main>}/></Routes></div><Footer/>{location.pathname === '/delivery' && cart.length > 0 && <button className="mobile-cart-bar" onClick={() => setModal('cart')}><ShoppingBag size={20}/><span>Корзина · {cart.reduce((s, p) => s + p.quantity, 0)}</span><strong>{money(cartTotal(cart))}</strong></button>}<Modals/>{toast && <div className="toast" role="status"><Check size={18}/>{toast}</div>}</>;
+  return <><a className="skip-link" href="#main-content" onClick={e => { e.preventDefault(); document.getElementById('main-content')?.focus(); }}>Перейти к содержимому</a><Header cartCount={showCart ? cartCount : 0}/><div id="main-content" tabIndex={-1} className="route-content" key={location.pathname}><Routes><Route path="/" element={<Home/>}/><Route path="/delivery" element={<Delivery/>}/><Route path="/checkout" element={<Checkout/>}/><Route path="/account" element={<Account/>}/><Route path="/loyalty" element={<Loyalty/>}/><Route path="/privacy" element={<Privacy/>}/><Route path="*" element={<main className="info-page paper-surface"><div className="container text-page"><h1>Кажется, здесь только море</h1><Link className="button" to="/">Вернуться на берег</Link></div></main>}/></Routes></div><Footer/>{showCart && <button className="mobile-cart-bar" type="button" aria-haspopup="dialog" onClick={() => setModal('cart')}><ShoppingBag size={20} aria-hidden="true"/><span>Корзина · {cartCount}</span><strong>{money(cartTotal(cart))}</strong></button>}<Modals/>{toast && <div className="toast" role="status"><Check size={18}/>{toast}</div>}</>;
 }
