@@ -7,6 +7,7 @@
   --shore-wave-clip: inset(0 0 calc(var(--shore-wave-height) * .1));
   --header-h: calc(var(--header-row-h) + var(--shore-wave-height));
   --header-ornament-h: 28px;
+  --olive-ornament: url('/assets/brand/olive-border.svg');
   --menu-tabs-h: 0px;
 }
 

@@ -13,7 +13,7 @@ import Account from './pages/Account';
 import Loyalty from './pages/Loyalty';
 import Modals from './modals';
 function OliveBorder() {
-  return <div className="olive-border" style={{ '--olive-ornament': `url(${asset('brand/olive-border.svg')})` }} aria-hidden="true"/>;
+  return <div className="olive-border" aria-hidden="true"/>;
 }
 
 function Header({ cartCount }) {

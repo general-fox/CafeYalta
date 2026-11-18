@@ -91,7 +91,7 @@ export default function Account() {
     notify('Блюда из заказа добавлены в корзину');
   }
 
-  return <main className="account-page container" style={{ '--account-ornament': `url(${asset('brand/olive-border.svg')})` }}><div className="account-title"><div><span className="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span><h1>Здравствуйте, <em>{user.name || 'гость'}</em></h1></div><span className="demo-pill"><span/>Демо-кабинет</span></div>
+  return <main className="account-page container"><div className="account-title"><div><span className="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span><h1>Здравствуйте, <em>{user.name || 'гость'}</em></h1></div><span className="demo-pill"><span/>Демо-кабинет</span></div>
     <div className="account-layout"><aside className="account-sidebar"><div className="account-person"><span className="account-avatar">{(user.name || 'Я').slice(0, 1).toUpperCase()}</span><div><strong>{user.name || 'Гость'}</strong><small>{user.phone}</small></div></div><nav ref={mobileNav} aria-label="Разделы личного кабинета">{tabs.map(([key, label]) => <button key={key} className={tab === key ? 'active' : ''} onClick={event => { setTab(key); if (tab === key) centerMobileNavItem(mobileNav.current, event.currentTarget); }} aria-current={tab === key ? 'page' : undefined}>{label}</button>)}<Link to="/loyalty" onClick={event => centerMobileNavItem(mobileNav.current, event.currentTarget)}>Карта гостя</Link></nav><button className="account-logout" onClick={() => { setUser(null); notify('Вы вышли из кабинета'); }}>Выйти</button></aside>
     <section className="account-main" aria-label={tabs.find(([key]) => key === tab)?.[1]}>
       {tab === 'profile' && <Profile user={user} setUser={setUser} notify={notify}/>}

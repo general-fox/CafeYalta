@@ -19,7 +19,7 @@
   inset: 0 0 auto;
   height: clamp(11px, 1.4vw, 17px);
   background: var(--palette-clay);
-  mask: var(--guest-ornament) left center / auto 100% repeat-x;
+  mask: var(--olive-ornament) left center / auto 100% repeat-x;
 }
 .guest-card-sample :is(.guest-card-label, .guest-card-details) {
   display: flex;

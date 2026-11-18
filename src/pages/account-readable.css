@@ -138,7 +138,7 @@
   inset: 0 var(--panel-radius) auto;
   height: 12px;
   background: var(--palette-clay);
-  mask: var(--account-ornament) left center / auto 100% repeat-x;
+  mask: var(--olive-ornament) left center / auto 100% repeat-x;
   pointer-events: none;
 }
 .account-page .account-panel-head {
