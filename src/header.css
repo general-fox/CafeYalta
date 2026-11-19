@@ -78,6 +78,19 @@
   flex-shrink: 0;
 }
 
+@media (any-pointer: coarse) {
+  :is(.site-header .brand, .site-footer .footer-brand) {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  :is(.site-header .brand, .site-footer .footer-brand) > :is(img, span) {
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+}
+
 .site-header .brand-caption { display: none; }
 
 .site-header .brand-logo {

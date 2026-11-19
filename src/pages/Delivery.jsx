@@ -127,7 +127,7 @@ export default function Delivery({ mobileCart }) {
     </div>
     <div className="container menu-layout">
       <aside className="category-sidebar">{search}<nav aria-label="Категории меню на компьютере">{categoryButtons}</nav></aside>
-      <div className="menu-main"><div className="mobile-menu-search">{search}</div><p className="demo-menu-note">Демонстрационное меню</p>
+      <div className="menu-main"><div className="mobile-menu-search">{search}</div>
         {filtered.length ? categories.map(category => {
           const list = filtered.filter(product => product.category === category.id);
           return list.length > 0 && <section key={category.id} id={`category-${category.id}`} data-category={category.id} className="menu-section"><div className="menu-section-title"><h2>{category.name}</h2></div><div className="menu-products">{list.map((product, index) => <ProductCard key={product.id} product={product} index={index}/>)}</div></section>;

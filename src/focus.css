@@ -2,7 +2,8 @@
   --focus-fill: color-mix(in srgb, var(--palette-clay) 28%, var(--palette-paper));
 }
 
-#root :is(a[href], button:enabled, summary):is(:focus-visible, :active),
+#root :is(a[href], button:enabled, summary):focus-visible,
+#root :is(a[href], button:enabled, summary):active:where(:not(.brand, .footer-brand)),
 #root :is(input:not([type='checkbox']), select, textarea):focus,
 #root [tabindex='0']:focus-visible,
 #root .search-box:focus-within,
@@ -33,13 +34,14 @@
 #root .checkbox-label:has(> input:focus-visible) :is(span, a) { color: inherit; }
 
 #root .hero-offer-code button:is(:focus-visible, :active) :is(svg, span),
-#root .footer-brand:is(:focus-visible, :active) span { color: inherit; }
-#root :is(.brand, .footer-brand):is(:focus-visible, :active) img {
+#root .footer-brand:focus-visible span { color: inherit; }
+#root :is(.brand, .footer-brand):focus-visible img {
   filter: brightness(0) opacity(.8);
 }
 
-/* Keep the white add icon legible against the lighter keyboard highlight. */
-#root button:is(:focus-visible, :active) .lucide-plus {
+/* Keep quantity icons readable on the lighter keyboard highlight. */
+#root :is(.add-button, .quantity button):is(:focus-visible, :active) svg {
+  color: var(--surface-action-text);
   background: var(--surface-action);
   border-radius: 50%;
 }

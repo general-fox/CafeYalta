@@ -128,12 +128,6 @@
   }
 }
 
-.delivery-page .demo-menu-note {
-  margin-bottom: 16px;
-  color: var(--surface-muted);
-  font-size: 13px;
-}
-
 .delivery-page .menu-section {
   margin-bottom: clamp(42px, 6vw, 78px);
 }
@@ -471,6 +465,10 @@
     outline-offset: -4px;
   }
 
+  #root:has(> .mobile-cart-bar) .editorial-hero {
+    --hero-bottom-inset: var(--cart-bar-clearance);
+  }
+
   #root:has(> .mobile-cart-bar) > .toast {
     bottom: var(--cart-bar-clearance);
   }
@@ -491,21 +489,50 @@
     scroll-padding-bottom: var(--delivery-dock-height, 60px);
   }
 
+  /* Keep an unfiltered, solid viewport edge for Safari's toolbar color sampling. */
+  body:has(.delivery-page)::after { bottom: var(--delivery-dock-height, 60px); }
+
   .route-content:has(> .delivery-page) { animation-name: fade-in; }
 
   .delivery-page .category-bar {
     position: fixed;
     inset: auto 0 0;
     z-index: 35;
-    padding: 0 env(safe-area-inset-right, 0px) max(4px, env(safe-area-inset-bottom, 0px)) env(safe-area-inset-left, 0px);
-    border-block-end: 0;
+    padding-bottom: max(4px, env(safe-area-inset-bottom, 0px));
+    background-color: var(--palette-clay);
+    border: 0;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
-  .delivery-page .category-inner { width: 100%; }
+  .delivery-page .category-bar:has(> .mobile-cart-bar) {
+    background-color: var(--palette-midnight);
+  }
+
+  /* Paint below the layout viewport while the native toolbar expands or collapses. */
+  .delivery-page .category-bar::after {
+    content: '';
+    position: absolute;
+    inset: 100% 0 auto;
+    height: calc(100lvh - 100svh + env(safe-area-inset-bottom, 0px));
+    background-color: inherit;
+    pointer-events: none;
+  }
+
+  .delivery-page .category-inner {
+    --surface-text: var(--palette-ink);
+    --surface-hover: var(--palette-paper);
+    width: 100%;
+    padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+    background-color: var(--palette-clay);
+  }
+
+  .delivery-page .category-nav > button.active { color: var(--palette-midnight); }
 
   .delivery-page .category-bar .mobile-cart-bar {
     position: static;
-    margin-block: 2px 6px;
+    max-width: calc(100% - 2 * max(14px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)));
+    margin-block: 6px;
     box-shadow: none;
   }
 

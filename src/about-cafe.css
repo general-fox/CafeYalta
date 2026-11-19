@@ -127,26 +127,62 @@
 @media (max-width: 700px) {
   .cafe-story.about-section {
     align-content: stretch;
-    padding-block: clamp(24px, 3.5vh, 36px);
+    /* Keep the cream surface behind the toolbar, with the gallery in the visible area. */
+    min-height: calc(100lvh - var(--header-row-h));
+    padding-block: clamp(18px, 2.5dvh, 24px)
+      calc(max(16px, env(safe-area-inset-bottom, 0px)) + 100lvh - 100dvh);
   }
   .cafe-story .cafe-story-layout {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(180px, 1fr);
+    grid-template-rows: auto minmax(clamp(200px, 30dvh, 280px), 1fr);
     grid-template-areas: 'copy' 'gallery';
-    gap: 24px;
+    gap: 16px;
   }
-  .cafe-story .cafe-story-copy { max-width: 540px; }
-  .cafe-story .cafe-story-title {
-    font-size: clamp(40px, 8vw, 57px);
-    line-height: 1.2;
-    margin-bottom: 20px;
+  .cafe-story .cafe-story-copy {
+    max-width: 540px;
+    container-type: inline-size;
   }
+  .cafe-story-heading {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: 'birds kicker' 'birds title';
+    align-items: center;
+    gap: 3px 12px;
+    margin-block-end: 14px;
+  }
+  .cafe-story-heading .gull-arrival { grid-area: birds; margin: 0; }
+  .cafe-story .cafe-story-heading .cafe-story-kicker {
+    grid-area: kicker;
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: .11em;
+  }
+  .cafe-story .cafe-story-heading .cafe-story-title {
+    grid-area: title;
+    margin: 0;
+    font-size: clamp(34px, 10.8cqi, 44px);
+    line-height: 1.15;
+  }
+  @container (max-width: 315px) {
+    .cafe-story-heading { grid-template-areas: 'birds kicker' 'title title'; }
+    .cafe-story .cafe-story-heading .cafe-story-title { font-size: 40px; }
+  }
+  .cafe-story .cafe-story-copy p { line-height: 1.5; margin-bottom: 0; }
+  .cafe-story .cafe-story-copy p + p { margin-top: 10px; }
   .cafe-story .cafe-story-track {
     align-self: stretch;
     contain: size;
-    gap: 14px;
+    margin-inline-end: calc(0px - var(--coast-edge));
+    gap: 10px;
   }
-  .cafe-story .cafe-story-photo { width: 86%; height: 100%; }
+  .cafe-story .cafe-story-photo { width: calc(100% - 30px); height: 100%; }
+}
+@media (min-width: 520px) and (max-width: 700px) and (orientation: landscape) {
+  .cafe-story .cafe-story-layout {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    grid-template-rows: minmax(200px, 1fr);
+    grid-template-areas: 'copy gallery';
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .cafe-story .cafe-story-track { scroll-behavior: auto; }

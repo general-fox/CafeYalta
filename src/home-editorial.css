@@ -220,7 +220,7 @@
 @media (max-width: 700px) {
   .editorial-hero {
     --hero-copy-inset: clamp(16px, 3svh, 28px);
-    --hero-gulls-width: clamp(108px, 40vw, 175px);
+    --hero-gulls-width: clamp(96px, 34vw, 150px);
     /* Keep the next section below Safari’s floating toolbar and the buttons above it. */
     --hero-viewport: 100lvh;
     --hero-toolbar-space: calc(100lvh - 100dvh);
@@ -246,8 +246,8 @@
     padding: var(--hero-copy-inset) 0 var(--hero-action-gap);
   }
   .editorial-hero .hero-location {
-    /* The flock shares the city row; the full neighbourhood name sits below its wings. */
-    min-height: calc(var(--hero-gulls-width) * 164 / 300 + 1lh + 4px);
+    /* The wings end above the bottom of the SVG; start the second line just below them. */
+    min-height: calc(var(--hero-gulls-width) * 140 / 300 + 1lh + 4px);
     align-content: end;
     margin-bottom: 12px;
     font-size: clamp(.9375rem, 4vw, 1.0625rem);

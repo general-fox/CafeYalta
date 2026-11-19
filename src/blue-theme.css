@@ -133,15 +133,12 @@ h2 em {
 
 @media (hover: hover) {
   :is(.cart-modal, .checkout-summary) .quantity {
-    --surface-action-hover: color-mix(in srgb, var(--surface-action) 85%, var(--palette-paper));
+    --surface-action-hover: color-mix(in srgb, var(--surface-action) 75%, var(--palette-midnight));
   }
 }
 
 .add-button,
-.quantity {
-  --surface-action-text: var(--palette-ink);
-}
-
+.quantity,
 .product-modal-bottom .button {
   --surface-action-text: var(--palette-paper);
 }
@@ -178,7 +175,6 @@ h2 em {
 .product-weight,
 .product-copy > p,
 .menu-toolbar > p,
-.demo-menu-note,
 .menu-section-title > span,
 .category-sidebar > p {
   color: var(--surface-muted);
@@ -188,11 +184,6 @@ h2 em {
 .image-open {
   color: var(--palette-midnight);
   background: var(--palette-paper);
-}
-
-.add-button .lucide-plus,
-.quantity .lucide-plus {
-  color: var(--button-text-light);
 }
 
 .quantity button:focus-visible {

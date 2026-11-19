@@ -146,7 +146,12 @@ export default function AboutCafe({ gullOrigin }) {
       inView = entry.isIntersecting;
       schedule();
     });
+    let slideWidthWithGap = cards[1].offsetLeft;
     const resize = new ResizeObserver(() => {
+      // Mobile browser bars resize the photos vertically without changing their snap points.
+      const step = cards[1].offsetLeft;
+      if (step === slideWidthWithGap) return;
+      slideWidthWithGap = step;
       stopAnimation();
       snapTo(current + 1);
       schedule();
@@ -188,7 +193,7 @@ export default function AboutCafe({ gullOrigin }) {
     <div className="cafe-story-wave" aria-hidden="true"/>
     <div className="coast-layout cafe-story-layout">
       <div className="cafe-story-copy">
-        <div>
+        <div className="cafe-story-heading">
           <GullFlight origin={gullOrigin}/>
           <span className="cafe-story-kicker">С ЮЖНЫМ НАСТРОЕНИЕМ</span>
           <h2 id="cafe-story-title" className="cafe-story-title">О кафе «Ялта»</h2>
