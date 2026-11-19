@@ -499,7 +499,7 @@
     inset: auto 0 0;
     z-index: 35;
     padding-bottom: max(4px, env(safe-area-inset-bottom, 0px));
-    background-color: var(--palette-clay);
+    background-color: var(--palette-paper);
     border: 0;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
@@ -521,10 +521,10 @@
 
   .delivery-page .category-inner {
     --surface-text: var(--palette-ink);
-    --surface-hover: var(--palette-paper);
+    --surface-hover: var(--sand);
     width: 100%;
     padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
-    background-color: var(--palette-clay);
+    background-color: var(--palette-paper);
   }
 
   .delivery-page .category-nav > button.active { color: var(--palette-midnight); }
