@@ -32,7 +32,8 @@
 }
 
 .editorial-hero {
-  --hero-available: calc(100svh - var(--header-h));
+  --hero-viewport: 100svh;
+  --hero-available: calc(var(--hero-viewport) - var(--header-h));
   position: relative;
   display: grid;
   align-content: stretch;
@@ -47,7 +48,7 @@
 @media (prefers-reduced-motion: no-preference) {
   .coastal-intro > .editorial-hero {
     position: sticky;
-    top: min(var(--header-h), calc(100svh - var(--hero-height, var(--hero-available))));
+    top: min(var(--header-h), calc(var(--hero-viewport) - var(--hero-height, var(--hero-available))));
     z-index: 0;
   }
 }
@@ -228,13 +229,15 @@
   .editorial-hero {
     --hero-copy-inset: clamp(16px, 3svh, 28px);
     --hero-gulls-width: clamp(108px, 40vw, 175px);
-    --hero-available: calc(100dvh - var(--header-h));
-    grid-template-rows: auto minmax(clamp(155px, 32svh, 280px), 1fr) auto;
+    /* Keep the next section below Safari’s floating toolbar and the buttons above it. */
+    --hero-viewport: 100lvh;
+    --hero-toolbar-space: calc(100lvh - 100dvh);
+    --hero-bottom-inset: max(var(--coast-edge), env(safe-area-inset-bottom, 0px));
+    grid-template-rows: auto minmax(96px, 1fr) auto;
     align-items: stretch;
     align-content: stretch;
     --hero-action-gap: clamp(14px, 4vw, 22px);
-    min-height: var(--hero-available);
-    padding: 0 0 var(--coast-edge);
+    padding: 0 0 calc(var(--hero-bottom-inset) + var(--hero-toolbar-space));
   }
   .hero-art-panel { display: contents; }
   .hero-content { display: contents; }
@@ -294,7 +297,8 @@
     grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr);
     grid-template-rows: minmax(min-content, 1fr) auto;
     column-gap: var(--coast-edge);
-    padding: 8px var(--coast-edge) 12px;
+    --hero-bottom-inset: max(12px, env(safe-area-inset-bottom, 0px));
+    padding: 8px var(--coast-edge) calc(var(--hero-bottom-inset) + var(--hero-toolbar-space));
   }
   .hero-intro-copy { align-self: center; margin: 0; padding: 0; }
   .hero-art-panel {

@@ -51,6 +51,10 @@ body::after {
   opacity: .1;
 }
 
+@media (max-width: 700px) {
+  body::after { top: var(--header-band-h); }
+}
+
 @media print, (forced-colors: active) {
   body::after { display: none; }
 }

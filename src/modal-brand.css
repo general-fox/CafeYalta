@@ -1,5 +1,20 @@
 /* The cream wave, navy title and clay action echo the home hero. */
+body .modal-backdrop {
+  --modal-gutter: 24px;
+  block-size: 100dvh;
+  padding:
+    max(var(--modal-gutter), env(safe-area-inset-top, 0px))
+    max(var(--modal-gutter), env(safe-area-inset-right, 0px))
+    max(var(--modal-gutter), env(safe-area-inset-bottom, 0px))
+    max(var(--modal-gutter), env(safe-area-inset-left, 0px));
+}
+
+@media (max-width: 700px) {
+  body .modal-backdrop { --modal-gutter: 12px; }
+}
+
 .modal-backdrop .modal {
+  max-height: 100%;
   --dialog-padding: clamp(20px, 4vw, 38px);
   --dialog-line: color-mix(in srgb, var(--palette-midnight) 27%, var(--palette-paper));
   --dialog-control: color-mix(in srgb, var(--palette-midnight) 58%, var(--palette-paper));
@@ -113,6 +128,32 @@
   background: var(--sand);
   font-size: 14px;
   line-height: 1.55;
+}
+
+.booking-modal .form-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+}
+
+.booking-modal .form-grid > label {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 1fr auto;
+}
+
+.booking-modal form :is(input:not([type='checkbox']), select) {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  height: max(46px, 2.875em);
+}
+
+.booking-modal input[type='date'] {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.booking-modal input[type='date']::-webkit-date-and-time-value {
+  margin: 0;
+  text-align: start;
 }
 
 .modal-backdrop .booking-modal .time-slots button {

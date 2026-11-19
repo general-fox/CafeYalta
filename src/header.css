@@ -7,6 +7,7 @@
   --shore-wave-clip: inset(0 0 calc(var(--shore-wave-height) * .1));
   --header-h: calc(var(--header-row-h) + var(--shore-wave-height));
   --header-ornament-h: 28px;
+  --header-band-h: var(--header-ornament-h);
   --olive-ornament: url('/assets/brand/olive-border.svg');
   --menu-tabs-h: 0px;
 }
@@ -38,7 +39,7 @@
 }
 
 .site-header .surface-grain {
-  top: var(--header-ornament-h);
+  top: var(--header-band-h);
   z-index: 0;
   background-color: var(--palette-midnight);
   mask: linear-gradient(black 0 0), var(--shore-wave-mask) center bottom / 100% var(--shore-wave-height) no-repeat;
@@ -65,7 +66,7 @@
   align-items: center;
   gap: 32px;
   width: min(1440px, calc(100% - 64px));
-  height: calc(var(--header-row-h) - var(--header-ornament-h));
+  height: calc(var(--header-row-h) - var(--header-band-h));
   margin-inline: auto;
 }
 
@@ -235,7 +236,7 @@
 
 @media (min-width: 701px) and (max-width: 1240px) {
   .site-header .header-inner {
-    width: calc(100% - 48px);
+    width: calc(100% - 2 * max(24px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)));
     gap: clamp(12px, 2vw, 24px);
   }
 
@@ -263,13 +264,38 @@
 
 /* The marine border and main row together match the sticky header offset. */
 @media (max-width: 700px) {
-  :root { --menu-tabs-h: 60px; --header-row-h: 108px; }
+  :root {
+    --menu-tabs-h: 60px;
+    --header-band-h: max(var(--header-ornament-h), env(safe-area-inset-top, 0px));
+    --header-row-h: calc(var(--header-band-h) + 80px);
+  }
+
+  .site-header {
+    --header-gutter: max(20px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+    /* Paint the top edge behind the status bar and leave the wave cutout transparent. */
+    background-color: var(--ornament-on-navy);
+    background-clip: content-box;
+    animation: none;
+  }
+
+  .site-header > .olive-border {
+    display: flex;
+    align-items: flex-end;
+    height: var(--header-band-h);
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .site-header > .olive-border::before {
+    width: 100%;
+    height: var(--header-ornament-h);
+  }
 
   .site-header .header-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: calc(100% - 40px);
+    width: calc(100% - 2 * var(--header-gutter));
     gap: 16px;
     padding: 0;
   }
@@ -317,12 +343,11 @@
     display: none;
     position: absolute;
     top: 100%;
-    right: -20px;
-    left: -20px;
+    inset-inline: calc(0px - var(--header-gutter));
     max-height: calc(100dvh - var(--header-h));
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: 18px 24px calc(24px + var(--shore-wave-height));
+    padding: 18px max(24px, var(--header-gutter)) calc(24px + var(--shore-wave-height));
     /* Overlap the solid panel and its wave by 1px to keep their join opaque. */
     mask: linear-gradient(to bottom, #000 calc(100% - var(--shore-wave-height) + 1px), transparent 0),
       url('./menu-wave.svg') center bottom / 100% var(--shore-wave-height) no-repeat;
