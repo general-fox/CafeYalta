@@ -189,11 +189,6 @@
   color: var(--surface-text);
 }
 
-.delivery-page .menu-products .product-weight {
-  font-size: 13px;
-  color: var(--surface-muted);
-}
-
 .delivery-page .menu-products .product-tag {
   background: var(--palette-midnight);
   color: var(--palette-paper);
@@ -414,11 +409,6 @@
   letter-spacing: .12em;
 }
 
-.booking-modal .modal-intro {
-  line-height: 1.55;
-  margin-top: 12px;
-}
-
 :is(.modal, .checkout-form) :is(input:not([type='checkbox']), select, textarea) {
   min-width: 0;
   min-height: 45px;
@@ -497,15 +487,34 @@
 }
 
 @media (max-width: 700px) {
-  /* Meet the sticky category bar with an opaque edge as dishes scroll behind it. */
-  .site-header:has(+ .route-content > .delivery-page) .surface-grain {
-    bottom: -1px;
-    mask: none;
-    clip-path: none;
+  html:has(.delivery-page) {
+    scroll-padding-bottom: var(--delivery-dock-height, 60px);
   }
 
+  .route-content:has(> .delivery-page) { animation-name: fade-in; }
+
   .delivery-page .category-bar {
-    border-block-start: 0;
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 35;
+    padding: 0 env(safe-area-inset-right, 0px) max(4px, env(safe-area-inset-bottom, 0px)) env(safe-area-inset-left, 0px);
+    border-block-end: 0;
+  }
+
+  .delivery-page .category-inner { width: 100%; }
+
+  .delivery-page .category-bar .mobile-cart-bar {
+    position: static;
+    margin-block: 2px 6px;
+    box-shadow: none;
+  }
+
+  #root:has(.delivery-page) > .toast {
+    bottom: calc(var(--delivery-dock-height, 60px) + 8px);
+  }
+
+  #root:has(.delivery-page) .footer-inner {
+    padding-bottom: calc(var(--delivery-dock-height, 60px) + 24px);
   }
 
   .delivery-facts dl {
@@ -527,24 +536,16 @@
   }
 
   .delivery-page .menu-products {
-    gap: 25px 13px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
   }
 
   .delivery-page .menu-section-title {
     margin-bottom: 18px;
   }
 
-  .delivery-page .product-image {
-    aspect-ratio: 1.16;
-  }
-
-  .delivery-page .menu-products .product-copy h3 {
-    font-size: 15px;
-    min-height: 2.7em;
-  }
-
-  .delivery-page .menu-products .product-bottom strong {
-    font-size: 15px;
+  .delivery-page .product-copy {
+    padding: 12px 16px;
   }
 
   .checkout-summary {
@@ -553,10 +554,6 @@
 }
 
 @media (max-width: 370px) {
-  .delivery-page .menu-products .product-bottom strong {
-    font-size: 14px;
-  }
-
   .booking-modal .form-grid {
     grid-template-columns: minmax(0, 1fr);
     gap: 0;

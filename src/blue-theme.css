@@ -4,7 +4,7 @@
   --palette-paper: #f2ede1;
   --palette-clay: #c86a4a;
   --product-action: #798098;
-  --product-action-hover: color-mix(in srgb, var(--product-action) 80%, var(--palette-paper));
+  --product-action-hover: color-mix(in srgb, var(--product-action) 85%, var(--palette-paper));
   --ornament-opacity: 89%;
   --palette-ink: color-mix(in srgb, var(--palette-midnight) 36%, black);
   --palette-paper-muted: color-mix(in srgb, var(--palette-paper) 86%, var(--palette-clay));
@@ -25,7 +25,8 @@
   --ornament-on-navy: color-mix(in srgb, var(--palette-clay) var(--ornament-opacity), var(--palette-midnight));
   --surface-action: color-mix(in srgb, var(--ornament-on-navy) 96%, black);
   --surface-action-hover: color-mix(in srgb, var(--surface-action) 92%, black);
-  --surface-action-text: white;
+  --button-text-light: white;
+  --surface-action-text: var(--button-text-light);
   --surface-focus: var(--palette-paper);
   --account-muted: var(--muted);
   color: var(--surface-text);
@@ -178,6 +179,11 @@ h2 em {
 .image-open {
   color: var(--palette-midnight);
   background: var(--palette-paper);
+}
+
+.add-button .lucide-plus,
+.quantity .lucide-plus {
+  color: var(--button-text-light);
 }
 
 .quantity button:focus-visible {

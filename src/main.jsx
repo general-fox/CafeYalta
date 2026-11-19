@@ -10,4 +10,5 @@ import './header.css';
 import './blue-theme.css';
 import './typography.css';
 import './commerce-editorial.css';
+import './focus.css';
 createRoot(document.getElementById('root')).render(<React.StrictMode><HashRouter><ShopProvider><App/></ShopProvider></HashRouter></React.StrictMode>);

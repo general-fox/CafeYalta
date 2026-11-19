@@ -3,13 +3,13 @@
   --header-row-h: 100px;
   --shore-wave-mask: url('./shore-wave.svg');
   --shore-wave-height: clamp(12px, 1.7vw, 28px);
-  /* The shore curve ends above the last 14% of its band; trim the raster edge there. */
-  --shore-wave-clip: inset(0 0 calc(var(--shore-wave-height) * .1));
+  /* Paint only the filled side of the curve. Overlap it with the solid row by 1px. */
+  --header-wave-mask: linear-gradient(to bottom, #000 calc(100% - var(--shore-wave-height) + 1px), transparent 0),
+    url('./menu-wave.svg') center bottom / 100% var(--shore-wave-height) no-repeat;
   --header-h: calc(var(--header-row-h) + var(--shore-wave-height));
   --header-ornament-h: 28px;
   --header-band-h: var(--header-ornament-h);
   --olive-ornament: url('/assets/brand/olive-border.svg');
-  --menu-tabs-h: 0px;
 }
 
 .olive-border {
@@ -42,9 +42,7 @@
   top: var(--header-band-h);
   z-index: 0;
   background-color: var(--palette-midnight);
-  mask: linear-gradient(black 0 0), var(--shore-wave-mask) center bottom / 100% var(--shore-wave-height) no-repeat;
-  mask-composite: subtract;
-  clip-path: var(--shore-wave-clip);
+  mask: var(--header-wave-mask);
 }
 
 /* Interior pages start below the wave. On the home page it overlays the hero. */
@@ -224,7 +222,7 @@
 }
 
 .menu-section {
-  scroll-margin-top: calc(var(--header-h) + var(--menu-tabs-h) + 16px);
+  scroll-margin-top: calc(var(--header-h) + 16px);
 }
 
 #about { scroll-margin-top: var(--header-row-h); }
@@ -265,7 +263,6 @@
 /* The marine border and main row together match the sticky header offset. */
 @media (max-width: 700px) {
   :root {
-    --menu-tabs-h: 60px;
     --header-band-h: max(var(--header-ornament-h), env(safe-area-inset-top, 0px));
     --header-row-h: calc(var(--header-band-h) + 80px);
   }
@@ -348,19 +345,22 @@
     overflow-y: auto;
     overscroll-behavior: contain;
     padding: 18px max(24px, var(--header-gutter)) calc(24px + var(--shore-wave-height));
-    /* Overlap the solid panel and its wave by 1px to keep their join opaque. */
-    mask: linear-gradient(to bottom, #000 calc(100% - var(--shore-wave-height) + 1px), transparent 0),
-      url('./menu-wave.svg') center bottom / 100% var(--shore-wave-height) no-repeat;
+    mask: var(--header-wave-mask);
     color: var(--palette-paper);
     background: var(--palette-midnight);
     border-bottom: 0;
     box-shadow: none;
   }
+  .site-header:has(.main-nav.is-open) {
+    filter: drop-shadow(0 1.5px .5px color-mix(in srgb, var(--palette-paper) 52%, transparent));
+  }
   .site-header .main-nav.is-open {
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
     align-items: stretch;
     gap: 8px;
+    background: linear-gradient(to bottom, var(--palette-midnight), color-mix(in srgb, var(--palette-midnight) 83%, var(--palette-paper)) min(80px, 35%));
   }
   .site-header .main-nav > .mobile-account-entry {
     border-radius: var(--button-radius);

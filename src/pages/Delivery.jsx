@@ -8,7 +8,7 @@ function categoryScrollBehavior() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
 }
 
-export default function Delivery() {
+export default function Delivery({ mobileCart }) {
   const [query, setQuery] = useState('');
   const [selection, setSelection] = useState({ id: 'breakfast', center: false });
   const mobileNav = useRef(null);
@@ -70,7 +70,8 @@ export default function Delivery() {
     }
 
     function measureOffset() {
-      const offset = header.getBoundingClientRect().height + bar.getBoundingClientRect().height + 16;
+      document.documentElement.style.setProperty('--delivery-dock-height', bar.offsetHeight + 'px');
+      const offset = header.getBoundingClientRect().height + 16;
       if (offset !== sectionOffset.current) destination.current = null;
       sectionOffset.current = offset;
       scheduleTracking();
@@ -95,6 +96,7 @@ export default function Delivery() {
     window.addEventListener('pointerdown', onScrollbarPress);
     return () => {
       resize.disconnect();
+      document.documentElement.style.removeProperty('--delivery-dock-height');
       window.cancelAnimationFrame(frame);
       window.removeEventListener('scroll', scheduleTracking);
       window.removeEventListener('wheel', resumeTracking);
@@ -117,7 +119,12 @@ export default function Delivery() {
         </dl>
       </div>
     </section>
-    <div className="category-bar"><div className="container category-inner"><nav ref={mobileNav} className="category-nav" aria-label="Категории меню">{categoryButtons}</nav></div></div>
+    <div className="category-bar">
+      <div className="container category-inner">
+        <nav ref={mobileNav} className="category-nav" aria-label="Категории меню">{categoryButtons}</nav>
+      </div>
+      {mobileCart}
+    </div>
     <div className="container menu-layout">
       <aside className="category-sidebar">{search}<nav aria-label="Категории меню на компьютере">{categoryButtons}</nav></aside>
       <div className="menu-main"><div className="mobile-menu-search">{search}</div><p className="demo-menu-note">Демонстрационное меню</p>

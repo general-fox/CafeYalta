@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, CalendarDays } from 'lucide-react';
 import { useShop } from '../store';
 import { asset } from '../components';
-import { normalizePhone, changeQuantity } from '../domain';
+import { formatPhone, changeQuantity } from '../domain';
 import './secondary.css';
 import './account-readable.css';
 
@@ -31,21 +31,19 @@ function AccountEmpty({ title, description, image, children }) {
 }
 
 function Profile({ user, setUser, notify }) {
-  const [draft, setDraft] = useState({ name: user.name || '', phone: user.phone || '', email: user.email || '', address: user.address || '' });
+  const [draft, setDraft] = useState({ name: user.name || '', email: user.email || '', address: user.address || '' });
   const [saved, setSaved] = useState(false);
   function save(event) {
     event.preventDefault();
     if (draft.name.trim().length < 2) return notify('Укажите имя: минимум 2 буквы.');
-    const phone = normalizePhone(draft.phone);
-    if (!phone) return notify('Укажите телефон из 11 цифр, начиная с 7 или 8.');
-    setUser({ ...user, ...Object.fromEntries(Object.entries(draft).map(([key, value]) => [key, value.trim()])), phone });
+    setUser({ ...user, ...Object.fromEntries(Object.entries(draft).map(([key, value]) => [key, value.trim()])) });
     setSaved(true);
     notify('Данные сохранены в этом браузере');
   }
   return <div className="account-panel"><div className="account-panel-head"><div><h2>Мои данные</h2></div></div>
     <form className="profile-form" onSubmit={save}>
       <label>Как вас зовут<input name="name" autoComplete="given-name" required maxLength={60} value={draft.name} onChange={e => { setDraft({ ...draft, name: e.target.value }); setSaved(false); }} placeholder="Ваше имя"/></label>
-      <label>Телефон<input name="phone" type="tel" autoComplete="tel" readOnly value={draft.phone} aria-describedby="profile-phone-hint"/><span id="profile-phone-hint">Номер для ваших заказов</span></label>
+      <label>Телефон<input name="phone" type="tel" autoComplete="tel" readOnly value={formatPhone(user.phone)} aria-describedby="profile-phone-hint"/><span id="profile-phone-hint">Номер для ваших заказов</span></label>
       <label className="profile-wide">Электронная почта <span>необязательно</span><input name="email" type="email" autoComplete="email" value={draft.email} onChange={e => { setDraft({ ...draft, email: e.target.value }); setSaved(false); }} placeholder="hello@example.ru"/></label>
       <label className="profile-wide">Адрес доставки<input name="address" autoComplete="street-address" maxLength={250} value={draft.address} onChange={e => { setDraft({ ...draft, address: e.target.value }); setSaved(false); }} placeholder="Москва, улица, дом, квартира"/></label>
       <div className="profile-actions profile-wide"><button className="button" type="submit">Сохранить изменения <ArrowUpRight size={18} aria-hidden="true"/></button>{saved && <span role="status" className="profile-saved">Изменения сохранены</span>}</div>
@@ -91,8 +89,13 @@ export default function Account() {
     notify('Блюда из заказа добавлены в корзину');
   }
 
-  return <main className="account-page container"><div className="account-title"><div><span className="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span><h1>Здравствуйте, <em>{user.name || 'гость'}</em></h1></div><span className="demo-pill"><span/>Демо-кабинет</span></div>
-    <div className="account-layout"><aside className="account-sidebar"><div className="account-person"><span className="account-avatar">{(user.name || 'Я').slice(0, 1).toUpperCase()}</span><div><strong>{user.name || 'Гость'}</strong><small>{user.phone}</small></div></div><nav ref={mobileNav} aria-label="Разделы личного кабинета">{tabs.map(([key, label]) => <button key={key} className={tab === key ? 'active' : ''} onClick={event => { setTab(key); if (tab === key) centerMobileNavItem(mobileNav.current, event.currentTarget); }} aria-current={tab === key ? 'page' : undefined}>{label}</button>)}<Link to="/loyalty" onClick={event => centerMobileNavItem(mobileNav.current, event.currentTarget)}>Карта гостя</Link></nav><button className="account-logout" onClick={() => { setUser(null); notify('Вы вышли из кабинета'); }}>Выйти</button></aside>
+  const greeting = `Привет, ${user.name || 'гость'}`;
+  return <main className="account-page container">
+    <div className="account-title">
+      <span className="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span>
+      <h1 style={{ '--greeting-length': greeting.length }} title={greeting}>{greeting}</h1>
+    </div>
+    <div className="account-layout"><aside className="account-sidebar"><div className="account-person"><span className="account-avatar">{(user.name || 'Я').slice(0, 1).toUpperCase()}</span><div><strong>{user.name || 'Гость'}</strong><small>{formatPhone(user.phone)}</small></div></div><nav ref={mobileNav} aria-label="Разделы личного кабинета">{tabs.map(([key, label]) => <button key={key} className={tab === key ? 'active' : ''} onClick={event => { setTab(key); if (tab === key) centerMobileNavItem(mobileNav.current, event.currentTarget); }} aria-current={tab === key ? 'page' : undefined}>{label}</button>)}<Link to="/loyalty" onClick={event => centerMobileNavItem(mobileNav.current, event.currentTarget)}>Карта гостя</Link></nav><button className="account-logout" onClick={() => { setUser(null); notify('Вы вышли из кабинета'); }}>Выйти</button></aside>
     <section className="account-main" aria-label={tabs.find(([key]) => key === tab)?.[1]}>
       {tab === 'profile' && <Profile user={user} setUser={setUser} notify={notify}/>}
       {tab === 'orders' && <div className="account-panel"><div className="account-panel-head"><div><h2>Мои заказы <span className="account-count">{orders.length}</span></h2></div>{orders.length > 0 && <Link to="/delivery" className="account-text-link">В меню <ArrowUpRight size={18} aria-hidden="true"/></Link>}</div>

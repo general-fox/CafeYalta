@@ -1,0 +1,63 @@
+:root {
+  --focus-fill: color-mix(in srgb, var(--palette-clay) 28%, var(--palette-paper));
+}
+
+#root :is(a[href], button:enabled, summary):is(:focus-visible, :active),
+#root :is(input:not([type='checkbox']), select, textarea):focus,
+#root [tabindex='0']:focus-visible,
+#root .search-box:focus-within,
+#root .checkbox-label:has(> input:focus-visible) {
+  outline: none;
+  background-color: var(--focus-fill);
+  color: var(--palette-midnight);
+}
+
+#root :is(input:not([type='checkbox']), select, textarea):focus {
+  border-color: var(--dialog-control, var(--surface-control));
+}
+
+/* The whole search field is painted, including its icon and clear button. */
+#root .search-box:focus-within {
+  --surface-text: var(--palette-midnight);
+  --surface-muted: var(--palette-midnight);
+}
+#root .search-box:focus-within input {
+  outline: none;
+  background: transparent;
+}
+#root .search-box button:focus-visible {
+  background-color: var(--palette-midnight);
+  color: var(--focus-fill);
+}
+#root .checkbox-label > input:focus-visible { outline: none; }
+#root .checkbox-label:has(> input:focus-visible) :is(span, a) { color: inherit; }
+
+#root .hero-offer-code button:is(:focus-visible, :active) :is(svg, span),
+#root .footer-brand:is(:focus-visible, :active) span { color: inherit; }
+#root :is(.brand, .footer-brand):is(:focus-visible, :active) img {
+  filter: brightness(0) opacity(.8);
+}
+
+/* Keep the white add icon legible against the lighter keyboard highlight. */
+#root button:is(:focus-visible, :active) .lucide-plus {
+  background: var(--product-action);
+  border-radius: 50%;
+}
+
+#root .product-image:focus-visible .image-open {
+  display: grid;
+  opacity: 1;
+  transform: none;
+  background: var(--focus-fill);
+  color: var(--palette-midnight);
+}
+#root .cafe-story-track:focus-visible .cafe-story-photo { opacity: .82; }
+
+@media (forced-colors: active) {
+  #root :is(a[href], button, input, select, textarea, summary, [tabindex='0']):focus-visible,
+  #root .search-box:focus-within {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+  #root .search-box input:focus-visible { outline: none; }
+}

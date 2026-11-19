@@ -21,18 +21,11 @@ export default function HomeHero({ gullOrigin }) {
       onScreen = entry.isIntersecting;
       updateMotion();
     });
-    const section = hero.current;
-    // A tall hero must scroll far enough to show its last row before it sticks.
-    const resize = new ResizeObserver(() => {
-      section.style.setProperty('--hero-height', section.offsetHeight + 'px');
-    });
-    resize.observe(section);
-    observer.observe(section);
+    observer.observe(hero.current);
     document.addEventListener('visibilitychange', updateMotion);
     updateMotion();
     return () => {
       observer.disconnect();
-      resize.disconnect();
       document.removeEventListener('visibilitychange', updateMotion);
     };
   }, []);
