@@ -126,6 +126,17 @@ h2 em {
   border-bottom-color: var(--surface-control);
 }
 
+:is(.cart-modal, .checkout-summary) .quantity {
+  --surface-action: #798098;
+  --surface-action-hover: var(--surface-action);
+}
+
+@media (hover: hover) {
+  :is(.cart-modal, .checkout-summary) .quantity {
+    --surface-action-hover: color-mix(in srgb, var(--surface-action) 85%, var(--palette-paper));
+  }
+}
+
 .add-button,
 .quantity {
   --surface-action-text: var(--palette-ink);
