@@ -40,7 +40,7 @@
 
 /* Keep the white add icon legible against the lighter keyboard highlight. */
 #root button:is(:focus-visible, :active) .lucide-plus {
-  background: var(--product-action);
+  background: var(--surface-action);
   border-radius: 50%;
 }
 

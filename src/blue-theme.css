@@ -3,8 +3,6 @@
   --palette-midnight: #293661;
   --palette-paper: #f2ede1;
   --palette-clay: #c86a4a;
-  --product-action: #798098;
-  --product-action-hover: color-mix(in srgb, var(--product-action) 85%, var(--palette-paper));
   --ornament-opacity: 89%;
   --palette-ink: color-mix(in srgb, var(--palette-midnight) 36%, black);
   --palette-paper-muted: color-mix(in srgb, var(--palette-paper) 86%, var(--palette-clay));
@@ -21,9 +19,9 @@
   --surface-line: var(--line);
   --surface-control: color-mix(in srgb, var(--palette-paper) 75%, var(--palette-midnight));
   --surface-hover: color-mix(in srgb, var(--palette-paper) 8%, transparent);
-  /* Darken the ornament over navy just enough for white action labels. */
+  /* Match the mobile status bar to the translucent ornament over the header. */
   --ornament-on-navy: color-mix(in srgb, var(--palette-clay) var(--ornament-opacity), var(--palette-midnight));
-  --surface-action: color-mix(in srgb, var(--ornament-on-navy) 96%, black);
+  --surface-action: var(--palette-clay);
   --surface-action-hover: color-mix(in srgb, var(--surface-action) 92%, black);
   --button-text-light: white;
   --surface-action-text: var(--button-text-light);
@@ -36,7 +34,6 @@
 @media (hover: none) {
   :root {
     --surface-action-hover: var(--surface-action);
-    --product-action-hover: var(--product-action);
   }
 }
 
@@ -130,11 +127,12 @@ h2 em {
 }
 
 .add-button,
-.quantity,
-.product-modal-bottom .button {
-  --surface-action: var(--product-action);
-  --surface-action-hover: var(--product-action-hover);
+.quantity {
   --surface-action-text: var(--palette-ink);
+}
+
+.product-modal-bottom .button {
+  --surface-action-text: var(--palette-paper);
 }
 
 .button,

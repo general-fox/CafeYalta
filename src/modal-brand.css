@@ -201,6 +201,7 @@ body .modal-backdrop {
 }
 
 .modal-backdrop .product-modal-content {
+  container-type: inline-size;
   padding: 12px var(--dialog-padding) var(--dialog-padding);
 }
 
@@ -230,10 +231,19 @@ body .modal-backdrop {
   min-height: 50px;
 }
 
-@media (max-width: 380px) {
+.modal-backdrop .product-modal-bottom > .button {
+  padding: 10px 14px;
+  gap: 8px;
+  font-size: 1.1875rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+@container (max-width: 21.5rem) {
   .modal-backdrop .product-modal-bottom {
     grid-template-columns: 1fr;
   }
+  .modal-backdrop .product-modal-bottom > .button { justify-self: stretch; }
 }
 
 @media (max-width: 420px) {

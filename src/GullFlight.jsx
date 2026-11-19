@@ -1,7 +1,8 @@
 import { useLayoutEffect, useRef } from 'react';
 import { Gulls } from './components';
 
-const legDuration = 1400;
+const defaultLegDuration = 1400;
+const mobileForwardLegDuration = 1200;
 
 export default function GullFlight({ origin }) {
   const arrival = useRef(null);
@@ -14,6 +15,7 @@ export default function GullFlight({ origin }) {
     const story = end.closest('section');
     const header = document.querySelector('.site-header');
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const phone = window.matchMedia('(max-width: 700px)');
     let lastScroll = Math.max(0, window.scrollY);
     let towardAbout = lastScroll > 0;
     // 0 is the hero perch, 1 is offscreen on both sides, and 2 is the About perch.
@@ -36,6 +38,7 @@ export default function GullFlight({ origin }) {
     };
 
     const tick = now => {
+      const legDuration = phone.matches && target > position ? mobileForwardLegDuration : defaultLegDuration;
       const step = lastTime === null ? 0 : (now - lastTime) / legDuration;
       position = position < target ? Math.min(target, position + step) : Math.max(target, position - step);
       paint();
