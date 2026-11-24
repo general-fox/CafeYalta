@@ -12,7 +12,26 @@ const slides = [aboutInteriors[count - 1], ...aboutInteriors, ...aboutInteriors.
 
 export default function AboutCafe({ gullOrigin }) {
   const gallery = useRef(null);
+  const settledSlides = useRef(new WeakSet());
+  const resumeAutoplay = useRef(null);
   const [loadPhotos, setLoadPhotos] = useState(false);
+  const [readyPhotos, setReadyPhotos] = useState(() => new Set());
+
+  // Each interior and its loop copies share the same fade, including after wraparound.
+  const markReady = (image, stem) => {
+    settledSlides.current.add(image);
+    setReadyPhotos(previous => previous.has(stem) ? previous : new Set(previous).add(stem));
+    resumeAutoplay.current?.();
+  };
+  const revealPhoto = async (image, stem) => {
+    try {
+      await image.decode();
+    } catch {
+      // A responsive source may change while decoding; its next load will retry.
+      if (!image.complete || !image.naturalWidth) return;
+    }
+    markReady(image, stem);
+  };
 
   useLayoutEffect(() => {
     const track = gallery.current;
@@ -34,12 +53,18 @@ export default function AboutCafe({ gullOrigin }) {
       track.style.removeProperty('scroll-snap-type');
     };
     const schedule = () => {
+      resumeAutoplay.current = null;
       clearTimeout(advanceTimer);
       if (!inView || document.hidden || motion.matches) {
         stopAnimation();
         return;
       }
       if (animationFrame || pointer?.mouse || pointer?.dragging) return;
+      // Both specific slides must be ready, including the clone at the end of a loop.
+      if (!settledSlides.current.has(cards[current + 1]) || !settledSlides.current.has(cards[current + 2])) {
+        resumeAutoplay.current = schedule;
+        return;
+      }
       advanceTimer = setTimeout(() => move(current + 2), slidePause);
     };
     const settle = () => {
@@ -177,6 +202,7 @@ export default function AboutCafe({ gullOrigin }) {
     document.addEventListener('visibilitychange', schedule);
     motion.addEventListener('change', schedule);
     return () => {
+      resumeAutoplay.current = null;
       clearTimeout(advanceTimer);
       clearTimeout(settleTimer);
       approaching.disconnect();
@@ -215,7 +241,9 @@ export default function AboutCafe({ gullOrigin }) {
         {slides.map((interior, index) => <img key={index} className="cafe-story-photo"
           {...(loadPhotos && sceneImageProps(interior.stem, galleryPhotoSizes))}
           alt={index > 0 && index <= count ? interior.alt : ''} width={interior.width} height={interior.height}
-          loading="lazy" fetchPriority="low" decoding="async" draggable={false} style={{ objectPosition: interior.position }}/>
+          loading="lazy" fetchPriority="low" decoding="async" draggable={false}
+          onLoad={event => revealPhoto(event.currentTarget, interior.stem)} onError={event => markReady(event.currentTarget, interior.stem)}
+          style={{ objectPosition: interior.position, opacity: readyPhotos.has(interior.stem) ? undefined : 0 }}/>
         )}
       </div>
       <p id="cafe-story-gallery-help" className="cafe-story-sr-only">Листайте фотографии мышью, свайпом или стрелками на клавиатуре. Чтобы открыть соседнюю фотографию, щёлкните по её видимому краю. Home — первый эскиз, End — последний.</p>

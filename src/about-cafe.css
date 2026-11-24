@@ -72,7 +72,9 @@
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
-.cafe-story-photo:not([src]) { opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .cafe-story .cafe-story-photo { transition: opacity 560ms ease-out; }
+}
 @media (any-pointer: fine) {
   .cafe-story .cafe-story-track { cursor: grab; user-select: none; }
 }

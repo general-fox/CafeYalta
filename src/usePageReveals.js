@@ -1,6 +1,13 @@
 import { useLayoutEffect } from 'react';
 
 const TARGETS = '[data-reveal], .reveal';
+const STEP_MS = 85;
+const MAX_STAGGER_MS = 300;
+
+function readingOrder(a, b) {
+  if (a === b) return 0;
+  return (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1;
+}
 
 // Enhance content only after the observer is ready. Without it everything stays visible.
 export default function usePageReveals() {
@@ -10,6 +17,8 @@ export default function usePageReveals() {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const tracked = new Set();
     const timers = new Map();
+    let lastStart = 0;
+    let lastGroup = null;
 
     const finish = element => {
       clearTimeout(timers.get(element));
@@ -19,30 +28,43 @@ export default function usePageReveals() {
       observer.unobserve(element);
     };
     const observer = new IntersectionObserver(entries => {
-      entries.forEach(({ target, isIntersecting, boundingClientRect }) => {
+      const visible = [];
+      for (const { target, isIntersecting, boundingClientRect } of entries) {
+        if (!target.isConnected || target.dataset.revealState !== 'pending') continue;
         if (!isIntersecting) {
           if (boundingClientRect.bottom < 0) finish(target);
-          return;
+          continue;
         }
         observer.unobserve(target);
-        if (motion.matches || target.contains(document.activeElement)) { finish(target); return; }
+        if (motion.matches || target.contains(document.activeElement)) finish(target);
+        else visible.push(target);
+      }
+      if (!visible.length) return;
+      visible.sort(readingOrder);
+
+      // Space only the items coming into view. A fast swipe must not build a long queue.
+      const sectionSelector = '[data-reveal-group], section, main, footer';
+      const now = performance.now();
+      const previous = visible[0].closest(sectionSelector) === lastGroup ? lastStart : 0;
+      const step = Math.min(STEP_MS, (now + MAX_STAGGER_MS - Math.max(now, previous)) / visible.length);
+      let start = Math.max(now, previous + step);
+      for (const target of visible) {
+        const delay = Math.round(start - now);
+        target.style.setProperty('--reveal-delay', delay + 'ms');
         target.dataset.revealState = 'entering';
-        // Also settle if a browser suppresses animationend (background tab, CSS changes).
-        timers.set(target, setTimeout(() => finish(target), 1100));
-      });
-    }, { threshold: 0.01, rootMargin: '0px 0px -16px 0px' });
+        // Keep a fallback for browsers that suppress animationend in background tabs.
+        timers.set(target, setTimeout(() => finish(target), delay + 900));
+        lastStart = start;
+        start += step;
+      }
+      lastGroup = visible[visible.length - 1].closest(sectionSelector);
+    }, { threshold: 0, rootMargin: '0px 0px -8px 0px' });
 
     const register = element => {
       if (tracked.has(element)) return;
       // A group enters together or its children do; never compound both movements.
       if (element.parentElement?.closest(TARGETS)) return;
       tracked.add(element);
-      const group = element.closest('[data-reveal-group]');
-      if (group) {
-        const siblings = [...group.querySelectorAll(TARGETS)]
-          .filter(item => item.closest('[data-reveal-group]') === group && !item.parentElement?.closest(TARGETS));
-        element.style.setProperty('--reveal-delay', `${Math.min(Math.max(siblings.indexOf(element), 0), 3) * 60}ms`);
-      }
       if (motion.matches || element.contains(document.activeElement)) { finish(element); return; }
       element.dataset.revealState = 'pending';
       observer.observe(element);
@@ -55,6 +77,7 @@ export default function usePageReveals() {
     const mutation = new MutationObserver(records => {
       // Only inspect added subtrees; typing and cart updates do not rescan the menu.
       records.forEach(record => record.addedNodes.forEach(scan));
+      if (!records.some(record => record.removedNodes.length)) return;
       tracked.forEach(element => {
         if (element.isConnected) return;
         observer.unobserve(element);

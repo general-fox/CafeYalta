@@ -8,8 +8,8 @@
 }
 
 [data-reveal], .reveal {
-  --reveal-rise: 16px;
-  --reveal-duration: 620ms;
+  --reveal-rise: 9px;
+  --reveal-duration: 680ms;
 }
 
 [data-reveal='soft'] { --reveal-rise: 0px; }
@@ -20,8 +20,8 @@
 }
 
 #root [data-reveal-state='entering'] {
-  animation: coastal-reveal var(--reveal-duration) cubic-bezier(.22, 1, .36, 1)
-    var(--reveal-delay, var(--delay, 0ms)) both;
+  animation: coastal-reveal var(--reveal-duration) cubic-bezier(.25, .55, .25, 1)
+    var(--reveal-delay, 0ms) both;
 }
 
 @keyframes coastal-reveal {
@@ -45,9 +45,8 @@
 }
 
 @media (max-width: 700px) {
-  [data-reveal], .reveal { --reveal-rise: 10px; --reveal-duration: 480ms; }
+  [data-reveal], .reveal { --reveal-rise: 6px; --reveal-duration: 560ms; }
   [data-reveal='soft'] { --reveal-rise: 0px; }
-  #root [data-reveal-state='entering'] { animation-delay: 0ms; }
 }
 
 @media (prefers-reduced-motion: reduce) {

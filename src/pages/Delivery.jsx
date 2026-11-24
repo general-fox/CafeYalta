@@ -130,7 +130,7 @@ export default function Delivery({ mobileCart }) {
       <div className="menu-main"><div className="mobile-menu-search">{search}</div>
         {filtered.length ? categories.map(category => {
           const list = filtered.filter(product => product.category === category.id);
-          return list.length > 0 && <section key={category.id} id={`category-${category.id}`} data-category={category.id} className="menu-section"><div className="menu-section-title" data-reveal="rise"><h2>{category.name}</h2></div><div className="menu-products">{list.map((product, index) => <ProductCard key={product.id} product={product} index={index} priority={product === products[0]}/>)}</div></section>;
+          return list.length > 0 && <section key={category.id} id={`category-${category.id}`} data-category={category.id} className="menu-section"><div className="menu-section-title" data-reveal="rise"><h2>{category.name}</h2></div><div className="menu-products">{list.map(product => <ProductCard key={product.id} product={product} priority={product === products[0]}/>)}</div></section>;
         }) : <div className="empty-state"><Search size={35}/><h2>Такого блюда пока нет</h2><button className="button-outline" onClick={() => setQuery('')}>Показать всё меню</button></div>}
       </div>
     </div>
