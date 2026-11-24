@@ -1,9 +1,9 @@
 :root {
-  --focus-fill: color-mix(in srgb, var(--palette-clay) 28%, var(--palette-paper));
+  --focus-fill: color-mix(in srgb, var(--palette-midnight) 28%, var(--palette-paper));
 }
 
 #root :is(a[href], button:enabled, summary):focus-visible,
-#root :is(a[href], button:enabled, summary):active:where(:not(.brand, .footer-brand)),
+#root :is(a[href], button:enabled, summary):active:where(:not(.brand, .footer-brand, .main-nav > *, .category-nav > *, .category-sidebar nav > *)),
 #root :is(input:not([type='checkbox']), select, textarea):focus,
 #root [tabindex='0']:focus-visible,
 #root .search-box:focus-within,

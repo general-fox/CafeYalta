@@ -1,7 +1,7 @@
 /* Hours and delivery terms stay in the normal reading order above the menu. */
 .delivery-page {
   --surface-muted: color-mix(in srgb, var(--palette-paper) 76%, var(--palette-midnight));
-  --delivery-highlight: color-mix(in srgb, var(--palette-clay) 55%, var(--palette-paper));
+  --delivery-highlight: var(--palette-paper-muted);
   background: var(--palette-midnight);
   color: var(--surface-text);
 }
@@ -115,7 +115,7 @@
   transition: background-color .18s ease;
 }
 
-.delivery-page :is(.category-sidebar nav, .category-nav) > button:enabled:is(.active, :active, :focus-visible) {
+.delivery-page :is(.category-sidebar nav, .category-nav) > button:enabled:is(.active, :focus-visible) {
   background-color: var(--surface-hover);
   font-weight: 400;
   text-decoration: none;

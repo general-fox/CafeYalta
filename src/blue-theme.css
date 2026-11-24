@@ -4,12 +4,12 @@
   --palette-paper: #f2ede1;
   --palette-clay: #ac3838;
   --palette-ink: color-mix(in srgb, var(--palette-midnight) 36%, black);
-  --palette-paper-muted: color-mix(in srgb, var(--palette-paper) 86%, var(--palette-clay));
+  --palette-paper-muted: color-mix(in srgb, var(--palette-midnight) 14%, white);
   --blue: var(--palette-midnight);
   --cream: var(--palette-paper);
   --ink: var(--palette-midnight);
   --pale: var(--palette-paper-muted);
-  --sand: color-mix(in srgb, var(--palette-paper) 83%, var(--palette-clay));
+  --sand: color-mix(in srgb, var(--palette-midnight) 18%, white);
   --muted: var(--palette-paper-muted);
   --line: color-mix(in srgb, var(--palette-paper) 30%, transparent);
   --surface-text: var(--palette-paper);

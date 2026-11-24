@@ -59,15 +59,17 @@
 }
 
 @media (any-pointer: coarse) {
-  :is(.site-header .brand, .site-footer .footer-brand) {
+  :is(.site-header .brand, .site-footer .footer-brand, .site-header .main-nav) {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
+  }
+  :is(.site-header .brand, .site-footer .footer-brand),
+  :is(.site-header .brand, .site-footer .footer-brand) > :is(img, span) {
     -webkit-user-drag: none;
   }
   :is(.site-header .brand, .site-footer .footer-brand) > :is(img, span) {
     pointer-events: none;
-    -webkit-user-drag: none;
   }
 }
 
@@ -103,7 +105,7 @@
   line-height: 1.5;
 }
 
-.site-header .main-nav > a:is(:focus-visible, :active, .active) {
+.site-header .main-nav > a.active {
   background-color: var(--surface-hover);
 }
 @media (hover: hover) {
@@ -342,9 +344,6 @@
   }
   .site-header .main-nav > .mobile-account-entry {
     border-radius: var(--button-radius);
-  }
-  .site-header .main-nav > .mobile-account-entry:is(:focus-visible, :active) {
-    background-color: var(--surface-hover);
   }
   .site-header .main-nav > a,
   .site-header .main-nav > .mobile-account-entry {
