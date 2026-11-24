@@ -13,9 +13,6 @@ import Account from './pages/Account';
 import Loyalty from './pages/Loyalty';
 import Modals from './modals';
 import usePageReveals from './usePageReveals';
-function OliveBorder() {
-  return <div className="olive-border" aria-hidden="true"/>;
-}
 
 function Header({ cartCount }) {
   const { user, openAuth, setModal } = useShop();
@@ -50,7 +47,6 @@ function Header({ cartCount }) {
   }, [mobile]);
 
   return <header ref={header} className="site-header">
-    <OliveBorder/>
     <div className="surface-grain" aria-hidden="true"/>
     <div className="header-inner">
     <Link className="brand" to="/" aria-label="Кафе Ялта — главная" onClick={() => setMobile(false)}>
@@ -106,7 +102,6 @@ function Home() {
 }
 function Footer() {
   return <footer className="site-footer">
-    <OliveBorder/>
     <div className="container footer-inner">
       <div className="footer-main" data-reveal-group>
         <Link className="footer-brand" to="/" data-reveal="rise">

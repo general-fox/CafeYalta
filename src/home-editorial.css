@@ -128,7 +128,8 @@
   font: 400 clamp(16px, 1.25vw, 20px)/1.45 var(--font-ui);
 }
 .hero-offer p { margin: 0; text-wrap: pretty }
-.hero-offer-code {
+.hero-offer .hero-offer-code {
+  margin-top: .4em;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -140,15 +141,10 @@
   min-height: 40px;
   gap: .45em;
   padding: 0 14px;
-  background: var(--surface-hover);
-  color: inherit;
   font-weight: 600;
 }
-.hero-offer-code button span {
-  color: var(--palette-paper);
-  user-select: all;
-}
-.hero-offer-code button svg { flex: none; color: var(--palette-paper) }
+.hero-offer-code button span { user-select: all; }
+.hero-offer-code button svg { flex: none; }
 .hero-actions {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -270,7 +266,7 @@
     container-type: inline-size;
     font-size: clamp(.875rem, 4vw, 1rem);
   }
-  .hero-offer > p:first-child { font-size: clamp(.75rem, 4.4cqi, 1rem); }
+  .hero-offer > p:first-child { font-size: clamp(.75rem, 4.25cqi, 1rem); }
   .hero-actions .button { padding-inline: 5px; font-size: clamp(13px, 3.6vw, 14px) }
   .hero-actions {
     grid-area: 3 / 1;

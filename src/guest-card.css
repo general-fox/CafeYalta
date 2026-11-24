@@ -5,21 +5,13 @@
   gap: 12px;
   width: 100%;
   aspect-ratio: 1.77;
-  padding: clamp(23px, 3vw, 36px) clamp(18px, 2.6vw, 34px) clamp(15px, 2vw, 24px);
+  padding: clamp(15px, 2vw, 24px) clamp(18px, 2.6vw, 34px);
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--palette-midnight) 18%, transparent);
   border-radius: var(--panel-radius);
   background: var(--palette-paper);
   color: var(--palette-midnight);
   font-family: var(--font-ui);
-}
-.guest-card-sample::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: clamp(11px, 1.4vw, 17px);
-  background: var(--palette-clay);
-  mask: var(--olive-ornament) left center / auto 100% repeat-x;
 }
 .guest-card-sample :is(.guest-card-label, .guest-card-details) {
   display: flex;

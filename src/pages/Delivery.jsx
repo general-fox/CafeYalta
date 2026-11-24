@@ -115,7 +115,7 @@ export default function Delivery({ mobileCart }) {
           <div data-reveal="rise"><dt>Кафе</dt><dd>11:00–23:00</dd></div>
           <div data-reveal="rise"><dt>Доставка</dt><dd>11:00–22:30</dd></div>
           <div data-reveal="rise"><dt>До двери</dt><dd>до 60 минут · {COURIER_FEE}&nbsp;₽</dd></div>
-          <div data-reveal="rise"><dt>Скидка 20 % на доставку</dt><dd>по коду <span>CAFEYALTA2026</span></dd></div>
+          <div data-reveal="rise"><dt><span className="offer-discount">Скидка 20 % на доставку</span></dt><dd>по коду <span className="offer-code">CAFEYALTA2026</span></dd></div>
         </dl>
       </div>
     </section>

@@ -47,11 +47,10 @@
   font-variant-numeric: tabular-nums;
 }
 
-.delivery-facts dd span {
+.delivery-facts dd .offer-code {
+  display: inline-block;
   padding: .08em .32em;
   border-radius: .35em;
-  background: var(--surface-hover);
-  color: var(--palette-paper);
   white-space: nowrap;
   user-select: all;
 }

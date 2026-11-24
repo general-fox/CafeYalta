@@ -132,15 +132,6 @@
   --account-rule: var(--surface-line);
   --account-muted: var(--surface-muted);
 }
-.account-page .account-panel::before {
-  content: '';
-  position: absolute;
-  inset: 0 var(--panel-radius) auto;
-  height: 12px;
-  background: var(--palette-clay);
-  mask: var(--olive-ornament) left center / auto 100% repeat-x;
-  pointer-events: none;
-}
 .account-page .account-panel-head {
   align-items: center;
   gap: 10px 18px;

@@ -1,6 +1,6 @@
 .catalog-state a,.iiko-checkout .order-progress a{color:inherit;font-weight:600;text-decoration:underline}
-.catalog-state{padding:25px;border:1px solid #334da030;background:var(--pale);color:var(--ink);margin:18px 0;font-size:16px;line-height:1.6}
-.availability-note{font-size:13px!important;line-height:1.5!important;color:#923a32!important;margin:8px 0!important}
+.catalog-state{padding:25px;border:1px solid color-mix(in srgb, var(--palette-midnight) 19%, transparent);background:var(--pale);color:var(--ink);margin:18px 0;font-size:16px;line-height:1.6}
+.availability-note{font-size:13px!important;line-height:1.5!important;color:var(--palette-clay)!important;margin:8px 0!important}
 .delivery-page .availability-note{color:var(--delivery-highlight)!important}
 .product-unavailable .food-photo{opacity:.65}
 .iiko-checkout .order-status-actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:24px 0}

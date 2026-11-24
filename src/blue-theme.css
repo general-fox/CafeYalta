@@ -1,9 +1,8 @@
 /* Shared maritime palette and surface colors. */
 :root {
-  --palette-midnight: #293661;
+  --palette-midnight: #2d407f;
   --palette-paper: #f2ede1;
-  --palette-clay: #c86a4a;
-  --ornament-opacity: 89%;
+  --palette-clay: #ac3838;
   --palette-ink: color-mix(in srgb, var(--palette-midnight) 36%, black);
   --palette-paper-muted: color-mix(in srgb, var(--palette-paper) 86%, var(--palette-clay));
   --blue: var(--palette-midnight);
@@ -19,8 +18,6 @@
   --surface-line: var(--line);
   --surface-control: color-mix(in srgb, var(--palette-paper) 75%, var(--palette-midnight));
   --surface-hover: color-mix(in srgb, var(--palette-paper) 8%, transparent);
-  /* Match the mobile status bar to the translucent ornament over the header. */
-  --ornament-on-navy: color-mix(in srgb, var(--palette-clay) var(--ornament-opacity), var(--palette-midnight));
   --surface-action: var(--palette-clay);
   --surface-action-hover: color-mix(in srgb, var(--surface-action) 92%, black);
   --button-text-light: white;
@@ -50,7 +47,7 @@ body::after {
 }
 
 @media (max-width: 700px) {
-  body::after { top: var(--header-band-h); }
+  body::after { top: env(safe-area-inset-top, 0px); }
 }
 
 @media print, (forced-colors: active) {
@@ -163,6 +160,20 @@ h2 em {
   color: var(--surface-action-text);
   background: var(--surface-action-hover);
   border-color: var(--surface-action-hover);
+}
+
+.offer-discount {
+  display: inline-block;
+  max-width: 100%;
+  padding-inline: .3em;
+  border-radius: .3em;
+  color: var(--palette-clay);
+  background-color: var(--palette-paper);
+}
+
+.offer-code {
+  color: var(--palette-paper);
+  background-color: var(--palette-clay);
 }
 
 .skip-link {

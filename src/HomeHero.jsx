@@ -73,9 +73,9 @@ export default function HomeHero({ gullOrigin }) {
           <p className="hero-location">Москва <span className="hero-location-dot" aria-hidden="true">·</span> <span className="hero-neighborhood">ЖК «Испанские кварталы»</span></p>
           <h1 id="hero-title"><HeroHandwriting/></h1>
           <div className="hero-offer">
-            <p>При заказе на сайте скидка на доставку 20 %</p>
+            <p>При заказе на сайте <span className="offer-discount">скидка на доставку 20 %</span></p>
             <p className="hero-offer-code">по промокоду{' '}
-              <button type="button" onClick={copyPromoCode} aria-label={`Скопировать промокод ${promoCode}`}>
+              <button type="button" className="offer-code" onClick={copyPromoCode} aria-label={`Скопировать промокод ${promoCode}`}>
                 <span ref={codeText}>{promoCode}</span><Copy size={15} strokeWidth={1.6} aria-hidden="true"/>
               </button>
             </p>
