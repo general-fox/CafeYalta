@@ -1,0 +1,60 @@
+/* A quiet coastal rhythm: short rises, soft fades, no moving page containers. */
+#root .route-content { animation: none; }
+
+#root .reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+[data-reveal], .reveal {
+  --reveal-rise: 16px;
+  --reveal-duration: 620ms;
+}
+
+[data-reveal='soft'] { --reveal-rise: 0px; }
+
+#root [data-reveal-state='pending'] {
+  opacity: 0;
+  translate: 0 var(--reveal-rise);
+}
+
+#root [data-reveal-state='entering'] {
+  animation: coastal-reveal var(--reveal-duration) cubic-bezier(.22, 1, .36, 1)
+    var(--reveal-delay, var(--delay, 0ms)) both;
+}
+
+@keyframes coastal-reveal {
+  from { opacity: 0; translate: 0 var(--reveal-rise); }
+  to { opacity: 1; translate: 0 0; }
+}
+
+/* Keyboard navigation never waits for an entrance to finish. */
+#root [data-reveal-state]:focus-within {
+  animation: none;
+  opacity: 1;
+  translate: none;
+}
+
+/* Dialogs share the rhythm, but their contents and controls arrive together. */
+.modal-backdrop { animation: fade-in 180ms ease-out; }
+.modal { animation: coastal-dialog 380ms cubic-bezier(.22, 1, .36, 1); }
+@keyframes coastal-dialog {
+  from { opacity: 0; translate: 0 10px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@media (max-width: 700px) {
+  [data-reveal], .reveal { --reveal-rise: 10px; --reveal-duration: 480ms; }
+  [data-reveal='soft'] { --reveal-rise: 0px; }
+  #root [data-reveal-state='entering'] { animation-delay: 0ms; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root [data-reveal-state] { opacity: 1; translate: none; animation: none; }
+  .modal, .modal-backdrop { animation: none; }
+}
+
+@media print {
+  #root [data-reveal-state] { opacity: 1; translate: none; animation: none; }
+}

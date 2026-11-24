@@ -40,7 +40,7 @@ function Profile({ user, setUser, notify }) {
     setSaved(true);
     notify('Данные сохранены в этом браузере');
   }
-  return <div className="account-panel"><div className="account-panel-head"><div><h2>Мои данные</h2></div></div>
+  return <div className="account-panel" data-reveal="soft"><div className="account-panel-head"><div><h2>Мои данные</h2></div></div>
     <form className="profile-form" onSubmit={save}>
       <label>Как вас зовут<input name="name" autoComplete="given-name" required maxLength={60} value={draft.name} onChange={e => { setDraft({ ...draft, name: e.target.value }); setSaved(false); }} placeholder="Ваше имя"/></label>
       <label>Телефон<input name="phone" type="tel" autoComplete="tel" readOnly value={formatPhone(user.phone)} aria-describedby="profile-phone-hint"/><span id="profile-phone-hint">Номер для ваших заказов</span></label>
@@ -67,15 +67,15 @@ export default function Account() {
   }, [tab, signedIn]);
   if (!user) return (
     <main className="account-entry container" aria-labelledby="account-entry-title">
-      <div className="account-entry-copy">
-        <span className="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span>
-        <h1 id="account-entry-title">Рады видеть <em>вас снова</em></h1>
-        <p>Здесь можно посмотреть заказы, бронирования и сохранить адрес доставки.</p>
-        <button className="button" onClick={openAuth}>Войти / создать профиль <ArrowUpRight size={18} aria-hidden="true"/></button>
-        <small>Демо без SMS. Данные остаются в этом браузере.</small>
-        <Link className="account-text-link" to="/delivery">Посмотреть меню <ArrowRight size={18} aria-hidden="true"/></Link>
+      <div className="account-entry-copy" data-reveal-group>
+        <span className="eyebrow" data-reveal="rise">ЛИЧНЫЙ КАБИНЕТ</span>
+        <h1 id="account-entry-title" data-reveal="rise">Рады видеть <em>вас снова</em></h1>
+        <p data-reveal="rise">Здесь можно посмотреть заказы, бронирования и сохранить адрес доставки.</p>
+        <button className="button" data-reveal="soft" onClick={openAuth}>Войти / создать профиль <ArrowUpRight size={18} aria-hidden="true"/></button>
+        <small data-reveal="soft">Демо без SMS. Данные остаются в этом браузере.</small>
+        <Link className="account-text-link" data-reveal="soft" to="/delivery">Посмотреть меню <ArrowRight size={18} aria-hidden="true"/></Link>
       </div>
-      <div className="account-entry-art">
+      <div className="account-entry-art" data-reveal="soft">
         <img src={asset('generated/scene/interior-table-hero.webp')}
           srcSet={`${asset('generated/scene/interior-table-hero.webp')} 640w, ${asset('generated/scene/interior-table.jpg')} 1086w`}
           sizes="(max-width: 480px) calc(100vw - 40px), (max-width: 700px) 390px, (max-width: 1100px) 37vw, 465px"
@@ -91,19 +91,19 @@ export default function Account() {
 
   const greeting = `Привет, ${user.name || 'гость'}`;
   return <main className="account-page container">
-    <div className="account-title">
-      <span className="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span>
-      <h1 style={{ '--greeting-length': greeting.length }} title={greeting}>{greeting}</h1>
+    <div className="account-title" data-reveal-group>
+      <span className="eyebrow" data-reveal="rise">ЛИЧНЫЙ КАБИНЕТ</span>
+      <h1 data-reveal="rise" style={{ '--greeting-length': greeting.length }} title={greeting}>{greeting}</h1>
     </div>
-    <div className="account-layout"><aside className="account-sidebar"><div className="account-person"><span className="account-avatar">{(user.name || 'Я').slice(0, 1).toUpperCase()}</span><div><strong>{user.name || 'Гость'}</strong><small>{formatPhone(user.phone)}</small></div></div><nav ref={mobileNav} aria-label="Разделы личного кабинета">{tabs.map(([key, label]) => <button key={key} className={tab === key ? 'active' : ''} onClick={event => { setTab(key); if (tab === key) centerMobileNavItem(mobileNav.current, event.currentTarget); }} aria-current={tab === key ? 'page' : undefined}>{label}</button>)}<Link to="/loyalty" onClick={event => centerMobileNavItem(mobileNav.current, event.currentTarget)}>Карта гостя</Link></nav><button className="account-logout" onClick={() => { setUser(null); notify('Вы вышли из кабинета'); }}>Выйти</button></aside>
+    <div className="account-layout"><aside className="account-sidebar"><div className="account-person" data-reveal="soft"><span className="account-avatar">{(user.name || 'Я').slice(0, 1).toUpperCase()}</span><div><strong>{user.name || 'Гость'}</strong><small>{formatPhone(user.phone)}</small></div></div><nav ref={mobileNav} data-reveal="soft" aria-label="Разделы личного кабинета">{tabs.map(([key, label]) => <button key={key} className={tab === key ? 'active' : ''} onClick={event => { setTab(key); if (tab === key) centerMobileNavItem(mobileNav.current, event.currentTarget); }} aria-current={tab === key ? 'page' : undefined}>{label}</button>)}<Link to="/loyalty" onClick={event => centerMobileNavItem(mobileNav.current, event.currentTarget)}>Карта гостя</Link></nav><button className="account-logout" data-reveal="soft" onClick={() => { setUser(null); notify('Вы вышли из кабинета'); }}>Выйти</button></aside>
     <section className="account-main" aria-label={tabs.find(([key]) => key === tab)?.[1]}>
       {tab === 'profile' && <Profile user={user} setUser={setUser} notify={notify}/>}
-      {tab === 'orders' && <div className="account-panel"><div className="account-panel-head"><div><h2>Мои заказы <span className="account-count">{orders.length}</span></h2></div>{orders.length > 0 && <Link to="/delivery" className="account-text-link">В меню <ArrowUpRight size={18} aria-hidden="true"/></Link>}</div>
+      {tab === 'orders' && <div className="account-panel" data-reveal="soft"><div className="account-panel-head"><div><h2>Мои заказы <span className="account-count">{orders.length}</span></h2></div>{orders.length > 0 && <Link to="/delivery" className="account-text-link">В меню <ArrowUpRight size={18} aria-hidden="true"/></Link>}</div>
         {!orders.length ? <AccountEmpty title="Пока без заказов" description="Начните с любимого блюда." image="generated/menu/b1.jpg">
           <Link className="button" to="/delivery">Выбрать блюда <ArrowUpRight size={18} aria-hidden="true"/></Link>
         </AccountEmpty> : <div className="order-history">{orders.map(order => <article className="history-order" key={order.id}><div className="history-order-heading"><div><strong>Заказ № {String(order.id).slice(-6)}</strong><span>{dateLabel(order.createdAt)} · {order.method === 'pickup' ? 'Самовывоз' : 'Доставка'}</span></div><span className="order-demo-status">Тестовый заказ</span></div><div className="order-history-items">{order.items.map((item, index) => <div key={`${item.id}-${index}`}><span>{item.isGift ? `Морс в подарок · ${item.weight}` : `${item.quantity || 1} × ${item.name}`}</span><span>{rub(item.price * (item.quantity || 1))}</span></div>)}{order.method !== 'pickup' && order.deliveryFee != null && <div className="history-delivery-fee"><span>Доставка</span><span>{rub(order.deliveryFee)}</span></div>}</div><div className="order-address"><span>Куда</span><p>{order.address || (order.method === 'pickup' ? 'Самовывоз из кафе' : user.address || 'Адрес не указан')}</p></div><p className="order-status-note">В кафе не отправлен.</p><div className="history-order-footer"><strong>{rub(order.total)}</strong><Link className="button button-outline" to="/delivery" onClick={() => repeatOrder(order)}>Повторить заказ <ArrowUpRight size={18} aria-hidden="true"/></Link></div></article>)}</div>}
       </div>}
-      {tab === 'reservations' && <div className="account-panel"><div className="account-panel-head"><div><h2>Бронирования <span className="account-count">{reservations.length}</span></h2></div></div>{!reservations.length ? <AccountEmpty title="Пока без бронирований" description="Выберите день и время для встречи в «Ялте»." image="generated/scene/interior-table-hero.webp">
+      {tab === 'reservations' && <div className="account-panel" data-reveal="soft"><div className="account-panel-head"><div><h2>Бронирования <span className="account-count">{reservations.length}</span></h2></div></div>{!reservations.length ? <AccountEmpty title="Пока без бронирований" description="Выберите день и время для встречи в «Ялте»." image="generated/scene/interior-table-hero.webp">
         <button type="button" className="button" onClick={() => setModal('booking')}>Забронировать стол</button>
       </AccountEmpty> : <div className="reservation-history">{reservations.map(reservation => <article key={reservation.id} className="reservation-item"><div className="reservation-date"><CalendarDays size={24} strokeWidth={1.5} aria-hidden="true"/><strong>{dateLabel(reservation.date)}</strong><span>{reservation.time}</span></div><div><h3>Встречаемся в «Ялте»</h3><p>{reservation.guests} гостей · {reservation.name || user.name}</p><span className="order-demo-status">Тестовая заявка</span><p className="order-status-note">Заявка не отправлена в кафе.</p></div></article>)}</div>}</div>}
     </section></div>

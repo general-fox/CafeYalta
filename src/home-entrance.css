@@ -1,0 +1,103 @@
+/* The entrance stays within the existing page layout and never blocks it. */
+html[data-home-intro] :is(.hero-lettering, .hero-intro-copy, .hero-actions) {
+  animation: none;
+}
+
+.hero-scene-reveal {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform-origin: 50% 35%;
+}
+
+html[data-home-intro='sequence'] .hero-scene-reveal {
+  animation: home-photo-reveal 1s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+@keyframes home-photo-reveal {
+  from { opacity: 0; clip-path: inset(0 0 100% 0); transform: scale(1.035); }
+  to { opacity: 1; clip-path: inset(0); transform: scale(1); }
+}
+
+html[data-home-intro='sequence'] .hero-scene-shot {
+  animation: none;
+  transform: none;
+  opacity: 0;
+}
+
+html[data-home-intro='sequence'] .hero-scene-shot:first-child { opacity: 1; }
+html[data-home-intro='done'] .hero-scene-shot:first-child { animation-name: home-intro-camera; }
+
+@keyframes home-intro-camera {
+  0% { transform: scale(1); }
+  41%, 100% { transform: var(--camera-end); }
+}
+
+html[data-home-intro='sequence'] .editorial-hero .hero-location {
+  animation: home-intro-rise .35s cubic-bezier(.22, 1, .36, 1) .35s both;
+}
+
+html[data-home-intro='sequence'] .editorial-hero .hero-offer {
+  animation: home-intro-rise .35s cubic-bezier(.22, 1, .36, 1) .6s both;
+}
+
+html[data-home-intro='sequence'] .hero-actions > :first-child {
+  animation: home-intro-button .3s ease-out .55s both;
+}
+
+html[data-home-intro='sequence'] .hero-actions > :last-child {
+  animation: home-intro-button .3s ease-out .65s both;
+}
+
+html[data-home-intro='sequence'] .hero-art-panel {
+  animation: home-intro-art .6s ease-out .6s both;
+}
+
+@keyframes home-intro-rise {
+  from { opacity: 0; visibility: hidden; transform: translate3d(0, 14px, 0); }
+  to { opacity: 1; visibility: visible; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes home-intro-button {
+  /* Opacity leaves each button's normal hover transform free to respond. */
+  from { opacity: 0; visibility: hidden; }
+  to { opacity: 1; visibility: visible; }
+}
+
+@keyframes home-intro-art {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* The handwritten title is part of the phone composition as well. */
+@media (max-width: 700px) {
+  html[data-home-intro='sequence'] .hero-scene-reveal { animation-duration: .8s; }
+  html[data-home-intro] .hero-intro-copy { position: relative; z-index: 3; }
+  html[data-home-intro='sequence'] .hero-art-panel > * {
+    animation: home-intro-art .5s ease-out .5s both;
+  }
+  html[data-home-intro] .editorial-hero h1 {
+    position: relative;
+    width: auto;
+    height: auto;
+    margin: 10px 0 18px;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+    font-size: clamp(48px, 12.2vw, 68px);
+    line-height: 1.04;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-home-intro] :is(.hero-scene-reveal, .editorial-hero .hero-location, .editorial-hero .hero-offer, .hero-actions > *, .hero-art-panel, .hero-art-panel > *) {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+  html[data-home-intro] .hero-scene-reveal { clip-path: none; }
+  html[data-home-intro] .hero-scene-shot { animation: none; transform: none; }
+  html[data-home-intro] .hero-scene-shot:first-child { animation: none; opacity: 1; }
+  html[data-home-intro] .hero-scene-shot:not(:first-child) { opacity: 0; }
+}

@@ -110,12 +110,12 @@ export default function Delivery({ mobileCart }) {
   return <main className="delivery-page">
     <section className="delivery-facts" aria-labelledby="delivery-facts-title">
       <div className="container">
-        <h1 id="delivery-facts-title"><Clock3 size={19} strokeWidth={1.6} aria-hidden="true"/>Часы работы и доставка</h1>
-        <dl>
-          <div><dt>Кафе</dt><dd>11:00–23:00</dd></div>
-          <div><dt>Доставка</dt><dd>11:00–22:30</dd></div>
-          <div><dt>До двери</dt><dd>до 60 минут · {COURIER_FEE}&nbsp;₽</dd></div>
-          <div><dt>Скидка 20 % на доставку</dt><dd>по коду <span>CAFEYALTA2026</span></dd></div>
+        <h1 id="delivery-facts-title" data-reveal="rise"><Clock3 size={19} strokeWidth={1.6} aria-hidden="true"/>Часы работы и доставка</h1>
+        <dl data-reveal-group>
+          <div data-reveal="rise"><dt>Кафе</dt><dd>11:00–23:00</dd></div>
+          <div data-reveal="rise"><dt>Доставка</dt><dd>11:00–22:30</dd></div>
+          <div data-reveal="rise"><dt>До двери</dt><dd>до 60 минут · {COURIER_FEE}&nbsp;₽</dd></div>
+          <div data-reveal="rise"><dt>Скидка 20 % на доставку</dt><dd>по коду <span>CAFEYALTA2026</span></dd></div>
         </dl>
       </div>
     </section>
@@ -126,11 +126,11 @@ export default function Delivery({ mobileCart }) {
       {mobileCart}
     </div>
     <div className="container menu-layout">
-      <aside className="category-sidebar">{search}<nav aria-label="Категории меню на компьютере">{categoryButtons}</nav></aside>
+      <aside className="category-sidebar">{search}<nav aria-label="Категории меню на компьютере" data-reveal="soft">{categoryButtons}</nav></aside>
       <div className="menu-main"><div className="mobile-menu-search">{search}</div>
         {filtered.length ? categories.map(category => {
           const list = filtered.filter(product => product.category === category.id);
-          return list.length > 0 && <section key={category.id} id={`category-${category.id}`} data-category={category.id} className="menu-section"><div className="menu-section-title"><h2>{category.name}</h2></div><div className="menu-products">{list.map((product, index) => <ProductCard key={product.id} product={product} index={index}/>)}</div></section>;
+          return list.length > 0 && <section key={category.id} id={`category-${category.id}`} data-category={category.id} className="menu-section"><div className="menu-section-title" data-reveal="rise"><h2>{category.name}</h2></div><div className="menu-products">{list.map((product, index) => <ProductCard key={product.id} product={product} index={index}/>)}</div></section>;
         }) : <div className="empty-state"><Search size={35}/><h2>Такого блюда пока нет</h2><button className="button-outline" onClick={() => setQuery('')}>Показать всё меню</button></div>}
       </div>
     </div>

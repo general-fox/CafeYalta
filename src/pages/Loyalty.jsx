@@ -19,23 +19,23 @@ export default function Loyalty() {
 
   return <main className="loyalty-page loyalty-brand">
     <div className="container lb-guide">
-      <Link className="lb-back" to="/"><ArrowLeft size={16} aria-hidden="true"/>На главную</Link>
+      <Link className="lb-back" to="/" data-reveal="soft"><ArrowLeft size={16} aria-hidden="true"/>На главную</Link>
       <section id="get-card" aria-labelledby="loyalty-title">
         <div className="lb-intro">
-          <div>
-            <span className="lb-kicker">Программа лояльности</span>
-            <h1 id="loyalty-title">Как получить<br/>карту гостя</h1>
+          <div data-reveal-group>
+            <span className="lb-kicker" data-reveal="rise">Программа лояльности</span>
+            <h1 id="loyalty-title" data-reveal="rise">Как получить<br/>карту гостя</h1>
           </div>
-          <div className="lb-card-preview"><GuestCard/></div>
+          <div className="lb-card-preview" data-reveal="soft"><GuestCard/></div>
         </div>
-        <ol className="lb-steps" aria-label="Шаги оформления карты">
-          {registrationSteps.map(({ title, text }, index) => <li key={title}>
+        <ol className="lb-steps" aria-label="Шаги оформления карты" data-reveal-group>
+          {registrationSteps.map(({ title, text }, index) => <li key={title} data-reveal="rise">
             <span className="lb-step-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
             <RegistrationIllustration step={index + 1}/>
             <div className="lb-step-copy"><h2>{title}</h2><p>{text}</p></div>
           </li>)}
         </ol>
-        <button type="button" className="button lb-registration-action" aria-haspopup="dialog" onClick={() => setShowLaunchNotice(true)}>
+        <button type="button" className="button lb-registration-action" data-reveal="soft" aria-haspopup="dialog" onClick={() => setShowLaunchNotice(true)}>
           Зарегистрироваться в программе лояльности <ArrowRight size={18} aria-hidden="true"/>
         </button>
       </section>

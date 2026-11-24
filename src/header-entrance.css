@@ -1,0 +1,96 @@
+/* Home-only entrance. Layout heights, the repeated ornament mask and the
+   mobile safe-area band stay owned by header.css throughout the sequence. */
+html[data-home-intro-seen='true'] .site-header {
+  animation: none;
+}
+
+html[data-home-intro='sequence'] .site-header {
+  visibility: visible;
+  animation: home-header-unfold .65s cubic-bezier(.2, .7, .25, 1) both;
+  will-change: clip-path;
+}
+
+/* Reveal the existing SVG repeat from left to right rather than stretching
+   it. This also works with the mobile flex-aligned ::before and its own height. */
+html[data-home-intro='sequence'] .site-header > .olive-border::before {
+  animation: home-header-ornament-draw .45s linear .1s both;
+  will-change: clip-path;
+}
+
+html[data-home-intro='sequence'] .site-header > .header-inner {
+  visibility: visible;
+  animation: home-header-row-arrive .4s cubic-bezier(.2, .7, .25, 1) .25s both;
+  will-change: transform, clip-path, opacity;
+}
+
+/* The parent reveal includes the masked surface-grain wave. The tiny final
+   step removes the clipping shape so an open mobile menu can extend below it. */
+@keyframes home-header-unfold {
+  0% {
+    clip-path: inset(0 0 100% 0);
+  }
+  27.692308%, 38.461538% {
+    clip-path: inset(0 0 calc(100% - var(--header-band-h)) 0);
+  }
+  99.999% {
+    clip-path: inset(0);
+  }
+  100% {
+    clip-path: none;
+  }
+}
+
+@keyframes home-header-ornament-draw {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0); }
+}
+
+/* Equal translation and top clipping keep the visible edge immediately below
+   the ornament: the navigation unfolds downwards without painting over it. */
+@keyframes home-header-row-arrive {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-100%);
+    clip-path: inset(100% 0 0);
+  }
+  99.999% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    clip-path: inset(0);
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    clip-path: none;
+  }
+}
+
+html[data-home-intro='done'] .site-header,
+html[data-home-intro='done'] .site-header > .olive-border::before,
+html[data-home-intro='done'] .site-header > .header-inner {
+  visibility: visible;
+  animation: none;
+  clip-path: none;
+  will-change: auto;
+}
+
+html[data-home-intro='done'] .site-header > .header-inner {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-home-intro] .site-header,
+  html[data-home-intro] .site-header > .olive-border::before,
+  html[data-home-intro] .site-header > .header-inner {
+    visibility: visible;
+    opacity: 1;
+    animation: none;
+    clip-path: none;
+    transform: none;
+    will-change: auto;
+  }
+}

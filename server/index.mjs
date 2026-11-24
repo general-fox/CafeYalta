@@ -15,7 +15,9 @@ try {
   });
   server.listen(config.port, '127.0.0.1', () => {
     console.log(`CafeYalta API: http://127.0.0.1:${config.port}/api/health`);
-    console.log('Режим: только чтение меню. Отправка заказов отключена.');
+    console.log(config.orderingEnabled
+      ? 'Режим: тестовые заказы в демо-кафе, самовывоз с оплатой наличными при получении.'
+      : 'Режим: только чтение меню. Отправка заказов отключена.');
     if (config.missingMenu.length) console.log(`Нужно заполнить server/.env: ${config.missingMenu.join(', ')}`);
   });
   for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => {

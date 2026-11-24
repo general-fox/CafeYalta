@@ -138,15 +138,116 @@ test('external menu and terminal group requests match the API shapes', async () 
   await client.externalMenus(organizationId);
   await client.terminalGroups(organizationId);
   assert.deepEqual(await client.menuById({ externalMenuId: 12345, organizationId }), { raw: ['unchanged'] });
-  await client.menuById({ externalMenuId: '67890', organizationId, priceCategoryId });
+  await client.menuById({ externalMenuId: ' 67890 ', organizationId, priceCategoryId });
+  await client.menuById({ externalMenuId: 'menu-abc', organizationId });
   assert.deepEqual(calls, [
     { path: '/api/2/menu', body: {} },
     { path: '/api/2/menu', body: { organizationIds: [organizationId] } },
     { path: '/api/1/terminal_groups', body: { organizationIds: [organizationId], includeDisabled: false } },
-    { path: '/api/menu/v3/by_id', body: { externalMenuId: 12345, organizationId } },
+    { path: '/api/menu/v3/by_id', body: { externalMenuId: '12345', organizationId } },
     { path: '/api/menu/v3/by_id', body: { externalMenuId: '67890', organizationId, priceCategoryId } },
+    { path: '/api/menu/v3/by_id', body: { externalMenuId: 'menu-abc', organizationId } },
   ]);
-  assert.deepEqual(Object.keys(client).sort(), ['externalMenus', 'menuById', 'organizations', 'terminalGroups']);
+  assert.deepEqual(Object.keys(client).sort(), [
+    'checkStopList', 'commandStatus', 'createDelivery', 'deliveriesById', 'externalMenus',
+    'menuById', 'orderTypes', 'organizations', 'paymentTypes', 'stopLists', 'terminalGroups', 'terminalGroupsAlive',
+  ]);
+});
+
+test('order dictionaries, availability and reconciliation requests match the official API shapes', async () => {
+  const terminalGroupId = '11111111-2222-3333-4444-666666666666';
+  const orderId = '11111111-2222-3333-4444-777777777777';
+  const items = [{ type: 'Product', amount: 1, productId: orderId, price: 0 }];
+  const order = { id: orderId, phone: '+70000000000', orderServiceType: 'DeliveryByClient', items };
+  const calls = [];
+  const client = createIikoClient({ ...auth, fetchImpl: async (url, options) => {
+    if (pathOf(url) === '/api/v2/access_token') return json({ token: 'token' });
+    calls.push({ path: pathOf(url), body: JSON.parse(options.body) });
+    return json({ correlationId });
+  } });
+  await client.terminalGroupsAlive(organizationId, terminalGroupId);
+  await client.orderTypes(organizationId);
+  await client.paymentTypes(organizationId);
+  await client.stopLists(organizationId, terminalGroupId);
+  await client.checkStopList({ organizationId, terminalGroupId, items });
+  await client.createDelivery({ organizationId, terminalGroupId, order, createOrderSettings: { checkStopList: true } });
+  await client.commandStatus({ organizationId, correlationId });
+  await client.deliveriesById({ organizationId, orderIds: [orderId] });
+  assert.deepEqual(calls, [
+    { path: '/api/1/terminal_groups/is_alive', body: { organizationIds: [organizationId], terminalGroupIds: [terminalGroupId] } },
+    { path: '/api/1/deliveries/order_types', body: { organizationIds: [organizationId] } },
+    { path: '/api/1/payment_types', body: { organizationIds: [organizationId] } },
+    { path: '/api/1/stop_lists', body: { organizationIds: [organizationId], terminalGroupsIds: [terminalGroupId], returnSize: true } },
+    { path: '/api/1/stop_lists/check', body: { organizationId, terminalGroupId, items } },
+    { path: '/api/1/deliveries/create', body: { organizationId, terminalGroupId, order, createOrderSettings: { checkStopList: true } } },
+    { path: '/api/1/commands/status', body: { organizationId, correlationId } },
+    { path: '/api/1/deliveries/by_id', body: { organizationId, orderIds: [orderId] } },
+  ]);
+});
+
+test('creating an order never retries after authentication, upstream or network failures', async () => {
+  const terminalGroupId = '11111111-2222-3333-4444-666666666666';
+  for (const failure of [401, 500, 'network']) {
+    let tokenCalls = 0;
+    let creates = 0;
+    const client = createIikoClient({ ...auth, fetchImpl: async url => {
+      if (pathOf(url) === '/api/v2/access_token') { tokenCalls += 1; return json({ token: 'private-token' }); }
+      creates += 1;
+      if (failure === 'network') throw new Error(auth.clientSecret);
+      return json({ correlationId, errorDescription: auth.apiKey }, failure);
+    } });
+    await assert.rejects(client.createDelivery({ organizationId, terminalGroupId, order: { id: correlationId, items: [] } }), error => {
+      assert.equal(error.code, failure === 'network' ? 'IIKO_NETWORK' : failure === 401 ? 'IIKO_AUTH' : 'IIKO_REQUEST');
+      assert.ok(!`${error.stack} ${JSON.stringify(error)}`.includes(auth.apiKey));
+      assert.ok(!`${error.stack} ${JSON.stringify(error)}`.includes(auth.clientSecret));
+      return true;
+    });
+    assert.equal(tokenCalls, 1);
+    assert.equal(creates, 1);
+  }
+});
+
+test('a create 401 invalidates the token for the next read without resending the order', async () => {
+  let tokenCalls = 0;
+  let creates = 0;
+  const client = createIikoClient({ ...auth, fetchImpl: async url => {
+    if (pathOf(url) === '/api/v2/access_token') return json({ token: `token-${++tokenCalls}` });
+    if (pathOf(url) === '/api/1/deliveries/create') { creates += 1; return json({}, 401); }
+    return json({ ok: true });
+  } });
+  await assert.rejects(client.createDelivery({ organizationId, terminalGroupId: organizationId, order: {} }), { code: 'IIKO_AUTH' });
+  assert.deepEqual(await client.organizations(), { ok: true });
+  assert.equal(creates, 1);
+  assert.equal(tokenCalls, 2);
+});
+
+test('creating an order does not retry after a timeout with an unknown result', async context => {
+  context.mock.timers.enable({ apis: ['setTimeout'] });
+  const started = deferred();
+  let creates = 0;
+  let signal;
+  const client = createIikoClient({ ...auth, fetchImpl: async (url, options) => {
+    if (pathOf(url) === '/api/v2/access_token') return json({ token: 'token' });
+    creates += 1;
+    signal = options.signal;
+    started.resolve();
+    return new Promise(() => {});
+  } });
+  const pending = assert.rejects(client.createDelivery({ organizationId, terminalGroupId: organizationId, order: {} }), { code: 'IIKO_TIMEOUT' });
+  await started.promise;
+  context.mock.timers.tick(15_000);
+  await pending;
+  assert.equal(signal.aborted, true);
+  assert.equal(creates, 1);
+});
+
+test('invalid order method inputs fail before authentication', () => {
+  let calls = 0;
+  const client = createIikoClient({ ...auth, fetchImpl: async () => { calls += 1; return json({}); } });
+  assert.throws(() => client.createDelivery({ organizationId, terminalGroupId: organizationId, order: [] }), { code: 'IIKO_INPUT' });
+  assert.throws(() => client.checkStopList({ organizationId, terminalGroupId: organizationId, items: [] }), { code: 'IIKO_INPUT' });
+  assert.throws(() => client.deliveriesById({ organizationId, orderIds: Array(201).fill(organizationId) }), { code: 'IIKO_INPUT' });
+  assert.equal(calls, 0);
 });
 
 test('HTTP errors never expose response bodies or unsafe correlation identifiers', async () => {

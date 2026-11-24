@@ -192,18 +192,18 @@ export default function AboutCafe({ gullOrigin }) {
   return <section id="about" className="about-section cafe-story" aria-labelledby="cafe-story-title">
     <div className="cafe-story-wave" aria-hidden="true"/>
     <div className="coast-layout cafe-story-layout">
-      <div className="cafe-story-copy">
+      <div className="cafe-story-copy" data-reveal-group>
         <div className="cafe-story-heading">
           <GullFlight origin={gullOrigin}/>
-          <span className="cafe-story-kicker">С ЮЖНЫМ НАСТРОЕНИЕМ</span>
-          <h2 id="cafe-story-title" className="cafe-story-title">О кафе «Ялта»</h2>
+          <span className="cafe-story-kicker" data-reveal="rise">С ЮЖНЫМ НАСТРОЕНИЕМ</span>
+          <h2 id="cafe-story-title" className="cafe-story-title" data-reveal="rise">О кафе «Ялта»</h2>
         </div>
         <div>
-          <p>Мы создаём «Ялту» для простых радостей: домашней кухни, неспешных разговоров и встреч с близкими.</p>
-          <p>Пока кафе готовится к открытию, делимся эскизами будущего интерьера. Хотим, чтобы здесь было уютно и за семейным обедом, и за чашкой кофе.</p>
+          <p data-reveal="rise">Мы создаём «Ялту» для простых радостей: домашней кухни, неспешных разговоров и встреч с близкими.</p>
+          <p data-reveal="rise">Пока кафе готовится к открытию, делимся эскизами будущего интерьера. Хотим, чтобы здесь было уютно и за семейным обедом, и за чашкой кофе.</p>
         </div>
       </div>
-      <div ref={gallery} className="cafe-story-track" role="region" aria-roledescription="карусель" aria-label="Эскизы будущего интерьера" tabIndex={0} aria-describedby="cafe-story-gallery-help">
+      <div ref={gallery} className="cafe-story-track" data-reveal="soft" role="region" aria-roledescription="карусель" aria-label="Эскизы будущего интерьера" tabIndex={0} aria-describedby="cafe-story-gallery-help">
         {slides.map((interior, index) => <img key={index} className="cafe-story-photo" src={asset('generated/scene/' + interior.image)}
           alt={index > 0 && index <= count ? interior.alt : ''} width={interior.width} height={interior.height}
           loading="lazy" decoding="async" draggable={false} style={{ objectPosition: interior.position }}/>

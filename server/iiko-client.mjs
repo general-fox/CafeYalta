@@ -6,7 +6,7 @@ const messages = {
   IIKO_CONFIG: 'Не настроено подключение к iiko.',
   IIKO_INPUT: 'Не хватает корректных данных для запроса к iiko.',
   IIKO_AUTH: 'Не удалось авторизоваться в iiko.',
-  IIKO_REQUEST: 'Не удалось получить данные из iiko.',
+  IIKO_REQUEST: 'Не удалось выполнить запрос к iiko.',
   IIKO_RESPONSE: 'iiko вернула некорректный ответ.',
   IIKO_TIMEOUT: 'iiko не ответила вовремя. Повторите запрос позже.',
   IIKO_NETWORK: 'Не удалось связаться с iiko. Повторите запрос позже.',
@@ -31,8 +31,20 @@ function requiredString(value) {
 }
 
 function menuIdentifier(value) {
-  if (typeof value === 'number' && Number.isSafeInteger(value) && value > 0) return value;
+  if (typeof value === 'number' && Number.isSafeInteger(value) && value > 0) return String(value);
   return requiredString(value);
+}
+
+function requiredObject(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new IikoError('IIKO_INPUT', { status: 400 });
+  return value;
+}
+
+function requiredArray(value, { max = Infinity, allowEmpty = false } = {}) {
+  if (!Array.isArray(value) || (!allowEmpty && value.length === 0) || value.length > max) {
+    throw new IikoError('IIKO_INPUT', { status: 400 });
+  }
+  return value;
 }
 
 export function createIikoClient({ appId, clientSecret, apiKey, fetchImpl = globalThis.fetch, now = Date.now } = {}) {
@@ -124,10 +136,46 @@ export function createIikoClient({ appId, clientSecret, apiKey, fetchImpl = glob
     }
   }
 
+  // A timeout or an authentication error after submission does not prove that
+  // the POS rejected an order. Reconciliation and any explicit retry belong to
+  // the order service, which retains the same order UUID.
+  async function writeOnce(path, body) {
+    const token = await getToken();
+    try {
+      return await request(path, body, token);
+    } catch (error) {
+      if (error instanceof IikoError && error.status === 401 && cachedToken?.value === token) cachedToken = null;
+      throw error;
+    }
+  }
+
   return Object.freeze({
     organizations: () => read('/api/1/organizations', {}),
     externalMenus: organizationId => read('/api/2/menu', organizationId == null ? {} : { organizationIds: [requiredString(organizationId)] }),
     terminalGroups: organizationId => read('/api/1/terminal_groups', { organizationIds: [requiredString(organizationId)], includeDisabled: false }),
+    terminalGroupsAlive: (organizationId, terminalGroupId) => read('/api/1/terminal_groups/is_alive', {
+      organizationIds: [requiredString(organizationId)], terminalGroupIds: [requiredString(terminalGroupId)],
+    }),
+    orderTypes: organizationId => read('/api/1/deliveries/order_types', { organizationIds: [requiredString(organizationId)] }),
+    paymentTypes: organizationId => read('/api/1/payment_types', { organizationIds: [requiredString(organizationId)] }),
+    stopLists: (organizationId, terminalGroupId) => read('/api/1/stop_lists', {
+      organizationIds: [requiredString(organizationId)], terminalGroupsIds: [requiredString(terminalGroupId)], returnSize: true,
+    }),
+    checkStopList: ({ organizationId, terminalGroupId, items } = {}) => read('/api/1/stop_lists/check', {
+      organizationId: requiredString(organizationId), terminalGroupId: requiredString(terminalGroupId),
+      items: requiredArray(items),
+    }),
+    createDelivery: ({ organizationId, terminalGroupId, order, createOrderSettings } = {}) => writeOnce('/api/1/deliveries/create', {
+      organizationId: requiredString(organizationId), terminalGroupId: requiredString(terminalGroupId),
+      order: requiredObject(order),
+      ...(createOrderSettings == null ? {} : { createOrderSettings: requiredObject(createOrderSettings) }),
+    }),
+    commandStatus: ({ organizationId, correlationId } = {}) => read('/api/1/commands/status', {
+      organizationId: requiredString(organizationId), correlationId: requiredString(correlationId),
+    }),
+    deliveriesById: ({ organizationId, orderIds } = {}) => read('/api/1/deliveries/by_id', {
+      organizationId: requiredString(organizationId), orderIds: requiredArray(orderIds, { max: 200 }).map(requiredString),
+    }),
     menuById: ({ externalMenuId, organizationId, priceCategoryId } = {}) => read('/api/menu/v3/by_id', {
       externalMenuId: menuIdentifier(externalMenuId),
       organizationId: requiredString(organizationId),

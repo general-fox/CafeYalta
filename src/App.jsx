@@ -12,6 +12,7 @@ import Checkout from './pages/Checkout';
 import Account from './pages/Account';
 import Loyalty from './pages/Loyalty';
 import Modals from './modals';
+import usePageReveals from './usePageReveals';
 function OliveBorder() {
   return <div className="olive-border" aria-hidden="true"/>;
 }
@@ -89,12 +90,12 @@ function Home() {
     </div>
     <section className="home-guest-section" aria-labelledby="home-guest-title">
       <div className="container home-guest-layout">
-        <div className="home-guest-info reveal">
-          <span className="eyebrow">ПРОГРАММА ЛОЯЛЬНОСТИ</span>
-          <h2 id="home-guest-title">Хорошо быть <em>своим</em></h2>
-          <p>Бонусы за любимые блюда и сюрпризы для наших гостей.</p>
-          <Link className="button home-guest-action" to="/loyalty">Как получить карту</Link>
-          <small>Программа готовится к запуску</small>
+        <div className="home-guest-info" data-reveal-group>
+          <span className="eyebrow" data-reveal="rise">ПРОГРАММА ЛОЯЛЬНОСТИ</span>
+          <h2 id="home-guest-title" data-reveal="rise">Хорошо быть <em>своим</em></h2>
+          <p data-reveal="rise">Бонусы за любимые блюда и сюрпризы для наших гостей.</p>
+          <Link className="button home-guest-action" to="/loyalty" data-reveal="soft">Как получить карту</Link>
+          <small data-reveal="soft">Программа готовится к запуску</small>
         </div>
         <div className="home-guest-card reveal">
           <GuestCard/>
@@ -107,18 +108,18 @@ function Footer() {
   return <footer className="site-footer">
     <OliveBorder/>
     <div className="container footer-inner">
-      <div className="footer-main">
-        <Link className="footer-brand" to="/">
+      <div className="footer-main" data-reveal-group>
+        <Link className="footer-brand" to="/" data-reveal="rise">
           <img src={asset('brand/CafeYalta-light.svg')} alt="Кафе Ялта" width="700" height="100"/>
           <span>Немного моря в Москве</span>
         </Link>
-        <nav className="footer-links" aria-label="Разделы сайта">
+        <nav className="footer-links" aria-label="Разделы сайта" data-reveal="rise">
           <span className="eyebrow">ЗАГЛЯДЫВАЙТЕ</span>
           <Link to="/delivery">Доставка и меню</Link>
           <Link to="/loyalty">Программа лояльности</Link>
           <Link to="/account">Личный кабинет</Link>
         </nav>
-        <div className="footer-contacts">
+        <div className="footer-contacts" data-reveal="rise">
           <span className="eyebrow">МЫ РЯДОМ</span>
           <a href="tel:+74951234567">+7 (495) 123-45-67</a>
           <span>Москва, ЖК «Испанские кварталы»</span>
@@ -126,7 +127,7 @@ function Footer() {
         </div>
         <Waves/>
       </div>
-      <div className="footer-bottom">
+      <div className="footer-bottom" data-reveal="soft">
         <span>© {new Date().getFullYear()} Кафе «Ялта»</span>
         <span>Демо · контакты и меню — примеры</span>
         <Link to="/privacy">Конфиденциальность</Link>
@@ -134,7 +135,7 @@ function Footer() {
     </div>
   </footer>;
 }
-function Privacy() { return <main className="info-page paper-surface"><div className="container text-page"><span className="eyebrow">ВАШИ ДАННЫЕ</span><h1>Конфиденциальность</h1><p>Этот сайт — демонстрационная версия кафе «Ялта». Введённые имя, телефон, адрес, состав тестовых заказов и бронирований сохраняются только в локальном хранилище вашего браузера на этом устройстве. В кафе они не отправляются. Не вводите реальные персональные данные для тестирования.</p><h2>Как удалить данные</h2><p>Очистите данные сайта в настройках браузера. После этого удалятся профиль, корзина и вся тестовая история на этом устройстве.</p><h2>Перед открытием кафе</h2><p>Здесь появится политика оператора персональных данных с актуальными реквизитами, целями обработки, сроками хранения и контактами. Реальная авторизация, оплата и обработка заказов пока не подключены.</p><Link className="button" to="/">На главную <ArrowUpRight size={18}/></Link></div></main>; }
+function Privacy() { return <main className="info-page paper-surface"><div className="container text-page" data-reveal-group><span className="eyebrow" data-reveal="rise">ВАШИ ДАННЫЕ</span><h1 data-reveal="rise">Конфиденциальность</h1><p data-reveal="rise">Этот сайт — демонстрационная версия кафе «Ялта». Введённые имя, телефон, адрес, состав тестовых заказов и бронирований сохраняются только в локальном хранилище вашего браузера на этом устройстве. В кафе они не отправляются. Не вводите реальные персональные данные для тестирования.</p><h2 data-reveal="rise">Как удалить данные</h2><p data-reveal="rise">Очистите данные сайта в настройках браузера. После этого удалятся профиль, корзина и вся тестовая история на этом устройстве.</p><h2 data-reveal="rise">Перед открытием кафе</h2><p data-reveal="rise">Здесь появится политика оператора персональных данных с актуальными реквизитами, целями обработки, сроками хранения и контактами. Реальная авторизация, оплата и обработка заказов пока не подключены.</p><Link className="button" data-reveal="soft" to="/">На главную <ArrowUpRight size={18}/></Link></div></main>; }
 export default function App() { const location = useLocation(); const { setModal, cart, toast } = useShop();
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
   const isDelivery = useMatch('/delivery');
@@ -146,6 +147,6 @@ export default function App() { const location = useLocation(); const { setModal
     </button>
   ) : null;
   useLayoutEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); const titles = { '/': 'Кафе Ялта — доставка в Москве', '/delivery': 'Доставка и меню — Ялта', '/loyalty': 'Программа лояльности — Ялта', '/account': 'Личный кабинет — Ялта', '/checkout': 'Оформление заказа — Ялта' }; document.title = titles[location.pathname] || 'Кафе Ялта'; }, [location.pathname]);
-  useEffect(() => { const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } }), { threshold: 0.07 }); const observe = () => document.querySelectorAll('.reveal:not(.is-visible)').forEach(el => observer.observe(el)); observe(); const mutation = new MutationObserver(observe); mutation.observe(document.getElementById('root'), { childList: true, subtree: true }); return () => { observer.disconnect(); mutation.disconnect(); }; }, []);
-  return <><a className="skip-link" href="#main-content" onClick={e => { e.preventDefault(); document.getElementById('main-content')?.focus(); }}>Перейти к содержимому</a><Header cartCount={showCart ? cartCount : 0}/><div id="main-content" tabIndex={-1} className="route-content" key={location.pathname}><Routes><Route path="/" element={<Home/>}/><Route path="/delivery" element={<Delivery mobileCart={mobileCart}/>}/><Route path="/checkout" element={<Checkout/>}/><Route path="/account" element={<Account/>}/><Route path="/loyalty" element={<Loyalty/>}/><Route path="/privacy" element={<Privacy/>}/><Route path="*" element={<main className="info-page paper-surface"><div className="container text-page"><h1>Кажется, здесь только море</h1><Link className="button" to="/">Вернуться на берег</Link></div></main>}/></Routes></div><Footer/>{!isDelivery && mobileCart}<Modals/>{toast && <div className="toast" role="status"><Check size={18}/>{toast}</div>}</>;
+  usePageReveals();
+  return <><a className="skip-link" href="#main-content" onClick={e => { e.preventDefault(); document.getElementById('main-content')?.focus(); }}>Перейти к содержимому</a><Header cartCount={showCart ? cartCount : 0}/><div id="main-content" tabIndex={-1} className="route-content" key={location.pathname}><Routes><Route path="/" element={<Home/>}/><Route path="/delivery" element={<Delivery mobileCart={mobileCart}/>}/><Route path="/checkout" element={<Checkout/>}/><Route path="/account" element={<Account/>}/><Route path="/loyalty" element={<Loyalty/>}/><Route path="/privacy" element={<Privacy/>}/><Route path="*" element={<main className="info-page paper-surface"><div className="container text-page" data-reveal="soft"><h1>Кажется, здесь только море</h1><Link className="button" to="/">Вернуться на берег</Link></div></main>}/></Routes></div><Footer/>{!isDelivery && mobileCart}<Modals/>{toast && <div className="toast" role="status"><Check size={18}/>{toast}</div>}</>;
 }
