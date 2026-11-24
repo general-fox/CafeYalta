@@ -4,8 +4,6 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Modal } from '../components';
 import GuestCard from '../GuestCard';
 import RegistrationIllustration from './RegistrationIllustration';
-import './secondary.css';
-import './loyalty-brand.css';
 
 const registrationSteps = [
   { title: 'Откройте регистрацию', text: 'После запуска отсканируйте QR-код в кафе или нажмите кнопку под инструкцией.' },

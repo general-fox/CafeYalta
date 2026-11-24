@@ -34,6 +34,11 @@
   }
 }
 
+.route-loading {
+  min-height: calc(100svh - var(--header-h));
+  padding-block: 3rem;
+}
+
 body::after {
   content: '';
   position: fixed;

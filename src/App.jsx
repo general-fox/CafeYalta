@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Routes, Route, NavLink, Link, useLocation, useMatch } from 'react-router-dom';
 import { ArrowUpRight, UserRound, ShoppingBag, Menu, X, Check, Phone } from 'lucide-react';
 import { useShop } from './store';
@@ -8,11 +8,12 @@ import Delivery from './pages/Delivery';
 import HomeHero from './HomeHero';
 import AboutCafe from './AboutCafe';
 import GuestCard from './GuestCard';
-import Checkout from './pages/Checkout';
-import Account from './pages/Account';
-import Loyalty from './pages/Loyalty';
-import Modals from './modals';
 import usePageReveals from './usePageReveals';
+
+const Account = lazy(() => import('./pages/Account'));
+const Loyalty = lazy(() => import('./pages/Loyalty'));
+const Checkout = lazy(() => import('./pages/Checkout'));
+const Modals = lazy(() => import('./modals'));
 
 function Header({ cartCount }) {
   const { user, openAuth, setModal } = useShop();
@@ -46,7 +47,9 @@ function Header({ cartCount }) {
     };
   }, [mobile]);
 
-  return <header ref={header} className="site-header">
+  return <>
+    <div className="header-safe-area" aria-hidden="true"/>
+    <header ref={header} className="site-header">
     <div className="surface-grain" aria-hidden="true"/>
     <div className="header-inner">
     <Link className="brand" to="/" aria-label="Кафе Ялта — главная" onClick={() => setMobile(false)}>
@@ -74,7 +77,8 @@ function Header({ cartCount }) {
       </button>
       <button ref={menuButton} type="button" className="mobile-menu icon-button" onClick={() => setMobile(open => !open)} aria-expanded={mobile} aria-controls="main-navigation" aria-label={mobile ? 'Закрыть меню' : 'Открыть меню'} title={mobile ? 'Закрыть меню' : 'Открыть меню'}>{mobile ? <X size={24} aria-hidden="true"/> : <Menu size={24} aria-hidden="true"/>}</button>
     </div>
-  </div></header>;
+  </div></header>
+  </>;
 }
 function Home() {
   const gullOrigin = useRef(null);
@@ -131,7 +135,7 @@ function Footer() {
   </footer>;
 }
 function Privacy() { return <main className="info-page paper-surface"><div className="container text-page" data-reveal-group><span className="eyebrow" data-reveal="rise">ВАШИ ДАННЫЕ</span><h1 data-reveal="rise">Конфиденциальность</h1><p data-reveal="rise">Этот сайт — демонстрационная версия кафе «Ялта». Введённые имя, телефон, адрес, состав тестовых заказов и бронирований сохраняются только в локальном хранилище вашего браузера на этом устройстве. В кафе они не отправляются. Не вводите реальные персональные данные для тестирования.</p><h2 data-reveal="rise">Как удалить данные</h2><p data-reveal="rise">Очистите данные сайта в настройках браузера. После этого удалятся профиль, корзина и вся тестовая история на этом устройстве.</p><h2 data-reveal="rise">Перед открытием кафе</h2><p data-reveal="rise">Здесь появится политика оператора персональных данных с актуальными реквизитами, целями обработки, сроками хранения и контактами. Реальная авторизация, оплата и обработка заказов пока не подключены.</p><Link className="button" data-reveal="soft" to="/">На главную <ArrowUpRight size={18}/></Link></div></main>; }
-export default function App() { const location = useLocation(); const { setModal, cart, toast } = useShop();
+export default function App() { const location = useLocation(); const { modal, setModal, cart, toast } = useShop();
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
   const isDelivery = useMatch('/delivery');
   const showCart = location.pathname !== '/checkout' && cartCount > 0;
@@ -143,5 +147,5 @@ export default function App() { const location = useLocation(); const { setModal
   ) : null;
   useLayoutEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); const titles = { '/': 'Кафе Ялта — доставка в Москве', '/delivery': 'Доставка и меню — Ялта', '/loyalty': 'Программа лояльности — Ялта', '/account': 'Личный кабинет — Ялта', '/checkout': 'Оформление заказа — Ялта' }; document.title = titles[location.pathname] || 'Кафе Ялта'; }, [location.pathname]);
   usePageReveals();
-  return <><a className="skip-link" href="#main-content" onClick={e => { e.preventDefault(); document.getElementById('main-content')?.focus(); }}>Перейти к содержимому</a><Header cartCount={showCart ? cartCount : 0}/><div id="main-content" tabIndex={-1} className="route-content" key={location.pathname}><Routes><Route path="/" element={<Home/>}/><Route path="/delivery" element={<Delivery mobileCart={mobileCart}/>}/><Route path="/checkout" element={<Checkout/>}/><Route path="/account" element={<Account/>}/><Route path="/loyalty" element={<Loyalty/>}/><Route path="/privacy" element={<Privacy/>}/><Route path="*" element={<main className="info-page paper-surface"><div className="container text-page" data-reveal="soft"><h1>Кажется, здесь только море</h1><Link className="button" to="/">Вернуться на берег</Link></div></main>}/></Routes></div><Footer/>{!isDelivery && mobileCart}<Modals/>{toast && <div className="toast" role="status"><Check size={18}/>{toast}</div>}</>;
+  return <><a className="skip-link" href="#main-content" onClick={e => { e.preventDefault(); document.getElementById('main-content')?.focus(); }}>Перейти к содержимому</a><Header cartCount={showCart ? cartCount : 0}/><div id="main-content" tabIndex={-1} className="route-content" key={location.pathname}><Suspense fallback={<main className="container route-loading" role="status">Загрузка страницы…</main>}><Routes><Route path="/" element={<Home/>}/><Route path="/delivery" element={<Delivery mobileCart={mobileCart}/>}/><Route path="/checkout" element={<Checkout/>}/><Route path="/account" element={<Account/>}/><Route path="/loyalty" element={<Loyalty/>}/><Route path="/privacy" element={<Privacy/>}/><Route path="*" element={<main className="info-page paper-surface"><div className="container text-page" data-reveal="soft"><h1>Кажется, здесь только море</h1><Link className="button" to="/">Вернуться на берег</Link></div></main>}/></Routes></Suspense></div><Footer/>{!isDelivery && mobileCart}{modal && <Suspense fallback={null}><Modals/></Suspense>}{toast && <div className="toast" role="status"><Check size={18}/>{toast}</div>}</>;
 }

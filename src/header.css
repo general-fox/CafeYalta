@@ -58,6 +58,23 @@
   flex-shrink: 0;
 }
 
+.header-safe-area { display: none; }
+
+@media screen and (any-pointer: coarse) {
+  /* Extend the opaque header behind the phone status bar, outside the animated wave.
+     Keep the viewport edge solid even when the browser reports a zero top inset. */
+  .header-safe-area {
+    display: block;
+    position: fixed;
+    inset-inline: 0;
+    top: calc(0px - var(--header-row-h));
+    height: calc(var(--header-row-h) + max(8px, env(safe-area-inset-top, 0px)));
+    z-index: 102;
+    background-color: var(--palette-midnight);
+    pointer-events: none;
+  }
+}
+
 @media (any-pointer: coarse) {
   :is(.site-header .brand, .site-footer .footer-brand, .site-header .main-nav) {
     -webkit-touch-callout: none;

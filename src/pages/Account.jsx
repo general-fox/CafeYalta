@@ -2,10 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, CalendarDays } from 'lucide-react';
 import { useShop } from '../store';
-import { asset } from '../components';
+import FoodImage from '../FoodImage';
+import { sceneImageProps } from '../interiorPhotos';
 import { formatPhone, changeQuantity } from '../domain';
-import './secondary.css';
-import './account-readable.css';
 
 const rub = value => new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(value || 0);
 const dateLabel = value => { const date = new Date(value); return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', timeZone: 'Europe/Moscow' }); };
@@ -19,14 +18,14 @@ function centerMobileNavItem(nav, item) {
   });
 }
 
-function AccountEmpty({ title, description, image, children }) {
+function AccountEmpty({ title, description, photo, children }) {
   return <div className="account-empty">
     <div className="account-empty-copy">
       <h3>{title}</h3>
       <p>{description}</p>
       {children}
     </div>
-    <img className="account-empty-photo" src={asset(image)} alt="" width="400" height="400"/>
+    {photo}
   </div>;
 }
 
@@ -76,9 +75,7 @@ export default function Account() {
         <Link className="account-text-link" data-reveal="soft" to="/delivery">Посмотреть меню <ArrowRight size={18} aria-hidden="true"/></Link>
       </div>
       <div className="account-entry-art" data-reveal="soft">
-        <img src={asset('generated/scene/interior-table-hero.webp')}
-          srcSet={`${asset('generated/scene/interior-table-hero.webp')} 640w, ${asset('generated/scene/interior-table.jpg')} 1086w`}
-          sizes="(max-width: 480px) calc(100vw - 40px), (max-width: 700px) 390px, (max-width: 1100px) 37vw, 465px"
+        <img {...sceneImageProps('interior-table', '(max-width: 480px) calc(100vw - 40px), (max-width: 700px) 390px, (max-width: 1100px) 37vw, 465px')} decoding="async"
           width="640" height="853" alt="Сервированный столик у окна в кафе «Ялта»"/>
       </div>
     </main>
@@ -99,11 +96,11 @@ export default function Account() {
     <section className="account-main" aria-label={tabs.find(([key]) => key === tab)?.[1]}>
       {tab === 'profile' && <Profile user={user} setUser={setUser} notify={notify}/>}
       {tab === 'orders' && <div className="account-panel" data-reveal="soft"><div className="account-panel-head"><div><h2>Мои заказы <span className="account-count">{orders.length}</span></h2></div>{orders.length > 0 && <Link to="/delivery" className="account-text-link">В меню <ArrowUpRight size={18} aria-hidden="true"/></Link>}</div>
-        {!orders.length ? <AccountEmpty title="Пока без заказов" description="Начните с любимого блюда." image="generated/menu/b1.jpg">
+        {!orders.length ? <AccountEmpty title="Пока без заказов" description="Начните с любимого блюда." photo={<FoodImage product={{ id: 'b1' }} variant="card" className="account-empty-photo" alt=""/>}>
           <Link className="button" to="/delivery">Выбрать блюда <ArrowUpRight size={18} aria-hidden="true"/></Link>
         </AccountEmpty> : <div className="order-history">{orders.map(order => <article className="history-order" key={order.id}><div className="history-order-heading"><div><strong>Заказ № {String(order.id).slice(-6)}</strong><span>{dateLabel(order.createdAt)} · {order.method === 'pickup' ? 'Самовывоз' : 'Доставка'}</span></div><span className="order-demo-status">Тестовый заказ</span></div><div className="order-history-items">{order.items.map((item, index) => <div key={`${item.id}-${index}`}><span>{item.isGift ? `Морс в подарок · ${item.weight}` : `${item.quantity || 1} × ${item.name}`}</span><span>{rub(item.price * (item.quantity || 1))}</span></div>)}{order.method !== 'pickup' && order.deliveryFee != null && <div className="history-delivery-fee"><span>Доставка</span><span>{rub(order.deliveryFee)}</span></div>}</div><div className="order-address"><span>Куда</span><p>{order.address || (order.method === 'pickup' ? 'Самовывоз из кафе' : user.address || 'Адрес не указан')}</p></div><p className="order-status-note">В кафе не отправлен.</p><div className="history-order-footer"><strong>{rub(order.total)}</strong><Link className="button button-outline" to="/delivery" onClick={() => repeatOrder(order)}>Повторить заказ <ArrowUpRight size={18} aria-hidden="true"/></Link></div></article>)}</div>}
       </div>}
-      {tab === 'reservations' && <div className="account-panel" data-reveal="soft"><div className="account-panel-head"><div><h2>Бронирования <span className="account-count">{reservations.length}</span></h2></div></div>{!reservations.length ? <AccountEmpty title="Пока без бронирований" description="Выберите день и время для встречи в «Ялте»." image="generated/scene/interior-table-hero.webp">
+      {tab === 'reservations' && <div className="account-panel" data-reveal="soft"><div className="account-panel-head"><div><h2>Бронирования <span className="account-count">{reservations.length}</span></h2></div></div>{!reservations.length ? <AccountEmpty title="Пока без бронирований" description="Выберите день и время для встречи в «Ялте»." photo={<img {...sceneImageProps('interior-table', 'auto, (max-width: 700px) calc(100vw - 64px), 320px')} loading="lazy" decoding="async" className="account-empty-photo" width="640" height="853" alt=""/>}>
         <button type="button" className="button" onClick={() => setModal('booking')}>Забронировать стол</button>
       </AccountEmpty> : <div className="reservation-history">{reservations.map(reservation => <article key={reservation.id} className="reservation-item"><div className="reservation-date"><CalendarDays size={24} strokeWidth={1.5} aria-hidden="true"/><strong>{dateLabel(reservation.date)}</strong><span>{reservation.time}</span></div><div><h3>Встречаемся в «Ялте»</h3><p>{reservation.guests} гостей · {reservation.name || user.name}</p><span className="order-demo-status">Тестовая заявка</span><p className="order-status-note">Заявка не отправлена в кафе.</p></div></article>)}</div>}</div>}
     </section></div>

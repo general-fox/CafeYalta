@@ -15,8 +15,8 @@ html[data-home-intro='sequence'] .hero-scene-reveal {
 }
 
 @keyframes home-photo-reveal {
-  from { opacity: 0; clip-path: inset(0 0 100% 0); transform: scale(1.035); }
-  to { opacity: 1; clip-path: inset(0); transform: scale(1); }
+  from { transform: scale(1.035); }
+  to { transform: scale(1); }
 }
 
 html[data-home-intro='sequence'] .hero-scene-shot {

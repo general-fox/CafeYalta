@@ -72,6 +72,7 @@
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
+.cafe-story-photo:not([src]) { opacity: 0; }
 @media (any-pointer: fine) {
   .cafe-story .cafe-story-track { cursor: grab; user-select: none; }
 }

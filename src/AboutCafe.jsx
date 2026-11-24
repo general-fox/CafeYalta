@@ -1,9 +1,9 @@
-import { useLayoutEffect, useRef } from 'react';
-import { asset } from './components';
-import { aboutInteriors } from './interiorPhotos';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { aboutInteriors, sceneImageProps } from './interiorPhotos';
 import GullFlight from './GullFlight';
 import './about-cafe.css';
 
+const galleryPhotoSizes = 'auto, (min-width: 520px) and (max-width: 700px) and (orientation: landscape) 42vw, (max-width: 700px) calc(100vw - 52px), (max-width: 1240px) and (orientation: portrait) calc(87vw - 50px), (max-width: 1360px) calc(49vw - 41px), 617px';
 const count = aboutInteriors.length;
 const slidePause = 2400;
 const slideDuration = 950;
@@ -12,6 +12,7 @@ const slides = [aboutInteriors[count - 1], ...aboutInteriors, ...aboutInteriors.
 
 export default function AboutCafe({ gullOrigin }) {
   const gallery = useRef(null);
+  const [loadPhotos, setLoadPhotos] = useState(false);
 
   useLayoutEffect(() => {
     const track = gallery.current;
@@ -142,6 +143,12 @@ export default function AboutCafe({ gullOrigin }) {
     const onWheel = event => {
       if (event.shiftKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) stopAnimation();
     };
+    const approaching = new IntersectionObserver(([entry], observer) => {
+      if (!entry.isIntersecting) return;
+      setLoadPhotos(true);
+      observer.disconnect();
+    }, { rootMargin: '160px 0px' });
+    approaching.observe(track);
     const visible = new IntersectionObserver(([entry]) => {
       inView = entry.isIntersecting;
       schedule();
@@ -172,6 +179,7 @@ export default function AboutCafe({ gullOrigin }) {
     return () => {
       clearTimeout(advanceTimer);
       clearTimeout(settleTimer);
+      approaching.disconnect();
       visible.disconnect();
       resize.disconnect();
       track.removeEventListener('scroll', onScroll);
@@ -204,9 +212,10 @@ export default function AboutCafe({ gullOrigin }) {
         </div>
       </div>
       <div ref={gallery} className="cafe-story-track" data-reveal="soft" role="region" aria-roledescription="карусель" aria-label="Эскизы будущего интерьера" tabIndex={0} aria-describedby="cafe-story-gallery-help">
-        {slides.map((interior, index) => <img key={index} className="cafe-story-photo" src={asset('generated/scene/' + interior.image)}
+        {slides.map((interior, index) => <img key={index} className="cafe-story-photo"
+          {...(loadPhotos && sceneImageProps(interior.stem, galleryPhotoSizes))}
           alt={index > 0 && index <= count ? interior.alt : ''} width={interior.width} height={interior.height}
-          loading="lazy" decoding="async" draggable={false} style={{ objectPosition: interior.position }}/>
+          loading="lazy" fetchPriority="low" decoding="async" draggable={false} style={{ objectPosition: interior.position }}/>
         )}
       </div>
       <p id="cafe-story-gallery-help" className="cafe-story-sr-only">Листайте фотографии мышью, свайпом или стрелками на клавиатуре. Чтобы открыть соседнюю фотографию, щёлкните по её видимому краю. Home — первый эскиз, End — последний.</p>
