@@ -520,13 +520,16 @@
 
   .delivery-page .category-inner {
     --surface-text: var(--palette-ink);
-    --surface-hover: var(--sand);
+    --surface-hover: color-mix(in srgb, var(--palette-clay) 24%, white);
+    --focus-fill: color-mix(in srgb, var(--palette-clay) 38%, white);
     width: 100%;
     padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
     background-color: var(--palette-paper);
   }
 
-  .delivery-page .category-nav > button.active { color: var(--palette-midnight); }
+  .delivery-page .category-nav > button.active {
+    color: color-mix(in srgb, var(--palette-clay) 76%, black);
+  }
 
   .delivery-page .category-bar .mobile-cart-bar {
     position: static;
