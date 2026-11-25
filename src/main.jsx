@@ -19,4 +19,5 @@ import './focus.css';
 import './header-entrance.css';
 import './home-entrance.css';
 import './page-reveals.css';
+import './iiko.css';
 createRoot(document.getElementById('root')).render(<React.StrictMode><HashRouter><ShopProvider><HomeEntranceProvider><App/></HomeEntranceProvider></ShopProvider></HashRouter></React.StrictMode>);

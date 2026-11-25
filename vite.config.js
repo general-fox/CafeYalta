@@ -27,6 +27,11 @@ function preloadHomePhoto() {
 export default defineConfig({
   plugins: [react(), preloadHomePhoto()],
   base: './',
-  server: { port: 5180, strictPort: true, watch: { ignored: ['**/.qa/**'] } },
+  server: {
+    port: 5180,
+    strictPort: true,
+    watch: { ignored: ['**/.qa/**'] },
+    proxy: { '/api': { target: 'http://127.0.0.1:3001', changeOrigin: true } },
+  },
   preview: { port: 4173, strictPort: true },
 });

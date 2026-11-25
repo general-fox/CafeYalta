@@ -241,6 +241,17 @@ const orderConfig = () => readConfig({
 });
 const orderHeaders = () => ({ origin: 'http://localhost:5180', 'content-type': 'application/json', authorization: `Bearer ${token}` });
 
+test('menu includes verified order methods and address format from the ordering service', async t => {
+  const ordering = { methods: ['pickup', 'delivery'], payment: 'cash_on_receipt', deliveryFee: 0, addressFormat: 'legacy' };
+  const request = await serve(t, {
+    config: orderConfig(), client: { async menuById() { return oldMenu(); } },
+    orderService: { async capabilities() { return ordering; } },
+  });
+  const response = await request('/api/menu');
+  assert.equal(response.status, 200);
+  assert.deepEqual((await response.json()).ordering, ordering);
+});
+
 test('ordering needs an explicit flag and a selected terminal group', () => {
   assert.equal(configured().orderingEnabled, false);
   assert.equal(readConfig({ IIKO_ORDERING_ENABLED: 'true' }).orderingEnabled, false);

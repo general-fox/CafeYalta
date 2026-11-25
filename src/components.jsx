@@ -27,10 +27,27 @@ export function Gulls({ className = '' }) {
   </svg>;
 }
 export function ArrowLink({ to, children }) { return <Link className="text-link" to={to}>{children}<ArrowUpRight size={19}/></Link>; }
-export function Quantity({ product, quantity }) { const { add } = useShop(); return <div className="quantity"><button type="button" onClick={() => add(product, -1)} aria-label={`Убрать одну порцию: ${product.name}`}><Minus size={16}/></button><span aria-live="polite">{quantity}</span><button type="button" onClick={() => add(product)} disabled={quantity >= 30} aria-label={`Добавить одну порцию: ${product.name}`}><Plus size={16}/></button></div>; }
-export function ProductCard({ product, priority = false }) { const { cart, add, setModal } = useShop(); const quantity = cart.find(item => item.id === product.id)?.quantity || 0; return <article className="product-card reveal"><button className="product-image" onClick={() => setModal({ type: 'product', product })} aria-label={`Подробнее: ${product.name}`}><FoodImage product={product} variant="card" priority={priority}/>{product.tag && <span className="product-tag">{product.tag}</span>}<span className="image-open"><ArrowUpRight size={22}/></span></button><div className="product-copy"><h3><button onClick={() => setModal({ type: 'product', product })}>{product.name}</button></h3><div className="product-bottom"><strong>{money(product.price)}</strong><div className="product-card-control">{quantity ? <Quantity product={product} quantity={quantity}/> : <button className="add-button" onClick={() => add(product)} aria-label={`Добавить в корзину: ${product.name}`}><Plus size={18}/><span>Добавить</span></button>}</div></div></div></article>; }
+export function ModifierSummary({ modifiers = [] }) {
+  if (!modifiers.length) return null;
+  return <ul className="modifier-summary" aria-label="Выбранные дополнения">{modifiers.map(modifier => <li key={`${modifier.groupId}:${modifier.modifierId}`}>
+    {modifier.name}{modifier.quantity > 1 ? ` × ${modifier.quantity}` : ''}
+  </li>)}</ul>;
+}
+export function Quantity({ product, quantity }) {
+  const { add, orderLocked, isIiko, orderingEnabled } = useShop();
+  return <div className="quantity"><button type="button" disabled={orderLocked} onClick={() => add(product, -1)} aria-label={`Убрать одну порцию: ${product.name}`}><Minus size={16}/></button><span aria-live="polite">{quantity}</span><button type="button" onClick={() => add(product)} disabled={orderLocked || quantity >= 30 || (isIiko && (!orderingEnabled || product.source !== 'iiko' || product.available === false))} aria-label={`Добавить одну порцию: ${product.name}`}><Plus size={16}/></button></div>;
+}
+export function ProductCard({ product, priority = false }) {
+  const { cart, add, setModal, isIiko, orderLocked, orderingEnabled } = useShop();
+  const quantity = cart.find(item => item.id === product.id)?.quantity || 0;
+  const configurable = isIiko && product.modifierGroups?.length > 0;
+  const unavailable = product.available === false || (isIiko && product.source !== 'iiko');
+  return <article className={`product-card reveal${unavailable ? ' product-unavailable' : ''}`}><button className="product-image" onClick={() => setModal({ type: 'product', product })} aria-label={`Подробнее: ${product.name}`}><FoodImage product={product} variant="card" priority={priority}/>{product.tag && <span className="product-tag">{product.tag}</span>}<span className="image-open"><ArrowUpRight size={22}/></span></button><div className="product-copy"><h3><button onClick={() => setModal({ type: 'product', product })}>{product.name}</button></h3>{unavailable && <p className="availability-note">{product.unavailableReason || 'Сейчас недоступно'}</p>}<div className="product-bottom"><strong>{money(product.price)}</strong><div className="product-card-control">{quantity && !configurable ? <Quantity product={product} quantity={quantity}/> : <button type="button" className={`add-button${configurable ? ' configure-button' : ''}`} disabled={unavailable || orderLocked || (isIiko && !orderingEnabled)} onClick={() => configurable ? setModal({ type: 'product', product }) : add(product)} aria-haspopup={configurable ? 'dialog' : undefined} aria-label={`${configurable ? 'Выбрать дополнения' : 'Добавить в корзину'}: ${product.name}`}><Plus size={18}/><span>{unavailable ? 'Недоступно' : configurable ? 'Выбрать' : 'Добавить'}</span></button>}</div></div></div></article>;
+}
 export function Modal({ title, children, className = '', onClose }) {
   const ref = useRef(); const closeRef = useRef(onClose); closeRef.current = onClose;
+  const stickyClose = className.split(/\s+/).includes('product-modifier-modal');
+  const closeButton = <button className="modal-close icon-button" onClick={onClose} aria-label="Закрыть окно"><X size={23}/></button>;
   useEffect(() => {
     const previous = document.activeElement; const previousOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden';
     ref.current?.querySelector('input, button, select, textarea, a')?.focus();
@@ -39,5 +56,5 @@ export function Modal({ title, children, className = '', onClose }) {
       if (!previous?.disabled && previous?.getClientRects().length) previous.focus();
       else document.getElementById('main-content')?.focus({ preventScroll: true }); };
   }, []);
-  return <div className="modal-backdrop" onMouseDown={e => { if (e.target === e.currentTarget) onClose(); }}><section ref={ref} className={`modal ${className}`} role="dialog" aria-modal="true" aria-labelledby="modal-title"><button className="modal-close icon-button" onClick={onClose} aria-label="Закрыть окно"><X size={23}/></button><h2 id="modal-title">{title}</h2>{children}</section></div>;
+  return <div className="modal-backdrop" onMouseDown={e => { if (e.target === e.currentTarget) onClose(); }}><section ref={ref} className={`modal ${className}`} role="dialog" aria-modal="true" aria-labelledby="modal-title">{stickyClose ? <div className="modifier-modal-close-anchor">{closeButton}</div> : closeButton}<h2 id="modal-title">{title}</h2>{children}</section></div>;
 }

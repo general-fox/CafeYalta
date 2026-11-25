@@ -19,9 +19,10 @@ export function getOrderItems(cart, method) {
   return gift ? [...paidItems, gift] : paidItems;
 }
 export function changeQuantity(cart, product, delta) {
-  const found = cart.find(item => item.id === product.id);
+  const key = product.lineId || product.id;
+  const found = cart.find(item => (item.lineId || item.id) === key);
   if (!found) return delta > 0 ? [...cart, { ...product, quantity: Math.min(delta, 30) }] : cart;
-  return cart.map(item => item.id === product.id ? { ...item, quantity: Math.min(item.quantity + delta, 30) } : item).filter(item => item.quantity > 0);
+  return cart.map(item => (item.lineId || item.id) === key ? { ...item, quantity: Math.min(item.quantity + delta, 30) } : item).filter(item => item.quantity > 0);
 }
 export const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Moscow', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 export function validReservation(date, time, now = new Date()) { return new Date(`${date}T${time}:00+03:00`).getTime() > now.getTime(); }

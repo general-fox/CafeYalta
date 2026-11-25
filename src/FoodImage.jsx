@@ -17,10 +17,13 @@ const catalogPhotos = new Map(products.map(({ id, image }) => {
 }));
 
 export default function FoodImage({ product, className = '', alt, variant = 'thumbnail', priority = false }) {
-  const photo = catalogPhotos.get(product.id);
+  const photo = product.source === 'iiko' ? undefined : catalogPhotos.get(product.id);
   const thumbnail = variant === 'thumbnail';
   const eager = priority || variant === 'detail';
-  const fallback = product.image || 'menu-placeholder.svg';
+  const placeholder = assetRoot + 'menu-placeholder.svg';
+  const fallback = product.source === 'iiko'
+    ? (/^https?:\/\//i.test(product.image || '') ? product.image : 'menu-placeholder.svg')
+    : product.image || 'menu-placeholder.svg';
   const src = (thumbnail && photo?.thumbnail) || photo?.src
     || (/^https?:\/\//i.test(fallback) ? fallback : assetRoot + fallback);
 
@@ -28,5 +31,12 @@ export default function FoodImage({ product, className = '', alt, variant = 'thu
     width={photo?.srcSet ? 1080 : undefined} height={photo?.srcSet ? 1080 : undefined}
     loading={eager ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : undefined} decoding="async"
     sizes={photo?.srcSet && !thumbnail ? (variant === 'detail' ? detailSizes : cardSizes) : undefined}
-    srcSet={thumbnail ? undefined : photo?.srcSet} src={src}/>;
+    srcSet={thumbnail ? undefined : photo?.srcSet} src={src}
+    onError={event => {
+      const image = event.currentTarget;
+      if (image.src.endsWith('/menu-placeholder.svg')) return;
+      image.removeAttribute('srcset');
+      image.removeAttribute('sizes');
+      image.src = placeholder;
+    }}/>;
 }

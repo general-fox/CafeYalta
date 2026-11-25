@@ -151,6 +151,9 @@ export function createIikoClient({ appId, clientSecret, apiKey, fetchImpl = glob
 
   return Object.freeze({
     organizations: () => read('/api/1/organizations', {}),
+    organizationDetails: organizationId => read('/api/1/organizations', {
+      organizationIds: [requiredString(organizationId)], returnAdditionalInfo: true, includeDisabled: false,
+    }),
     externalMenus: organizationId => read('/api/2/menu', organizationId == null ? {} : { organizationIds: [requiredString(organizationId)] }),
     terminalGroups: organizationId => read('/api/1/terminal_groups', { organizationIds: [requiredString(organizationId)], includeDisabled: false }),
     terminalGroupsAlive: (organizationId, terminalGroupId) => read('/api/1/terminal_groups/is_alive', {

@@ -114,12 +114,15 @@ export function createApiServer({ config, client, now = Date.now, orderService, 
         });
         const fresh = new URL(request.url, 'http://localhost').searchParams.get('refresh') === '1';
         const catalog = await getCatalog({ fresh });
+        const ordering = orderingEnabled && typeof orders?.capabilities === 'function'
+          ? await orders.capabilities()
+          : { methods: orderingEnabled ? ['pickup'] : [], payment: 'cash_on_receipt', deliveryFee: 0, addressFormat: null };
         return send(200, {
           source: 'iiko', mode: orderingEnabled ? 'demo-ordering' : 'read-only', orderingEnabled,
           organizationId: config.selection.organizationId, externalMenuId: config.selection.externalMenuId,
           fetchedAt: new Date(catalog.timestamp).toISOString(),
           categories: catalog.categories, products: catalog.products, warnings: catalog.warnings,
-          ordering: { methods: orderingEnabled ? ['pickup'] : [], payment: 'cash_on_receipt' },
+          ordering,
           data: catalog.data,
         });
       }

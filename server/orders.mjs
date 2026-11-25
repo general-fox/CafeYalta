@@ -1,19 +1,25 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { createFileOrderStore } from './order-store.mjs';
+import { canonicalModifierSelection, cartLineId, evaluateModifierSelection } from '../shared/modifiers.mjs';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const CAPABILITY = /^(?:[0-9a-f]{32,128}|[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/i;
 const MAX_TOTAL_CENTS = 100_000_000;
+const ADDRESS_FORMAT_CACHE_MS = 60_000;
 const messages = {
-  INVALID_ORDER: 'Проверьте имя, телефон и состав заказа. Доступен только самовывоз.',
+  INVALID_ORDER: 'Проверьте способ получения, имя, телефон и состав заказа.',
+  INVALID_ADDRESS: 'Проверьте адрес доставки: укажите город, улицу и дом.',
   ORDER_NOT_FOUND: 'Заявка не найдена.',
   REQUEST_CONFLICT: 'Эта заявка уже отправлялась с другим составом или данными. Сначала проверьте её статус.',
   PRICE_CHANGED: 'Цена заказа изменилась. Обновите меню и проверьте корзину.',
   ITEM_UNAVAILABLE: 'В корзине есть недоступное блюдо или блюдо, требующее выбора модификаторов.',
+  INVALID_MODIFIERS: 'Проверьте выбранные добавки: состав или допустимое количество изменились.',
   ORDERING_DISABLED: 'Отправка заказов пока отключена.',
   CATALOG_UNAVAILABLE: 'Не удалось проверить актуальное меню. Повторите позже.',
   POS_UNAVAILABLE: 'Касса сейчас недоступна. Попробуйте позже.',
   PICKUP_UNAVAILABLE: 'В iiko не настроен доступный тип заказа на самовывоз.',
+  DELIVERY_UNAVAILABLE: 'В iiko не настроен доступный тип заказа на доставку.',
+  ADDRESS_FORMAT_UNAVAILABLE: 'Не удалось подтвердить формат адреса доставки. Обновите меню или выберите самовывоз.',
   CASH_PAYMENT_UNAVAILABLE: 'В iiko не настроена оплата наличными при получении для этой кассы.',
   IIKO_UNAVAILABLE: 'Не удалось проверить настройки iiko. Заявка ещё не отправлялась.',
   ORDER_STORAGE_UNAVAILABLE: 'Не удалось прочитать или сохранить заявку. Не оформляйте её повторно, пока статус не проверен.',
@@ -63,8 +69,38 @@ function text(value, maximum, { required = false } = {}) {
   return clean;
 }
 
+function deliveryAddress(value) {
+  if (!isObject(value) || !['city', 'legacy'].includes(value.type)) fail('INVALID_ADDRESS');
+  const addressText = (input, maximum, required = false) => {
+    try { return text(input, maximum, { required }).replace(/\s+/g, ' '); }
+    catch { fail('INVALID_ADDRESS'); }
+  };
+  const address = { type: value.type };
+  if (value.type === 'legacy') {
+    address.city = addressText(value.city, 60, true);
+    address.street = addressText(value.street, 60, true);
+    address.house = addressText(value.house, 30, true);
+    const building = addressText(value.building, 10);
+    if (building) address.building = building;
+  } else {
+    address.line1 = addressText(value.line1, 250, true);
+    if (address.line1.length < 10) fail('INVALID_ADDRESS');
+  }
+  for (const field of ['flat', 'entrance', 'floor', 'doorphone']) {
+    const detail = addressText(value[field], 10);
+    if (detail) address[field] = detail;
+  }
+  return address;
+}
+
+function iikoDeliveryAddress(address) {
+  if (address.type === 'city') return { ...address };
+  const { city, street, ...details } = address;
+  return { ...details, street: { name: street, city } };
+}
+
 function validatePayload(payload) {
-  if (!isObject(payload) || payload.method !== 'pickup' || !isObject(payload.customer)) fail('INVALID_ORDER');
+  if (!isObject(payload) || !['pickup', 'delivery'].includes(payload.method) || !isObject(payload.customer)) fail('INVALID_ORDER');
   const name = text(payload.customer.name, 80, { required: true });
   const suppliedPhone = text(payload.customer.phone, 40, { required: true });
   if (!/^[+\d ()-]+$/.test(suppliedPhone)) fail('INVALID_ORDER');
@@ -74,17 +110,25 @@ function validatePayload(payload) {
   const phone = `+${digits}`;
   if (!/^\+[1-9]\d{7,14}$/.test(phone)) fail('INVALID_ORDER');
   const comment = text(payload.comment, 500);
+  const address = payload.method === 'delivery' ? deliveryAddress(payload.address) : undefined;
   const expectedTotalCents = cents(payload.expectedTotal);
   if (expectedTotalCents === null || !Array.isArray(payload.items) || !payload.items.length || payload.items.length > 30) fail('INVALID_ORDER');
+  const lines = new Map();
   const quantities = new Map();
   for (const item of payload.items) {
     if (!isObject(item) || typeof item.id !== 'string' || !item.id || item.id.length > 200 || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 30) fail('INVALID_ORDER');
+    let selections;
+    try { selections = canonicalModifierSelection(item.selections); }
+    catch { fail('INVALID_MODIFIERS'); }
     const quantity = (quantities.get(item.id) || 0) + item.quantity;
     if (quantity > 30) fail('INVALID_ORDER');
     quantities.set(item.id, quantity);
+    const lineId = cartLineId(item.id, selections);
+    const previous = lines.get(lineId);
+    lines.set(lineId, { id: item.id, quantity: (previous?.quantity || 0) + item.quantity, ...(selections.length ? { selections } : {}) });
   }
-  const items = [...quantities].sort(([a], [b]) => a.localeCompare(b)).map(([id, quantity]) => ({ id, quantity }));
-  return { method: 'pickup', customer: { name, phone }, comment, items, expectedTotalCents };
+  const items = [...lines].sort(([a], [b]) => a.localeCompare(b)).map(([, item]) => item);
+  return { method: payload.method, customer: { name, phone }, comment, ...(address ? { address } : {}), items, expectedTotalCents };
 }
 
 function publicOrder(record) {
@@ -92,7 +136,13 @@ function publicOrder(record) {
     id: record.id,
     status: record.status,
     total: record.totalCents / 100,
-    items: record.items.map(({ id, name, priceCents, quantity }) => ({ id, name, price: priceCents / 100, quantity })),
+    items: record.items.map(({ id, lineId, name, basePriceCents, priceCents, quantity, selections = [], modifiers = [] }) => ({
+      id, lineId: lineId || cartLineId(id, selections), name, basePrice: (basePriceCents ?? priceCents) / 100,
+      price: priceCents / 100, quantity, selections,
+      modifiers: modifiers.map(({ groupId, modifierId, name: modifierName, quantity: modifierQuantity, priceCents: modifierPrice }) => ({
+        groupId, modifierId, name: modifierName, quantity: modifierQuantity, price: modifierPrice / 100,
+      })),
+    })),
     createdAt: record.createdAt,
     message: record.status === 'accepted' ? 'Заказ поступил в iikoFront. Оплата наличными при получении.'
       : record.status === 'failed' ? 'iiko не приняла заказ. Проверьте заявку перед новым оформлением.'
@@ -101,13 +151,13 @@ function publicOrder(record) {
   };
 }
 
-function selectedOrderType(result, organizationId) {
+function selectedOrderType(result, organizationId, method) {
   if (!Array.isArray(result?.orderTypes)) fail('IIKO_UNAVAILABLE', 502);
   const candidates = result.orderTypes.filter(group => sameId(group?.organizationId, organizationId))
     .flatMap(group => Array.isArray(group.items) ? group.items : [])
-    .filter(type => UUID.test(type?.id || '') && type.orderServiceType === 'DeliveryPickUp' && type.isDeleted !== true);
+    .filter(type => UUID.test(type?.id || '') && type.orderServiceType === (method === 'delivery' ? 'DeliveryByCourier' : 'DeliveryPickUp') && type.isDeleted !== true);
   candidates.sort((a, b) => Number(b.isDefault === true) - Number(a.isDefault === true) || a.id.localeCompare(b.id));
-  if (!candidates.length) fail('PICKUP_UNAVAILABLE', 503);
+  if (!candidates.length) fail(method === 'delivery' ? 'DELIVERY_UNAVAILABLE' : 'PICKUP_UNAVAILABLE', 503);
   return candidates[0];
 }
 
@@ -123,25 +173,92 @@ function selectedCashPayment(result, terminalGroupId) {
 
 function snapshotItems(validated, catalog) {
   if (!(catalog?.entries instanceof Map)) fail('CATALOG_UNAVAILABLE', 503);
-  return validated.items.map(({ id, quantity }) => {
+  return validated.items.map(({ id, quantity, selections = [] }) => {
     const entry = catalog.entries.get(id);
-    if (!entry || entry.available !== true || entry.requiresModifiers || entry.requiredModifiers || entry.hasRequiredModifiers) fail('ITEM_UNAVAILABLE', 409);
+    if (!entry || entry.available !== true) fail('ITEM_UNAVAILABLE', 409);
+    if ((entry.requiresModifiers || entry.requiredModifiers || entry.hasRequiredModifiers) && !entry.modifierGroups?.length) fail('ITEM_UNAVAILABLE', 409);
     if (!UUID.test(entry.productId || '') || (entry.sizeId != null && !UUID.test(entry.sizeId))) fail('ITEM_UNAVAILABLE', 409);
-    const priceCents = entry.priceCents;
-    if (!Number.isSafeInteger(priceCents) || priceCents < 0 || priceCents > MAX_TOTAL_CENTS || cents(entry.price) !== priceCents) fail('CATALOG_UNAVAILABLE', 503);
-    return { id, productId: entry.productId, ...(entry.sizeId ? { sizeId: entry.sizeId } : {}), name: String(entry.name || 'Блюдо').slice(0, 200), priceCents, quantity };
+    const basePriceCents = entry.priceCents;
+    if (!Number.isSafeInteger(basePriceCents) || basePriceCents < 0 || basePriceCents > MAX_TOTAL_CENTS || cents(entry.price) !== basePriceCents) fail('CATALOG_UNAVAILABLE', 503);
+    const evaluation = evaluateModifierSelection(entry, selections);
+    if (!evaluation.valid) fail('INVALID_MODIFIERS', 409);
+    const orderItemType = entry.orderItemType || 'Product';
+    if (!['Product', 'Compound'].includes(orderItemType)) fail('ITEM_UNAVAILABLE', 409);
+    const orderModifiers = [];
+    for (const group of entry.modifierGroups || []) {
+      const productGroupId = group.productGroupId ?? (UUID.test(group.id) ? group.id : undefined);
+      if (productGroupId != null && !UUID.test(productGroupId)) fail('ITEM_UNAVAILABLE', 409);
+      for (const option of group.items) {
+        const selected = evaluation.selectedModifiers.find(item => item.groupId === group.id && item.modifierId === option.id);
+        // A removed default must be explicit, so that iiko does not silently
+        // restore it and the kitchen can see the guest's choice to omit it.
+        if (!selected && !option.defaultQuantity) continue;
+        const productId = option.productId || option.id;
+        if (!UUID.test(productId)) fail('ITEM_UNAVAILABLE', 409);
+        orderModifiers.push({ productId, ...(productGroupId ? { productGroupId } : {}),
+          amount: selected?.quantity || 0, price: option.price, splittable: group.splittable === true });
+      }
+    }
+    return { id, lineId: cartLineId(id, selections), productId: entry.productId, ...(entry.sizeId ? { sizeId: entry.sizeId } : {}),
+      name: String(entry.name || 'Блюдо').slice(0, 200), orderItemType, basePriceCents,
+      priceCents: evaluation.unitPriceCents, quantity, selections: evaluation.selections,
+      modifiers: evaluation.selectedModifiers, orderModifiers, configured: Boolean(entry.modifierGroups?.length) };
   });
 }
 
 function iikoItems(items) {
-  return items.map(item => ({ type: 'Product', productId: item.productId, amount: item.quantity, price: item.priceCents / 100,
-    ...(item.sizeId ? { productSizeId: item.sizeId } : {}) }));
+  return items.flatMap(item => {
+    const base = { type: item.orderItemType, amount: item.configured ? 1 : item.quantity,
+      ...(item.sizeId ? { productSizeId: item.sizeId } : {}) };
+    const stripRouting = ({ splittable, ...modifier }) => modifier;
+    let orderItem;
+    if (item.orderItemType === 'Compound') {
+      const componentModifiers = item.orderModifiers.filter(modifier => modifier.splittable).map(stripRouting);
+      const commonModifiers = item.orderModifiers.filter(modifier => !modifier.splittable).map(stripRouting);
+      orderItem = { ...base, primaryComponent: { productId: item.productId, price: item.basePriceCents / 100,
+        ...(componentModifiers.length ? { modifiers: componentModifiers } : {}) },
+        ...(commonModifiers.length ? { commonModifiers } : {}) };
+    } else {
+      orderItem = { ...base, productId: item.productId, price: item.basePriceCents / 100,
+        ...(item.orderModifiers.length ? { modifiers: item.orderModifiers.map(stripRouting) } : {}) };
+    }
+    // Each configured unit carries its own selection. This avoids dependence
+    // on the POS's relative modifier quantity setting when ordering several.
+    return Array.from({ length: item.configured ? item.quantity : 1 }, () => structuredClone(orderItem));
+  });
 }
 
 // Status reads use IDs from our persisted record, never arbitrary
 // customer-supplied iiko IDs or a phone-number history lookup.
 export function createOrderService({ config, client, getCatalog, store = createFileOrderStore({ directory: config?.orderDataDir }), now = Date.now }) {
   const locks = new Map();
+  let cachedAddressFormat;
+  let pendingAddressFormat;
+
+  async function getAddressFormat({ fresh = false } = {}) {
+    if (!fresh && cachedAddressFormat && now() - cachedAddressFormat.timestamp < ADDRESS_FORMAT_CACHE_MS) return cachedAddressFormat.value;
+    if (!pendingAddressFormat) {
+      pendingAddressFormat = Promise.resolve().then(() => client.organizationDetails(config.selection.organizationId)).then(result => {
+        const organization = result.organizations?.find(item => sameId(item?.id, config.selection.organizationId));
+        const value = typeof organization?.addressFormatType === 'string' ? organization.addressFormatType.toLowerCase() : '';
+        if (!['city', 'legacy'].includes(value)) fail('ADDRESS_FORMAT_UNAVAILABLE', 503);
+        cachedAddressFormat = { value, timestamp: now() };
+        return value;
+      }).finally(() => { pendingAddressFormat = undefined; });
+    }
+    return pendingAddressFormat;
+  }
+
+  async function capabilities() {
+    const options = { methods: ['pickup'], payment: 'cash_on_receipt', deliveryFee: 0, addressFormat: null };
+    try {
+      options.addressFormat = await getAddressFormat();
+      options.methods.push('delivery');
+    } catch {
+      options.deliveryUnavailableReason = messages.ADDRESS_FORMAT_UNAVAILABLE;
+    }
+    return options;
+  }
 
   function locked(id, operation) {
     const previous = locks.get(id) || Promise.resolve();
@@ -212,18 +329,20 @@ export function createOrderService({ config, client, getCatalog, store = createF
       const { organizationId, terminalGroupId, externalMenuId, priceCategoryId } = config.selection || {};
       if (!UUID.test(organizationId || '') || !UUID.test(terminalGroupId || '') || !externalMenuId) fail('ORDERING_DISABLED', 503);
       const validated = validatePayload(payload);
-      let catalog, orderTypes, paymentTypes, alive;
+      let catalog, orderTypes, paymentTypes, alive, addressFormat;
       try {
-        [catalog, orderTypes, paymentTypes, alive] = await Promise.all([
+        [catalog, orderTypes, paymentTypes, alive, addressFormat] = await Promise.all([
           Promise.resolve().then(() => getCatalog({ fresh: true })).catch(() => fail('CATALOG_UNAVAILABLE', 503)),
           client.orderTypes(organizationId), client.paymentTypes(organizationId), client.terminalGroupsAlive(organizationId, terminalGroupId),
+          validated.method === 'delivery' ? getAddressFormat({ fresh: true }) : undefined,
         ]);
       } catch (error) {
         if (error instanceof OrderError) throw error;
         fail('IIKO_UNAVAILABLE', 502);
       }
       if (!Array.isArray(alive?.isAliveStatus) || !alive.isAliveStatus.some(group => sameId(group?.organizationId, organizationId) && sameId(group?.terminalGroupId, terminalGroupId) && group.isAlive === true)) fail('POS_UNAVAILABLE', 503);
-      const orderType = selectedOrderType(orderTypes, organizationId);
+      if (validated.method === 'delivery' && addressFormat !== validated.address.type) fail('ADDRESS_FORMAT_UNAVAILABLE', 409);
+      const orderType = selectedOrderType(orderTypes, organizationId, validated.method);
       const payment = selectedCashPayment(paymentTypes, terminalGroupId);
       const items = snapshotItems(validated, catalog);
       const totalCents = items.reduce((sum, item) => sum + item.priceCents * item.quantity, 0);
@@ -255,6 +374,7 @@ export function createOrderService({ config, client, getCatalog, store = createF
             id, menuId: String(externalMenuId), orderTypeId: orderType.id,
             phone: validated.customer.phone, customer: { type: 'one-time', name: validated.customer.name },
             comment: validated.comment, sourceKey: 'CafeYalta-demo-site', items: orderItems,
+            ...(validated.method === 'delivery' ? { deliveryPoint: { address: iikoDeliveryAddress(validated.address) } } : {}),
             ...(UUID.test(priceCategoryId || '') ? { priceCategoryId } : {}),
             payments: [{ paymentTypeKind: 'Cash', paymentTypeId: payment.id, sum: totalCents / 100, isProcessedExternally: false, isFiscalizedExternally: false }],
           },
@@ -275,5 +395,5 @@ export function createOrderService({ config, client, getCatalog, store = createF
     return locked(id, async () => existingOrder(await load(id), accessTokenHash));
   }
 
-  return Object.freeze({ create, get });
+  return Object.freeze({ create, get, capabilities });
 }

@@ -1,32 +1,54 @@
+import { cartLineId, evaluateModifierSelection } from '../shared/modifiers.mjs';
+
 export const CHECKOUT_STORAGE_KEY = 'yalta-iiko-checkout-v1';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const SAFE_REJECTION_CODES = new Set([
   'INVALID_ORDER', 'PRICE_CHANGED', 'ITEM_UNAVAILABLE', 'ORDERING_DISABLED',
   'POS_UNAVAILABLE', 'PICKUP_UNAVAILABLE', 'CASH_PAYMENT_UNAVAILABLE',
-  'CATALOG_UNAVAILABLE', 'IIKO_UNAVAILABLE',
+  'CATALOG_UNAVAILABLE', 'IIKO_UNAVAILABLE', 'INVALID_ADDRESS', 'DELIVERY_UNAVAILABLE', 'ADDRESS_FORMAT_UNAVAILABLE', 'INVALID_MODIFIERS',
 ]);
+
+export function configuredIikoProduct(product, selections) {
+  if (product.modifierGroups?.length && !Array.isArray(selections)) throw new Error('Выберите дополнения к блюду.');
+  const choice = evaluateModifierSelection(product, selections || []);
+  if (!choice.valid) throw new Error(choice.errors.join(' ') || 'Проверьте выбранные дополнения.');
+  return {
+    ...product, basePrice: product.basePrice ?? product.price, price: choice.unitPrice,
+    lineId: cartLineId(product.id, choice.selections), selections: choice.selections,
+    modifiers: choice.selectedModifiers,
+  };
+}
 
 export function reconcileIikoCart(cart, products) {
   const byId = new Map(products.map(product => [product.id, product]));
   return (Array.isArray(cart) ? cart : []).filter(item => item && typeof item.id === 'string' && Number.isInteger(item.quantity) && item.quantity > 0).map(item => {
     const current = byId.get(item.id);
-    return current
-      ? { ...current, quantity: Math.min(item.quantity, 30) }
-      : { ...item, source: 'iiko', available: false, unavailableReason: 'Этого блюда больше нет в меню' };
+    if (!current) return { ...item, source: 'iiko', available: false, unavailableReason: 'Этого блюда больше нет в меню' };
+    try {
+      return { ...configuredIikoProduct(current, item.selections), quantity: Math.min(item.quantity, 30) };
+    } catch (error) {
+      return { ...item, ...current, price: item.price, basePrice: current.price, lineId: item.lineId || item.id,
+        selections: item.selections, modifiers: item.modifiers, quantity: Math.min(item.quantity, 30),
+        available: false, unavailableReason: `Выбор дополнений изменился. ${error.message}` };
+    }
   });
 }
 
-export function createCheckoutAttempt({ cart, customer, comment = '', uuid = () => crypto.randomUUID(), now = () => new Date().toISOString() }) {
+export function createCheckoutAttempt({ cart, customer, comment = '', method = 'pickup', address, uuid = () => crypto.randomUUID(), now = () => new Date().toISOString() }) {
+  if (!['pickup', 'delivery'].includes(method)) throw new Error('Выберите способ получения заказа.');
+  if (method === 'delivery' && (!address || !['city', 'legacy'].includes(address.type))) throw new Error('Проверьте адрес доставки.');
   const requestId = uuid();
   const token = uuid();
   return {
     requestId, token, createdAt: now(),
     payload: {
-      requestId, method: 'pickup', customer, comment,
-      items: cart.map(({ id, quantity }) => ({ id, quantity })),
+      requestId, method, customer: { ...customer }, comment,
+      ...(method === 'delivery' ? { address: { ...address } } : {}),
+      items: cart.map(({ id, quantity, selections, modifierGroups }) => ({ id, quantity,
+        ...(modifierGroups?.length || selections?.length ? { selections: (selections || []).map(({ groupId, modifierId, quantity }) => ({ groupId, modifierId, quantity })) } : {}) })),
       expectedTotal: Math.round(cart.reduce((sum, item) => sum + item.price * item.quantity, 0) * 100) / 100,
     },
-    snapshotItems: cart.map(item => ({ ...item })),
+    snapshotItems: structuredClone(cart),
   };
 }
 

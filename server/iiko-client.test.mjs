@@ -150,8 +150,20 @@ test('external menu and terminal group requests match the API shapes', async () 
   ]);
   assert.deepEqual(Object.keys(client).sort(), [
     'checkStopList', 'commandStatus', 'createDelivery', 'deliveriesById', 'externalMenus',
-    'menuById', 'orderTypes', 'organizations', 'paymentTypes', 'stopLists', 'terminalGroups', 'terminalGroupsAlive',
+    'menuById', 'orderTypes', 'organizationDetails', 'organizations', 'paymentTypes', 'stopLists', 'terminalGroups', 'terminalGroupsAlive',
   ]);
+});
+
+test('organization address format is requested from extended organization information', async () => {
+  const calls = [];
+  const client = createIikoClient({ ...auth, fetchImpl: async (url, options) => {
+    if (pathOf(url) === '/api/v2/access_token') return json({ token: 'token' });
+    calls.push({ path: pathOf(url), body: JSON.parse(options.body) });
+    return json({ organizations: [{ id: organizationId, addressFormatType: 'Legacy' }] });
+  } });
+  const result = await client.organizationDetails(organizationId);
+  assert.equal(result.organizations[0].addressFormatType, 'Legacy');
+  assert.deepEqual(calls, [{ path: '/api/1/organizations', body: { organizationIds: [organizationId], returnAdditionalInfo: true, includeDisabled: false } }]);
 });
 
 test('order dictionaries, availability and reconciliation requests match the official API shapes', async () => {

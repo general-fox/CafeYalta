@@ -16,7 +16,7 @@ const Checkout = lazy(() => import('./pages/Checkout'));
 const Modals = lazy(() => import('./modals'));
 
 function Header({ cartCount }) {
-  const { user, openAuth, setModal } = useShop();
+  const { user, openAuth, setModal, isIiko } = useShop();
   const [mobile, setMobile] = useState(false);
   const location = useLocation();
   const header = useRef(null);
@@ -60,8 +60,8 @@ function Header({ cartCount }) {
       <NavLink to="/delivery">Доставка</NavLink>
       <NavLink to="/loyalty">Программа лояльности</NavLink>
       <a href="#/#about" onClick={() => { setMobile(false); setTimeout(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }), 60); }}>О нас</a>
-      {mobile && (user
-        ? <NavLink to="/account" onClick={() => setMobile(false)}>Личный кабинет</NavLink>
+      {mobile && (user || isIiko
+        ? <NavLink to="/account" onClick={() => setMobile(false)}>{isIiko ? 'История заказов' : 'Личный кабинет'}</NavLink>
         : <button type="button" className="mobile-account-entry" onClick={() => {
             menuButton.current?.focus();
             setMobile(false);
@@ -70,7 +70,7 @@ function Header({ cartCount }) {
       )}
     </nav>
     <div className="header-actions">
-      {user ? <Link className="account-button" to="/account" aria-label="Личный кабинет" title="Личный кабинет" onClick={() => setMobile(false)}><UserRound size={22} aria-hidden="true"/></Link> : <button type="button" className="account-button" aria-label="Войти в личный кабинет" title="Войти в личный кабинет" onClick={() => { setMobile(false); openAuth(); }}><UserRound size={22} aria-hidden="true"/></button>}
+      {user || isIiko ? <Link className="account-button" to="/account" aria-label={isIiko ? 'История заказов в этом браузере' : 'Личный кабинет'} title={isIiko ? 'История заказов' : 'Личный кабинет'} onClick={() => setMobile(false)}><UserRound size={22} aria-hidden="true"/></Link> : <button type="button" className="account-button" aria-label="Войти в личный кабинет" title="Войти в личный кабинет" onClick={() => { setMobile(false); openAuth(); }}><UserRound size={22} aria-hidden="true"/></button>}
       <a className="header-phone" href="tel:+74951234567" aria-label="Позвонить в кафе: +7 (495) 123-45-67" title="Позвонить в кафе" onClick={() => setMobile(false)}><Phone size={22} aria-hidden="true"/></a>
       <button type="button" className="header-cart" disabled={!cartCount} aria-label={`Корзина, порций: ${cartCount}`} title="Открыть корзину" aria-haspopup="dialog" onClick={() => setModal('cart')}>
         <ShoppingBag size={22} aria-hidden="true"/><span aria-hidden="true">{cartCount}</span>
@@ -105,6 +105,7 @@ function Home() {
   </main>;
 }
 function Footer() {
+  const { isIiko } = useShop();
   return <footer className="site-footer">
     <div className="container footer-inner">
       <div className="footer-main" data-reveal-group>
@@ -116,7 +117,7 @@ function Footer() {
           <span className="eyebrow">ЗАГЛЯДЫВАЙТЕ</span>
           <Link to="/delivery">Доставка и меню</Link>
           <Link to="/loyalty">Программа лояльности</Link>
-          <Link to="/account">Личный кабинет</Link>
+          <Link to="/account">{isIiko ? 'История заказов' : 'Личный кабинет'}</Link>
         </nav>
         <div className="footer-contacts" data-reveal="rise">
           <span className="eyebrow">МЫ РЯДОМ</span>
@@ -128,13 +129,20 @@ function Footer() {
       </div>
       <div className="footer-bottom" data-reveal="soft">
         <span>© {new Date().getFullYear()} Кафе «Ялта»</span>
-        <span>Демо · контакты и меню — примеры</span>
+        <span>{isIiko ? 'Демо-кафе · меню из iiko, контакты — примеры' : 'Демо · контакты и меню — примеры'}</span>
         <Link to="/privacy">Конфиденциальность</Link>
       </div>
     </div>
   </footer>;
 }
-function Privacy() { return <main className="info-page paper-surface"><div className="container text-page" data-reveal-group><span className="eyebrow" data-reveal="rise">ВАШИ ДАННЫЕ</span><h1 data-reveal="rise">Конфиденциальность</h1><p data-reveal="rise">Этот сайт — демонстрационная версия кафе «Ялта». Введённые имя, телефон, адрес, состав тестовых заказов и бронирований сохраняются только в локальном хранилище вашего браузера на этом устройстве. В кафе они не отправляются. Не вводите реальные персональные данные для тестирования.</p><h2 data-reveal="rise">Как удалить данные</h2><p data-reveal="rise">Очистите данные сайта в настройках браузера. После этого удалятся профиль, корзина и вся тестовая история на этом устройстве.</p><h2 data-reveal="rise">Перед открытием кафе</h2><p data-reveal="rise">Здесь появится политика оператора персональных данных с актуальными реквизитами, целями обработки, сроками хранения и контактами. Реальная авторизация, оплата и обработка заказов пока не подключены.</p><Link className="button" data-reveal="soft" to="/">На главную <ArrowUpRight size={18}/></Link></div></main>; }
+function Privacy() {
+  const { isIiko } = useShop();
+  return <main className="info-page paper-surface"><div className="container text-page" data-reveal-group><span className="eyebrow" data-reveal="rise">ВАШИ ДАННЫЕ</span><h1 data-reveal="rise">Конфиденциальность</h1>
+    <p data-reveal="rise">{isIiko ? 'Сайт подключён к демо-кафе iiko. При отправке заказа имя, телефон, адрес доставки, комментарий и состав заказа передаются локальному серверу сайта и в iiko. Контакты, корзина и история заказов сохраняются также в этом браузере. Используйте вымышленные контакты для тестирования.' : 'Этот сайт — демонстрационная версия кафе «Ялта». Введённые имя, телефон, адрес, состав тестовых заказов и бронирований сохраняются только в локальном хранилище вашего браузера на этом устройстве. В кафе они не отправляются. Не вводите реальные персональные данные для тестирования.'}</p>
+    {isIiko && <p data-reveal="rise">История на этом устройстве доступна без входа по SMS и не является защищённым личным кабинетом. Тестовые заявки на бронирование остаются в браузере и в кафе не отправляются.</p>}
+    <h2 data-reveal="rise">Как удалить данные</h2><p data-reveal="rise">{isIiko ? 'Очистка данных сайта удалит контакты, корзину и историю в этом браузере. Уже переданные заказы останутся на сервере и в iikoFront: очистка браузера не отменяет и не удаляет их.' : 'Очистите данные сайта в настройках браузера. После этого удалятся профиль, корзина и вся тестовая история на этом устройстве.'}</p>
+    <h2 data-reveal="rise">Перед открытием кафе</h2><p data-reveal="rise">{isIiko ? 'Перед публичным запуском здесь появятся сведения об операторе персональных данных, целях обработки, сроках хранения и контактах. Сейчас подключена отправка тестовых заказов в демо-кафе; онлайн-оплата и вход с подтверждением телефона не подключены.' : 'Здесь появится политика оператора персональных данных с актуальными реквизитами, целями обработки, сроками хранения и контактами. Реальная авторизация, оплата и обработка заказов пока не подключены.'}</p><Link className="button" data-reveal="soft" to="/">На главную <ArrowUpRight size={18}/></Link></div></main>;
+}
 export default function App() { const location = useLocation(); const { modal, setModal, cart, toast } = useShop();
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
   const isDelivery = useMatch('/delivery');

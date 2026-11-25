@@ -1,12 +1,18 @@
 import { useState } from 'react';
 import FoodImage from '../FoodImage';
 import RussianPhoneInput from '../RussianPhoneInput';
+import IikoCheckout from './IikoCheckout';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, Check, CircleDot, MapPin, ShoppingBag } from 'lucide-react';
 import { useShop } from '../store';
 import { cartTotal, deliveryFee, getOrderGift, getOrderItems, money, normalizePhone } from '../domain';
 import { asset, Quantity, Waves } from '../components';
 export default function Checkout() {
+  const { isIiko } = useShop();
+  return isIiko ? <IikoCheckout/> : <DemoCheckout/>;
+}
+
+function DemoCheckout() {
   const { cart, setCart, user, setUser, saveOrder, deliveryMethod: method, setDeliveryMethod: setMethod } = useShop();
   const [error, setError] = useState(''); const [done, setDone] = useState(null);
   const total = cartTotal(cart); const fee = deliveryFee(total, method); const gift = getOrderGift(cart, method);
